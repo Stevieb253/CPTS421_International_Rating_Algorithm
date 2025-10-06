@@ -2,10 +2,9 @@
 
 ## Project summary
 
-### One-sentence description of the project
+
 A data-driven system to predict which international applicants are most likely to enroll at Washington State University.
 
-### Additional information about the project
 The International Student Scoring Algorithm is designed to assist the Office of International Programs at WSU in evaluating applicants using real data. It generates both category-specific and overall scores for applicants, flags suspicious documents for manual review, and allows automated output of applicant scores in a spreadsheet format. The project also considers regional trends (South Asia, Vietnam, Kenya, and Nigeria) and provides a prototype framework that could be integrated with existing platforms like Slate.
 
 ---
@@ -30,8 +29,8 @@ The International Student Scoring Algorithm is designed to assist the Office of 
 ### Installation Steps
 1. Clone the repository:  
 ```bash
-git clone https://github.com/<your-username>/International-Student-Scoring-Algorithm.git
-cd International-Student-Scoring-Algorithm
+git clone https://github.com/Stevieb253/CPTS421_International_Rating_Algorithm.git
+cd CPTS421_International_Rating_Algorithm
 ```
 2. Set up a virtual environment:
 ```bash

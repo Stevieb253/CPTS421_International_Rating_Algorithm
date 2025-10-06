@@ -32,5 +32,4 @@ This Sprint 1 demo showcases the following features:
 
 ---
 
-## Contact
 

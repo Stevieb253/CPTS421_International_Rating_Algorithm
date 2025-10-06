@@ -1,4 +1,4 @@
-# International Student Scoring Algorithm
+# International Applicant Rating Algorithm 
 
 ## Project summary
 

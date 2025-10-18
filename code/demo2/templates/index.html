@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Scoring System - WSU</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .input-section, .results-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .sample-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .sample-btn {
+            flex: 1;
+            padding: 10px;
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .sample-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .essay-container {
+            margin-bottom: 20px;
+        }
+        
+        .essay-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 150px;
+        }
+        
+        .essay-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .char-info {
+            text-align: right;
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 4px;
+        }
+        
+        .essay-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .action-btn {
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .text-preview, .text-stats {
+            display: none;
+            margin-top: 12px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .risk-factors {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .analyze-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .scores-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .score-card {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .score-card.academic {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .score-card.deductions {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .score-card.overall {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+        
+        .score-card h3 {
+            font-size: 0.875rem;
+            margin-bottom: 12px;
+            opacity: 0.9;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .score-label {
+            font-size: 0.75rem;
+            opacity: 0.85;
+        }
+        
+        .analysis-details {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .analysis-details h3 {
+            margin-bottom: 16px;
+            color: #1f2937;
+        }
+        
+        #factorBreakdown div {
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+            color: #374151;
+        }
+        
+        #factorBreakdown div:last-child {
+            border-bottom: none;
+        }
+        
+        .recommendation {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 12px;
+            padding: 24px;
+            color: white;
+        }
+        
+        .recommendation h3 {
+            margin-bottom: 12px;
+            font-size: 1.25rem;
+        }
+        
+        .recommendation-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Student Scoring System</h1>
+            <p>AI-Powered International Student Admissions Analysis</p>
+            <div style="margin-top: 16px;">
+                <span style="color: white; margin-right: 16px;">👤 {{ username }}</span>
+                <a href="/analytics" style="color: white; margin-right: 16px; text-decoration: none; padding: 8px 12px; background: rgba(255,255,255,0.1); border-radius: 6px;">📊 Analytics</a>
+                <a href="/batch" style="color: white; margin-right: 16px; text-decoration: none; padding: 8px 12px; background: rgba(255,255,255,0.1); border-radius: 6px;">📁 Batch Process</a>
+                <button onclick="exportData()" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">⬇️ Export CSV</button>
+                <button onclick="exportExcel()" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">📊 Export Excel</button>
+                <a href="/logout" style="background: rgba(220,38,38,0.8); border: 1px solid white; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none;">🚪 Logout</a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2 style="margin-bottom: 24px; color: #1f2937; font-size: 1.5rem; font-weight: 700;">Student Profile</h2>
+                
+                <div class="sample-buttons">
+                    <button class="sample-btn" onclick="loadSample('high')">High Potential</button>
+                    <button class="sample-btn" onclick="loadSample('medium')">Medium Risk</button>
+                    <button class="sample-btn" onclick="loadSample('low')">High Risk</button>
+                </div>
+                
+                <form id="studentForm" onsubmit="event.preventDefault(); analyzeStudent();">
+                    <div class="form-group">
+                        <label>Student ID</label>
+                        <input type="text" id="studentId" placeholder="STU_2025_001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select id="country">
+                            <option value="">Select Country</option>
+                            <option value="India">India</option>
+                            <option value="Vietnam">Vietnam</option>
+                            <option value="Kenya">Kenya</option>
+                            <option value="China">China</option>
+                            <option value="Pakistan">Pakistan</option>
+                            <option value="Bangladesh">Bangladesh</option>
+                            <option value="South Korea">South Korea</option>
+                            <option value="Thailand">Thailand</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Admissions GPA</label>
+                        <input type="number" id="gpa" min="0" max="5" step="0.01" placeholder="3.5" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Curriculum Type</label>
+                        <select id="curriculum" required>
+                            <option value="">Select Curriculum</option>
+                            <option value="N/A">N/A</option>
+                            <option value="Standard Intl Secondary">Standard Intl Secondary Completion Boards/Transcripts</option>
+                            <option value="International University/HS English MOI">International University/HS with English MOI</option>
+                            <option value="IGCSE/IB">IGCSE / IB</option>
+                            <option value="US HS/University">US HS or University</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Travel History</label>
+                        <select id="travelHistory" required>
+                            <option value="">Select Travel History</option>
+                            <option value="No travel abroad">No travel abroad</option>
+                            <option value="1 non-listed">1 trip to non-listed country</option>
+                            <option value="1 listed or multiple non-listed">1 trip to country on list or multiple trips to non-list countries</option>
+                            <option value="Multiple listed">Traveled multiple times to countries on our list</option>
+                            <option value="SEVIS/Multiple US trips">Active or completed SEVIS record/multiple US trips</option>
+                        </select>
+                    </div>
+                    
+                    <div class="essay-container">
+                        <label>Personal Essay</label>
+                        <textarea id="essayText" class="essay-textarea" rows="6" placeholder="Paste the student's personal statement or essay here..." oninput="updateCharCount()"></textarea>
+                        <div class="char-info" id="essayCounter">0 chars</div>
+                        
+                        <div class="essay-actions">
+                            <button type="button" class="action-btn" onclick="togglePreview()">📖 Preview</button>
+                            <button type="button" class="action-btn" onclick="showStats()">📊 Stats</button>
+                            <button type="button" class="action-btn" onclick="clearText()">🗑️ Clear</button>
+                        </div>
+                        
+                        <div class="text-preview" id="textPreview"></div>
+                        <div class="text-stats" id="textStats"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Negative / Risk Factors</label>
+                        <div class="risk-factors">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="reqAppFeeWaiver">
+                                <label for="reqAppFeeWaiver">Requested Application Fee Waiver</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cannotPayFee">
+                                <label for="cannotPayFee">Cannot Pay App Fee (No Card)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="reqEnrollmentFeeWaiver">
+                                <label for="reqEnrollmentFeeWaiver">Requested Enrollment Fee Waiver</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="bankDocsPending">
+                                <label for="bankDocsPending">Bank Documents Pending</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="earlyI20">
+                                <label for="earlyI20">Requested Early I-20</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="analyze-btn" id="analyzeBtn">
+                        🚀 Analyze Student
+                    </button>
+                </form>
+            </div>
+            
+            <div class="results-section">
+                <h2 style="margin-bottom: 32px; color: #1f2937; font-size: 1.5rem; font-weight: 700;">Analysis Results</h2>
+                
+                <div class="scores-grid">
+                    <div class="score-card academic">
+                        <h3>POS Score</h3>
+                        <div class="score-value" id="posScore">--</div>
+                        <div class="score-label">positive attributes</div>
+                    </div>
+                    <div class="score-card deductions">
+                        <h3>NEG Deductions</h3>
+                        <div class="score-value" id="negScore">--</div>
+                        <div class="score-label">risk factors</div>
+                    </div>
+                    <div class="score-card overall">
+                        <h3>Final Score</h3>
+                        <div class="score-value" id="finalScore">--</div>
+                        <div class="score-label">POS - NEG</div>
+                    </div>
+                </div>
+                
+                <div class="analysis-details">
+                    <h3>Factor Breakdown</h3>
+                    <div id="factorBreakdown">
+                        <p style="color: #6b7280; text-align: center; padding: 40px;">Enter student information and click "Analyze Student" to see detailed analysis.</p>
+                    </div>
+                </div>
+                
+                <div class="recommendation" id="recommendation" style="display: none;">
+                    <h3>🎯 Recommendation</h3>
+                    <div class="recommendation-text" id="recommendationText"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateCharCount() {
+            const text = document.getElementById('essayText').value;
+            document.getElementById('essayCounter').textContent = `${text.length} chars`;
+        }
+
+        function togglePreview() {
+            const preview = document.getElementById('textPreview');
+            const text = document.getElementById('essayText').value;
+            
+            if (preview.style.display === 'block') {
+                preview.style.display = 'none';
+            } else {
+                preview.innerHTML = text.replace(/\n/g, '<br>');
+                preview.style.display = 'block';
+            }
+        }
+
+        function showStats() {
+            const stats = document.getElementById('textStats');
+            const text = document.getElementById('essayText').value;
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+            
+            if (stats.style.display === 'block') {
+                stats.style.display = 'none';
+            } else {
+                stats.innerHTML = `
+                    <strong>Text Statistics:</strong><br>
+                    Characters: ${text.length}<br>
+                    Words: ${words}<br>
+                    Sentences: ${sentences}<br>
+                    Avg words/sentence: ${sentences > 0 ? (words/sentences).toFixed(1) : 0}
+                `;
+                stats.style.display = 'block';
+            }
+        }
+
+        function clearText() {
+            if (confirm('Clear the essay text?')) {
+                document.getElementById('essayText').value = '';
+                updateCharCount();
+            }
+        }
+
+        async function loadSample(type) {
+            try {
+                const response = await fetch(`/api/sample/${type}`);
+                const data = await response.json();
+                
+                document.getElementById('studentId').value = data.studentId || '';
+                document.getElementById('country').value = data.country || '';
+                document.getElementById('gpa').value = data.gpa || '';
+                document.getElementById('curriculum').value = data.curriculum || '';
+                document.getElementById('travelHistory').value = data.travelHistory || '';
+                document.getElementById('essayText').value = data.essayText || '';
+                
+                // Clear all checkboxes first
+                ['reqAppFeeWaiver', 'cannotPayFee', 'reqEnrollmentFeeWaiver', 'bankDocsPending', 'earlyI20'].forEach(id => {
+                    document.getElementById(id).checked = false;
+                });
+                
+                // Set checked items
+                if (data.negFactors) {
+                    data.negFactors.forEach(factor => {
+                        const el = document.getElementById(factor);
+                        if (el) el.checked = true;
+                    });
+                }
+                
+                updateCharCount();
+            } catch (error) {
+                alert('Error loading sample: ' + error.message);
+            }
+        }
+
+        async function analyzeStudent() {
+            const btn = document.getElementById('analyzeBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Analyzing...';
+            
+            try {
+                // Collect form data
+                const gpa = parseFloat(document.getElementById('gpa').value) || 0;
+                const curriculum = document.getElementById('curriculum').value;
+                const travelHistory = document.getElementById('travelHistory').value;
+                const essayText = document.getElementById('essayText').value.trim();
+                
+                // Collect negative factors
+                const negFactors = [];
+                ['reqAppFeeWaiver', 'cannotPayFee', 'reqEnrollmentFeeWaiver', 'bankDocsPending', 'earlyI20'].forEach(id => {
+                    if (document.getElementById(id).checked) {
+                        negFactors.push(id);
+                    }
+                });
+                
+                // Send to backend
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        gpa,
+                        curriculum,
+                        travelHistory,
+                        essayText,
+                        negFactors
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Analysis failed');
+                }
+                
+                const result = await response.json();
+                
+                // Update UI
+                document.getElementById('posScore').textContent = result.posScore.toFixed(2);
+                document.getElementById('negScore').textContent = result.negScore.toFixed(2);
+                document.getElementById('finalScore').textContent = result.finalScore.toFixed(2);
+                
+                // Factor breakdown
+                const breakdown = document.getElementById('factorBreakdown');
+                breakdown.innerHTML = Object.entries(result.breakdown)
+                    .map(([key, value]) => `<div>${key}: ${typeof value === 'number' ? value.toFixed(2) : value}</div>`)
+                    .join('') +
+                    `<div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid #e5e7eb;">
+                        <strong>Essay Analysis Insights:</strong><br>
+                        ${result.essayAnalysis.insights.map(insight => `<div style="margin-top: 4px;">• ${insight}</div>`).join('')}
+                    </div>`;
+                
+                // Recommendation
+                const recommendation = document.getElementById('recommendation');
+                const recommendationText = document.getElementById('recommendationText');
+                recommendation.style.display = 'block';
+                recommendationText.innerHTML = `<strong>${result.recommendation}</strong>`;
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Analyze Student';
+            }
+        }
+
+        async function exportData() {
+            try {
+                const response = await fetch('/api/export/csv', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `student_analysis_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        }
+
+        async function exportExcel() {
+            try {
+                const response = await fetch('/api/export/excel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `student_analysis_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

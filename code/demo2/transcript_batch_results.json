@@ -1,0 +1,749 @@
+[
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\authentic\\Kenya National Examinations Council 2_Authenticated_Redacted.pdf",
+    "page_number": 1,
+    "ocr_text": "t\n} LE 2 OE\n(fs) THE KENYA NATIONAL EXAMINATIONS COUNCIL ¢ rs a KCSE\na > ety EXAMINATION FOR THE KENYA CERTIFICATE OF SECONDARY ze)\n2 ees 3 ION RESULT SLIP See\n5 . Ne EDUCATION RESULT S es\n2 . ~\n= 26\n",
+    "ai_summary": "Scanned KCSE result slip with visible KNEC seals, watermark-like background and no obvious image copy-paste artifacts. Forensic metrics (very low ELA and zero copy-move) do not indicate pasted regions. Several black rectangular redactions over name/index fields are present (likely applied after scanning) and OCR failed to extract course codes/GPA values, producing some uncertainty. Overall there is no strong evidence of tampering visible in this single-page scan, but the redactions and OCR gaps merit manual review if original unredacted verification is required.",
+    "fraud_signals": [
+      {
+        "signal": "Visible official seals and textured background consistent with KNEC security features",
+        "category": "visual_security_features",
+        "polarity": "benign",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Very low ELA score and zero copy-move score (no detected duplicated/pasted regions)",
+        "category": "image_forensics",
+        "polarity": "benign",
+        "confidence": 0.85
+      },
+      {
+        "signal": "Large black rectangular redactions over name/index area",
+        "category": "redaction",
+        "polarity": "inconclusive",
+        "confidence": 0.6
+      },
+      {
+        "signal": "OCR failed to extract course codes, GPA values and key terms (heuristic counts = 0)",
+        "category": "ocr_inconsistency",
+        "polarity": "inconclusive",
+        "confidence": 0.4
+      },
+      {
+        "signal": "Overall layout and header text consistent with genuine KCSE result slip formatting",
+        "category": "institution_consistency",
+        "polarity": "benign",
+        "confidence": 0.75
+      },
+      {
+        "signal": "Printed date/text contains unusual OCR artifacts (e.g. '2490122'), likely OCR noise",
+        "category": "text_artifact",
+        "polarity": "inconclusive",
+        "confidence": 0.3
+      }
+    ],
+    "severity": "LOW",
+    "confidence": 0.7,
+    "extra": {
+      "ela": 0.002055066404864192,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": false,
+        "has_registrar": false,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 0,
+        "distinct_course_codes": [],
+        "gpa_values": [],
+        "has_term_words": false,
+        "suspicious_phrases_found": [],
+        "char_count": 606,
+        "line_count": 35
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\authentic\\Kenya National Examinations Council_Authenticated_Redacted.pdf",
+    "page_number": 1,
+    "ocr_text": "¢\n«\nt\ns\n~ J\n. ._ ~\na |\n|\nL]\n",
+    "ai_summary": "Scanned page appears to be a Kenya National Examinations Council (KNEC) result slip with visible security features (watermark, patterned background, gold seal). Automated heuristics show very low evidence of image splicing or copy-move manipulation. Several black rectangular redactions cover name/ID areas. OCR/heuristics did not extract course codes, GPAs, or typical transcript keywords from the supplied image (likely due to rotation, resolution, or redaction). Overall there is no clear forensic evidence of alteration in the image data, but redactions and missing parsed text warrant routine manual review of the original document if verification is required.",
+    "fraud_signals": [
+      {
+        "signal": "Visible security features (watermark, patterned background, gold seal) consistent with official KNEC result slips",
+        "category": "security_features",
+        "polarity": "benign",
+        "confidence": 0.85
+      },
+      {
+        "signal": "Low ELA score (0.002) and zero copy-move score indicating no detectable pasted or duplicated regions",
+        "category": "image_manipulation",
+        "polarity": "benign",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Black rectangular redactions covering name/ID areas",
+        "category": "redaction",
+        "polarity": "inconclusive",
+        "confidence": 0.6
+      },
+      {
+        "signal": "OCR/heuristic extraction returned no transcript keywords, course codes, or GPA values",
+        "category": "data_extraction_issue",
+        "polarity": "inconclusive",
+        "confidence": 0.5
+      },
+      {
+        "signal": "Image is rotated and appears scanned/cropped which reduces automated verification reliability",
+        "category": "formatting_issue",
+        "polarity": "benign",
+        "confidence": 0.4
+      }
+    ],
+    "severity": "LOW",
+    "confidence": 0.48,
+    "extra": {
+      "ela": 0.0019846258219331503,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": false,
+        "has_registrar": false,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 0,
+        "distinct_course_codes": [],
+        "gpa_values": [],
+        "has_term_words": false,
+        "suspicious_phrases_found": [],
+        "char_count": 28,
+        "line_count": 10
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\authentic\\University of Sierra Leone Fourah Bay_Authenticated_Redacted.pdf",
+    "page_number": 1,
+    "ocr_text": "<n LLEGE\na ee FOURAH BAY CO\nCANN UNIVERSITY OF SIERRA LEONE\nee e-mail: foc_usl1827@yahoo.com\nONS AG\nOur Ref: P/STU(ARTS) DATE: 7'\" JANUARY 2014\n[YourRefS OP\nThe following details of academic record ar",
+    "ai_summary": "No clear evidence of document tampering was detected on this scanned transcript page. Image-forensics indicators (copy-move = 0.0, ELA heterogeneity very low) show no duplicated or obviously pasted regions. Academic data are internally consistent: per-course credit × grade-point calculations match the reported semester grade-point totals and derived averages. Visible elements that merit note but do not by themselves indicate fraud include redaction black bars over name/admission fields, an externally applied 'RECEIVED / WSU VANCOUVER' stamp, and OCR transcription errors (e.g., OCR read 'JULY 2082' though the image shows 'JULY 2012'). Overall, the page shows low suspicion for alteration based on the available automated checks and visual review.",
+    "fraud_signals": [
+      {
+        "signal": "No image copy-move evidence detected (copy_move_score = 0.0000)",
+        "category": "image_duplication",
+        "polarity": "benign",
+        "confidence": 0.9
+      },
+      {
+        "signal": "Low ELA heterogeneity (ELA_score = 0.0016) — no heterogeneous compression/pasting artifacts detected",
+        "category": "compression_artifact",
+        "polarity": "benign",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Per-course credits and grade values mathematically consistent with reported semester grade-point totals and averages",
+        "category": "gpa_consistency",
+        "polarity": "benign",
+        "confidence": 0.95
+      },
+      {
+        "signal": "Visible black-box redactions over NAME/ADMISSION fields",
+        "category": "redaction",
+        "polarity": "inconclusive",
+        "confidence": 0.3
+      },
+      {
+        "signal": "External 'RECEIVED / WSU VANCOUVER' stamp present (possible routing/receipt mark, not an alteration indicator by itself)",
+        "category": "external_stamp",
+        "polarity": "benign",
+        "confidence": 0.7
+      },
+      {
+        "signal": "OCR produced improbable date string ('JULY 2082') inconsistent with image (likely OCR error)",
+        "category": "ocr_noise",
+        "polarity": "inconclusive",
+        "confidence": 0.25
+      },
+      {
+        "signal": "Document lacks explicit 'official' watermark/wording flag in OCR heuristics (has_official = false)",
+        "category": "document_elements",
+        "polarity": "inconclusive",
+        "confidence": 0.4
+      }
+    ],
+    "severity": "MEDIUM",
+    "confidence": 0.82,
+    "extra": {
+      "ela": 0.0016265142476186156,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": true,
+        "has_registrar": true,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 7,
+        "distinct_course_codes": [
+          "BAMC112",
+          "BAMC121",
+          "BAMC122",
+          "BAMC123",
+          "BAMC124",
+          "BAMC128",
+          "FOST110"
+        ],
+        "gpa_values": [],
+        "has_term_words": true,
+        "suspicious_phrases_found": [],
+        "char_count": 2865,
+        "line_count": 54
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\authentic\\University of Sierra Leone Fourah Bay_Authenticated_Redacted.pdf",
+    "page_number": 2,
+    "ocr_text": "tall\nRSS UNIVERSITY OF SIERRA LEONE |\n\" * Zs e-mail: fhc_usl1827@yahoo.com\nTOY? EEE\nCd oa ~\nj ; [—)\nff S| wi | REMARKS /\n: Qe | EXAMINATIO we Sessional Grade\nCOURSE DESCRIPTION a Be: s < | Point Avera",
+    "ai_summary": "Document is a single scanned transcript page from Fourah Bay College (University of Sierra Leone). There is no clear visual evidence of image copy-paste manipulation, but several administrative and content inconsistencies raise concern: the page has no visible student name or ID, several key fields (Cumulative GPA, dates of completion/conferment) are blank, the contact email is a generic Yahoo address rather than an institutional account, and multiple external stamps/marks (e.g., 'RECEIVED', 'WSU VANCOUVER', a date-stamp) appear that could indicate handling by third parties or later stamping. OCR heuristics show few distinct course codes extracted (likely OCR noise) and low ELA / copy-move indicators (no duplicated regions detected). Overall these factors warrant manual review of authenticity and completeness rather than automated classification as definitively forged.",
+    "fraud_signals": [
+      {
+        "signal": "Missing student identifiers and core conferral fields (no visible student name, student ID, date of completion/conferment, qualification obtained)",
+        "category": "missing_identifiers_or_metadata",
+        "polarity": "fraud_positive",
+        "confidence": 0.7
+      },
+      {
+        "signal": "Contact email is a generic Yahoo address (fbc_usl1827@yahoo.com) instead of an institutional domain",
+        "category": "institutional_contact_inconsistency",
+        "polarity": "fraud_positive",
+        "confidence": 0.6
+      },
+      {
+        "signal": "Multiple external stamps/annotations present (e.g., 'RECEIVED', 'WSU VANCOUVER', a date-stamp) which are not part of the issuing institution's standard header",
+        "category": "third_party_stamp_or_annotation",
+        "polarity": "fraud_positive",
+        "confidence": 0.6
+      },
+      {
+        "signal": "Low count of distinct course codes in OCR output relative to the visible table (heuristic course_code_count=4 vs many table rows) — likely OCR extraction failure, could hide inconsistencies",
+        "category": "ocr_extraction_anomaly",
+        "polarity": "inconclusive",
+        "confidence": 0.3
+      },
+      {
+        "signal": "No copy-move duplication detected (copy_move_score=0.0) and ELA score very low indicating homogeneous compression rather than heterogeneous editing",
+        "category": "image_integrity_indicators",
+        "polarity": "benign",
+        "confidence": 0.6
+      },
+      {
+        "signal": "Blank Cumulative GPA and other summary fields on the page (CGPA area left empty) which may indicate an incomplete page or cropped/missing supplementary pages",
+        "category": "missing_summary_fields",
+        "polarity": "inconclusive",
+        "confidence": 0.45
+      },
+      {
+        "signal": "Unusual wording/typos in printed text (e.g., 'PLEASE DISREGARD TRANSCRIPT LF SEAL IS FOUND BROKEN') — could be OCR errors but also atypical phrasing for an official form",
+        "category": "textual_anomalies",
+        "polarity": "inconclusive",
+        "confidence": 0.25
+      }
+    ],
+    "severity": "MEDIUM",
+    "confidence": 0.62,
+    "extra": {
+      "ela": 0.0017738352762535214,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": true,
+        "has_registrar": true,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 4,
+        "distinct_course_codes": [
+          "BAMC214",
+          "BAMC217",
+          "BAMC221",
+          "BAMC228"
+        ],
+        "gpa_values": [],
+        "has_term_words": true,
+        "suspicious_phrases_found": [],
+        "char_count": 2887,
+        "line_count": 64
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\fraudulent\\Kenya National Examinations Council_Fraudulent_Redacted.pdf",
+    "page_number": 1,
+    "ocr_text": "a Rh ea a gia a Oe LLU OE SSC“ ;SCCCCC:COCCCCCC##é#é...................._..________|\n@ -\n(— THE KENYA NATIONAL EXAMINATIONS COUNCIL ~~ coe\n® We EXAMINATION FOR THE KENYA CERTIFICATE OF SECONDARY Loo “",
+    "ai_summary": "The scanned KCSE result slip shows a mostly authentic-looking layout (security background pattern and central embossed seal visible) but also contains multiple suspicious elements that warrant manual review: black rectangular redactions over identification numbers, inconsistent printed candidate/serial numbers in different locations, and unusual overlapping/garbled text across the page. Automated image-forensics (ELA and copy-move) do not show strong evidence of pasted-in regions or duplicated blocks.",
+    "fraud_signals": [
+      {
+        "signal": "Black rectangular boxes obscuring numeric fields near the top of the page",
+        "category": "Visual alteration",
+        "polarity": "fraud_positive",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Inconsistent candidate/serial numbers visible in different positions (e.g. variations of 34500017 / 345900171)",
+        "category": "Data inconsistency",
+        "polarity": "fraud_positive",
+        "confidence": 0.7
+      },
+      {
+        "signal": "Prominent security features present (background guilloche/pattern and central embossed seal)",
+        "category": "Document security features",
+        "polarity": "benign",
+        "confidence": 0.75
+      },
+      {
+        "signal": "Low ELA heterogeneity score (no strong local compression/contrast anomalies detected)",
+        "category": "Error level analysis",
+        "polarity": "benign",
+        "confidence": 0.6
+      },
+      {
+        "signal": "Copy-move analysis shows no duplicated regions (copy_move_score ~0)",
+        "category": "Image duplication analysis",
+        "polarity": "benign",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Scattered/overlapping garbled text and OCR errors across the page (misspelled subjects, stray dotted text and overlays)",
+        "category": "Overlay / OCR artifacts",
+        "polarity": "inconclusive",
+        "confidence": 0.35
+      },
+      {
+        "signal": "Hand/finger partially occluding lower-left corner of the page (photograph artifact)",
+        "category": "Occlusion / capture artifact",
+        "polarity": "benign",
+        "confidence": 0.65
+      }
+    ],
+    "severity": "MEDIUM",
+    "confidence": 0.65,
+    "extra": {
+      "ela": 0.002862937981262803,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": false,
+        "has_registrar": false,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 0,
+        "distinct_course_codes": [],
+        "gpa_values": [],
+        "has_term_words": false,
+        "suspicious_phrases_found": [],
+        "char_count": 705,
+        "line_count": 23
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\fraudulent\\Kenya National Examinations Council_Fraudulent_Redacted.pdf",
+    "page_number": 2,
+    "ocr_text": "K.C.S.E 4222484 Sof\n",
+    "ai_summary": "Scanned page contains only a short header-like line: an identifier 'K.C.S.E' and number '4222484' plus a QR code. There are no course listings, grades, GPA values, term labels, registrar or 'official/unofficial/transcript' markers, and OCR/heuristic metrics indicate a very sparse capture (low character and line counts). No clear copy-paste artifacts were detected by the provided image-forensics scores. The page is consistent with an incomplete/cropped scan or an isolated header image rather than a full transcript; this absence of expected academic detail warrants manual review and, if this is intended to be a complete transcript page, further verification with the issuing institution.",
+    "fraud_signals": [
+      {
+        "signal": "Page contains only identifier (K.C.S.E) and a numeric code; no course entries, grades, or GPA values visible",
+        "category": "content_consistency",
+        "polarity": "fraud_positive",
+        "confidence": 0.75
+      },
+      {
+        "signal": "No typical transcript metadata found (no words 'transcript', 'registrar', 'official', 'unofficial')",
+        "category": "missing_metadata",
+        "polarity": "inconclusive",
+        "confidence": 0.4
+      },
+      {
+        "signal": "Very low OCR character and line counts (char_count=20, line_count=2) suggesting cropping, incomplete scan, or isolated header image",
+        "category": "image_crop_or_incomplete_page",
+        "polarity": "fraud_positive",
+        "confidence": 0.6
+      },
+      {
+        "signal": "No course codes or GPA structure detected (course_code_count=0, gpa_values=[]), inconsistent with a full transcript page",
+        "category": "academic_structure_inconsistency",
+        "polarity": "fraud_positive",
+        "confidence": 0.7
+      },
+      {
+        "signal": "Image-forensics scores show no detected copy-move or heterogeneous-compression artifacts (ELA_score=0.0, copy_move_score=0.0)",
+        "category": "technical_forensics",
+        "polarity": "benign",
+        "confidence": 0.85
+      },
+      {
+        "signal": "Presence of a QR code without accompanying verification text or institutional context",
+        "category": "suspicious_element_without_context",
+        "polarity": "inconclusive",
+        "confidence": 0.4
+      }
+    ],
+    "severity": "MEDIUM",
+    "confidence": 0.6,
+    "extra": {
+      "ela": 4.0398801502306014e-05,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": false,
+        "has_registrar": false,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 0,
+        "distinct_course_codes": [],
+        "gpa_values": [],
+        "has_term_words": false,
+        "suspicious_phrases_found": [],
+        "char_count": 20,
+        "line_count": 2
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\fraudulent\\Kenya National Examinations Council_Fraudulent_Redacted.pdf",
+    "page_number": 3,
+    "ocr_text": "THE KENYA NATIONAL EXAMINATIONS COUNCIL ..- «\nWy EXAMINATION FOR THE KENYA CERTIFICATE OF SECONDARY yl K.C.S.E\nSe EDUCATION RESULT SLIP oO,\n34500017 NOI KAPSOWAR GIRLS\n34500017/078 JERUTO RENCY 345000",
+    "ai_summary": "Scanned K.C.S.E. result slip shows noisy/overlapping text in the central subject/grade area and multiple OCR inconsistencies. Image-level tamper metrics (ELA and copy-move) are very low and do not show clear duplicated regions or obvious pasted elements. The page contains official headings and seals, but expected registrar/official wording and reliable course-code extraction are missing in the OCR output. Recommend manual review of the original/high-resolution scan to confirm whether the central overlap is a scanning/artifact or an alteration.",
+    "fraud_signals": [
+      {
+        "signal": "Prominent visual overlap/noisy text block across the subjects/grades area (central-left)",
+        "category": "visual alteration",
+        "polarity": "inconclusive",
+        "confidence": 0.35
+      },
+      {
+        "signal": "Low ELA and copy-move scores (no strong duplicated-region or heterogeneous-compression indicators)",
+        "category": "copy-paste detection",
+        "polarity": "benign",
+        "confidence": 0.8
+      },
+      {
+        "signal": "OCR fails to extract course codes and registrar/official keywords (heuristic: course_code_count=0; no 'registrar'/'official' words)",
+        "category": "document textual consistency",
+        "polarity": "inconclusive",
+        "confidence": 0.3
+      },
+      {
+        "signal": "Multiple small OCR inconsistencies in grade labels and labels (e.g., 'FLUS' for 'PLUS', 'Grapes' for 'Grades')",
+        "category": "OCR/noise",
+        "polarity": "benign",
+        "confidence": 0.6
+      },
+      {
+        "signal": "Presence of official header and two seals/emblems in expected positions (top-left and top-right)",
+        "category": "institutional elements",
+        "polarity": "benign",
+        "confidence": 0.7
+      },
+      {
+        "signal": "Declared subjects count '*EIGHT*' visible but OCR/heuristics show no parsed course codes / counts",
+        "category": "structural inconsistency",
+        "polarity": "inconclusive",
+        "confidence": 0.25
+      }
+    ],
+    "severity": "LOW",
+    "confidence": 0.66,
+    "extra": {
+      "ela": 0.00046970348921604455,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": false,
+        "has_registrar": false,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 0,
+        "distinct_course_codes": [],
+        "gpa_values": [],
+        "has_term_words": false,
+        "suspicious_phrases_found": [],
+        "char_count": 616,
+        "line_count": 18
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\fraudulent\\Kenya National Examinations Council_Fraudulent_Redacted.pdf",
+    "page_number": 4,
+    "ocr_text": "",
+    "ai_summary": "Scanned page is almost entirely blank white with a small QR code at the top-left. OCR and provided heuristics found no transcript keywords, no registrar/official wording, no course codes, and no GPA/term data. Image-level tamper detectors (ELA, copy-move) report no anomalies. The absence of any typical transcript content on the page is highly suspicious for an official transcript page (could be a blank/back page, an incomplete scan, or an intentionally substituted page). Recommend manual review and request of a complete page set or higher-quality scan.",
+    "fraud_signals": [
+      {
+        "signal": "Page contains almost entirely blank white area; no readable transcript text detected",
+        "category": "missing_content",
+        "polarity": "fraud_positive",
+        "confidence": 0.95
+      },
+      {
+        "signal": "No institutional markers found (no 'transcript', 'registrar', 'official', 'unofficial' keywords detected)",
+        "category": "missing_key_markers",
+        "polarity": "fraud_positive",
+        "confidence": 0.9
+      },
+      {
+        "signal": "No academic data detected (no course codes, no GPA values, no term words)",
+        "category": "absent_academic_data",
+        "polarity": "fraud_positive",
+        "confidence": 0.9
+      },
+      {
+        "signal": "Small QR code present in top-left but no accompanying content",
+        "category": "unusual_isolated_element",
+        "polarity": "inconclusive",
+        "confidence": 0.4
+      },
+      {
+        "signal": "ELA score indicates uniform compression (ELA_score=0.0) and copy-move detector found no duplicated regions",
+        "category": "image_integrity_checks",
+        "polarity": "benign",
+        "confidence": 0.6
+      }
+    ],
+    "severity": "HIGH",
+    "confidence": 0.78,
+    "extra": {
+      "ela": 1.2754620911437087e-05,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": false,
+        "has_registrar": false,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 0,
+        "distinct_course_codes": [],
+        "gpa_values": [],
+        "has_term_words": false,
+        "suspicious_phrases_found": [],
+        "char_count": 0,
+        "line_count": 1
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\fraudulent\\University of Sierra Leone Fourah Bay Diploma_Fraudulent_Redacted.pdf",
+    "page_number": 1,
+    "ocr_text": ". . 4 , ; t |\n) IN\n5 ’ d id a\"\n, \\L ,\n, Che Anibersity of Sierra Leone | of\n‘ : . se\n\n‘ e rertet 2 a\nNy . 5 a Be “ . . ao\n; FOURAH BAY COLLEGE a\n. Having satisfied in full the requirements of the Univ",
+    "ai_summary": "The image appears to be a degree certificate/diploma issued by The University of Sierra Leone / Fourah Bay College (degree: Bachelor of Social Science with Honours in Social Work, class: Second Class Second Division, dated December 2016) rather than a multi-line academic transcript listing courses, terms, and GPA. The scan shows multiple ink stamps (including a consular-style blue round stamp with a handwritten date 09/05/2023), several handwritten signatures, an embossed seal impression at the bottom center, and at least two black rectangular redaction boxes obscuring personal data. Automated image heuristics show no evidence of copy-move duplication and a very low ELA anomaly score. Overall there are no clear signs of pixel-level pasted text or duplicated regions; the main concern is the mismatch between expected transcript content (course codes, term entries, GPAs) and the provided certificate page. Manual review recommended to confirm whether a diploma was submitted in place of a transcript and to verify the authenticity of the applied stamps/seals through issuing authorities.",
+    "fraud_signals": [
+      {
+        "signal": "Document content matches a degree/certificate (diploma) layout rather than a multi-line academic transcript with course codes, terms, and GPA.",
+        "category": "content_mismatch",
+        "polarity": "fraud_positive",
+        "confidence": 0.65
+      },
+      {
+        "signal": "No course listings, term words, or GPA values present on the page (course_code_count=0; gpa_values empty).",
+        "category": "missing_academic_data",
+        "polarity": "inconclusive",
+        "confidence": 0.35
+      },
+      {
+        "signal": "Multiple applied stamps (blue round consular-style stamp dated 09/05/2023) and overlapping handwritten dates/signatures present.",
+        "category": "post_issuance_authentication_marks",
+        "polarity": "benign",
+        "confidence": 0.6
+      },
+      {
+        "signal": "Automated image forensics show near-zero copy-move score and very low ELA anomalies (copy_move_score=0.0; ELA_score=0.0028) indicating no obvious pasted or duplicated regions.",
+        "category": "pixel_level_consistency",
+        "polarity": "benign",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Solid black rectangular redactions over name/identifier areas (visible blocks) which obscure identity fields.",
+        "category": "redaction_present",
+        "polarity": "inconclusive",
+        "confidence": 0.3
+      },
+      {
+        "signal": "Presence of printed border, institutional crest, and an embossed seal impression consistent with a formally produced diploma/certificate.",
+        "category": "visual_seals_and_security_features",
+        "polarity": "benign",
+        "confidence": 0.6
+      }
+    ],
+    "severity": "MEDIUM",
+    "confidence": 0.68,
+    "extra": {
+      "ela": 0.0028356900438666344,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": false,
+        "has_registrar": true,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 0,
+        "distinct_course_codes": [],
+        "gpa_values": [],
+        "has_term_words": false,
+        "suspicious_phrases_found": [],
+        "char_count": 529,
+        "line_count": 22
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\fraudulent\\University of Sierra Leone Fourah Bay Transcript_Fraudulent_Redacted.pdf",
+    "page_number": 1,
+    "ocr_text": "Sa en er y 1 SERRA LEONE 5 | ,\n> a Re . * Oe Ey sear uaa mes E : : . ower\nCae Cpr :\nOur Ref: P/STU(SOCLAL WORK) DATE: 16™ MARCH 2018 °\nYourRef:  ——“Cséi‘“;‘i‘*iSCi“‘(:SSSS\nThe following details of aca",
+    "ai_summary": "Document is a scanned transcript for Fourah Bay College (University of Sierra Leone). Visual inspection finds multiple strong layout anomalies that increase the probability of tampering: several identical course codes are used for different course descriptions across the table (e.g., SOW 111 appears with different course titles; SOW120 and SOW110 appear more than once with different descriptions). A large circular stamp and handwritten certification overlap cells in the grade table (partially obscuring entries). Automated image heuristics show no clear copy-paste duplication, but the duplicated course-code mappings and overlapping stamp are suspicious and warrant manual review of the source file and original institutional records. Overall risk level: MEDIUM.",
+    "fraud_signals": [
+      {
+        "signal": "Duplicate course codes mapped to different course descriptions (e.g., SOW 111 listed as both 'INTRODUCTION TO SOCIAL WORK' and 'INTRODUCTION TO SOCIOLOGY'; SOW120 and SOW110 appear more than once with different descriptions).",
+        "category": "course_code_inconsistency",
+        "polarity": "fraud_positive",
+        "confidence": 0.88
+      },
+      {
+        "signal": "Large circular stamp and handwritten 'Certified' annotation overlap the grade table and some grade cells, which could obscure or mask edits to grades/entries.",
+        "category": "overlay_stamp_or_handwriting",
+        "polarity": "fraud_positive",
+        "confidence": 0.6
+      },
+      {
+        "signal": "Automated copy-move / duplicated-region analysis returned no detectable duplicated regions (copy_move_score = 0.0) and low ELA heterogeneity (ELA_score ~0.0038), suggesting no obvious digital paste/detection of cloning artifacts.",
+        "category": "copy_move_and_ela_analysis",
+        "polarity": "benign",
+        "confidence": 0.75
+      },
+      {
+        "signal": "Numeric summaries and grade-point totals shown on the page are noisy and appear inconsistent in the OCR text (e.g., sum/average placements and numeric labels are unclear); cannot confirm arithmetic consistency from the scan alone.",
+        "category": "grade_sum_consistency",
+        "polarity": "inconclusive",
+        "confidence": 0.35
+      },
+      {
+        "signal": "Header contains informal-looking contact (a Yahoo address) and some typographic noise in the printed header; while not definitive of fraud, this is atypical for many modern official transcripts.",
+        "category": "header_contact_anomaly",
+        "polarity": "inconclusive",
+        "confidence": 0.25
+      },
+      {
+        "signal": "Document includes official-seal wording 'PLEASE DISREGARD TRANSCRIPT IF SEAL IS FOUND BROKEN' and multiple stamps/signatures; presence of stamps is normal for attestation but their placement over data cells increases review necessity.",
+        "category": "seal_and_attestation",
+        "polarity": "inconclusive",
+        "confidence": 0.5
+      }
+    ],
+    "severity": "MEDIUM",
+    "confidence": 0.68,
+    "extra": {
+      "ela": 0.0037829044740647078,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": true,
+        "has_registrar": true,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 7,
+        "distinct_course_codes": [
+          "ENGL 202",
+          "IT 203",
+          "OW122",
+          "SOW 110",
+          "SOW 111",
+          "SOW120"
+        ],
+        "gpa_values": [],
+        "has_term_words": true,
+        "suspicious_phrases_found": [],
+        "char_count": 2163,
+        "line_count": 48
+      }
+    }
+  },
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\transcript\\fraudulent\\University of Sierra Leone Fourah Bay Transcript_Fraudulent_Redacted.pdf",
+    "page_number": 2,
+    "ocr_text": "{>\n< . sate Sf . x @,\nCR oR TUUSHS BAY USELESS. * REA a\n|S t~—“‘(” OCLC YEA@RULSECONDSEMESTER 00ti“(‘(‘é]*OO]COUOUOCOCTOUUUUUUUUUUOUG/ PD ee US).\n[cops 211 [ADULT EDUCATION TS Paes [semester le meio S",
+    "ai_summary": "The page shows one notable content inconsistency: the Date of Conferment (16 Mar 2016) appears earlier than the Date of Completion (July 2016) — this increases the likelihood of tampering or clerical fabrication and warrants manual review. Image-level forensic indicators (ELA and copy-move) do not show obvious pasted regions or duplicated content. There are multiple overlapping stamps and signatures (normal on official documents) and heavy OCR/text alignment noise that make automated parsing unreliable. Several course-code repetitions and noisy rows are present in the OCR output but could be OCR/layout errors rather than intentional alteration.",
+    "fraud_signals": [
+      {
+        "signal": "Date of conferment (16 MAR 2016) is earlier than Date of completion (July 2016)",
+        "category": "dates",
+        "polarity": "fraud_positive",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Very low ELA score and zero copy-move score (no heterogeneous compression or duplicated regions detected)",
+        "category": "image_artifact",
+        "polarity": "benign",
+        "confidence": 0.7
+      },
+      {
+        "signal": "Multiple overlapping stamps and hand signatures across document (stamp overprint obscures printed text in places)",
+        "category": "visual_elements",
+        "polarity": "benign",
+        "confidence": 0.6
+      },
+      {
+        "signal": "OCR output shows heavy noise, misaligned rows and garbled text making automated extraction unreliable",
+        "category": "ocr",
+        "polarity": "inconclusive",
+        "confidence": 0.35
+      },
+      {
+        "signal": "Repeated/duplicate course codes and inconsistent row alignment in OCR (e.g., same SOW codes appearing for different titles/rows)",
+        "category": "academic_structure",
+        "polarity": "inconclusive",
+        "confidence": 0.35
+      },
+      {
+        "signal": "Common transcript keyword(s) not reliably detected in OCR (e.g., 'TRANSCRIPT' not found in parsed text) despite visible transcript-like footer; likely OCR omission",
+        "category": "text_content",
+        "polarity": "inconclusive",
+        "confidence": 0.25
+      }
+    ],
+    "severity": "MEDIUM",
+    "confidence": 0.62,
+    "extra": {
+      "ela": 0.0033348475117236376,
+      "copy_move": 0.0,
+      "doc_type": "transcript",
+      "escalated": false,
+      "features": {
+        "has_word_transcript": false,
+        "has_registrar": true,
+        "has_official": false,
+        "has_unofficial": false,
+        "course_code_count": 5,
+        "distinct_course_codes": [
+          "SOW 323",
+          "SOW 411",
+          "SOW 412",
+          "SOW 422",
+          "SOW 427"
+        ],
+        "gpa_values": [],
+        "has_term_words": true,
+        "suspicious_phrases_found": [],
+        "char_count": 2709,
+        "line_count": 52
+      }
+    }
+  }
+]

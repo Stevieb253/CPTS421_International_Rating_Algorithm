@@ -1,0 +1,24 @@
+[
+  {
+    "file_path": "C:\\Users\\steve\\OneDrive\\Desktop\\FallSemester2025\\CPTS421\\InternationalRatingAlgorithm\\CPTS421_International_Rating_Algorithm\\data\\financial\\authentic\\Axis_Bank_IN_Authenticated_Redacted.pdf",
+    "page_number": 1,
+    "ocr_text": "/)\nAXIS BAN\nIAN js\n\nAXIS BANK LTD. MULUND(W), MUMBAI [MH] BRANCH\n\nCustomer Id:\n\nBALANCE CERTIFICATE\n\nThis is to certify that the balance in the undernoted account(s)\nof at the close of 03-04-2022 was ",
+    "ai_summary": "Document appears to be a scanned bank balance certificate with standard redactions. I observed one clear concern: the page text explicitly states the output is computer-generated and not required to be signed, yet a round bank stamp and a handwritten signature are present. I did NOT find high-confidence technical tampering indicators (no obvious clone/paste artifacts, no repeated pixel blocks, and no clear compression inconsistencies) around the stamp, signature, or numeric table. Because only one high-confidence indicator is present and other checks are negative/ambiguous, I assess overall severity as LOW. There is some uncertainty because a physical stamp/signature could have been legitimately applied before scanning; if higher-resolution originals are available further forensic checks (pixel-level compression analysis, EXIF/scan-source comparison) are recommended.",
+    "fraud_signals": [
+      {
+        "signal": "Conflict between document statement ('computer generated output and is not required to be signed') and presence of a bank stamp and handwritten signature",
+        "confidence": 0.9
+      },
+      {
+        "signal": "No clear paste/clone artifacts, no repeated pixel blocks, and no obvious inconsistent compression around the stamp/signature or table (negative evidence)",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Black rectangular redaction blocks over account identifiers (standard redaction behavior; not treated as tampering by default)",
+        "confidence": 0.95
+      }
+    ],
+    "severity": "LOW",
+    "confidence": 0.0
+  }
+]

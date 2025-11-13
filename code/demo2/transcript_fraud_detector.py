@@ -404,6 +404,38 @@ class TranscriptFraudDetector:
         s = re.sub(r"[A-Za-z]:\\\\[^\\s]+", "", s)      # Windows-style paths
         s = re.sub(r"/[^\\s]+(?:/[^\\s]+)*", "", s)     # Unix-style paths
         return s
+    
+def analyze_transcript_pdf(pdf_path: str, max_pages: int = 20) -> Dict[str, Any]:
+    """
+    Web-friendly wrapper for transcript screening.
+
+    Returns a JSON-serializable dict with:
+    - doc-level severity
+    - page-level details
+    """
+    detector = TranscriptFraudDetector(
+        max_pages=max_pages,
+        escalate=True
+    )
+    page_results: List[fin.FraudResult] = detector.analyze_document(pdf_path)
+    doc_label = fin.doc_severity(page_results)
+
+    return {
+        "file_path": pdf_path,
+        "doc_severity": doc_label,
+        "pages": [
+            {
+                "page_number": r.page_number,
+                "severity": r.severity,
+                "confidence": r.confidence,
+                "ocr_preview": r.ocr_text,
+                "ai_summary": r.ai_summary,
+                "fraud_signals": r.fraud_signals,
+                "extra": r.extra,
+            }
+            for r in page_results
+        ],
+    }
 
 # -------------------------------------------------------------------------
 # CLI wrapper — similar to financial_fraud_detector

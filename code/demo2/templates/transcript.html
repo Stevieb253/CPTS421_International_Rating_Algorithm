@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcript Screening - Student Scoring System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.05rem;
+            opacity: 0.95;
+        }
+
+        .nav-bar {
+            margin-top: 16px;
+        }
+
+        .nav-bar a,
+        .nav-bar button {
+            display: inline-block;
+            color: white;
+            margin-right: 12px;
+            text-decoration: none;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .nav-bar a:hover,
+        .nav-bar button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .nav-bar .danger {
+            background: rgba(220,38,38,0.8);
+            border-color: white;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+
+        .card p.subtitle {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .form-group input[type="file"] {
+            width: 100%;
+        }
+
+        .upload-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .info-box {
+            margin-top: 16px;
+            padding: 12px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #4b5563;
+        }
+
+        .severity-pill {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .severity-low    { background: #dcfce7; color: #166534; }
+        .severity-medium { background: #fef9c3; color: #854d0e; }
+        .severity-high   { background: #fee2e2; color: #b91c1c; }
+
+        .results-header {
+            margin-bottom: 16px;
+        }
+
+        .results-header h3 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .results-header p {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .page-card {
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            padding: 16px;
+            margin-bottom: 16px;
+            background: #f9fafb;
+        }
+
+        .page-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .page-title-row h4 {
+            font-size: 1rem;
+            color: #111827;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            margin-left: 4px;
+        }
+
+        .pill-esc {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .pill-conf {
+            background: #eef2ff;
+            color: #4338ca;
+        }
+
+        .pill-ela, .pill-cm {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .summary-block {
+            margin: 8px 0 12px 0;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .ocr-preview {
+            font-size: 0.8rem;
+            color: #6b7280;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 10px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .signals-list {
+            margin-top: 8px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 8px;
+        }
+
+        .signal-item {
+            margin-bottom: 8px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: #ffffff;
+            font-size: 0.85rem;
+        }
+
+        .signal-meta {
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        .polarity-fraud {
+            color: #b91c1c;
+        }
+
+        .polarity-benign {
+            color: #166534;
+        }
+
+        .polarity-inc {
+            color: #92400e;
+        }
+
+        .error-message {
+            margin-top: 8px;
+            padding: 10px;
+            background: #fee2e2;
+            color: #b91c1c;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.85rem;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 1024px) {
+            .main-content { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📄 Transcript Screening</h1>
+        <p>Prototype fraud pre-screening for academic transcripts and academic records</p>
+
+        <div class="nav-bar">
+            <span style="color: white; margin-right: 16px;">👤 {{ username }}</span>
+            <a href="/">🏠 Student Scoring</a>
+            <a href="/analytics">📊 Analytics</a>
+            <a href="/batch">📁 Batch Process</a>
+            <a href="/financial">💵 Financial Docs</a>
+            <!-- corrected route: /transcript -->
+            <a href="/transcript" style="border-color: white;">📄 Transcripts</a>
+            <a href="/logout" class="danger">🚪 Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Upload card -->
+        <div class="card">
+            <h2>Upload Transcript PDF(s)</h2>
+            <p class="subtitle">
+                Select a single academic transcript or official academic record.
+                The system will run OCR, image heuristics, and an AI transcript-specific analysis.
+            </p>
+
+            <div class="form-group">
+                <label for="transcriptFile">Transcript PDF(s)</label>
+                <!-- allow multiple transcripts at once -->
+                <input type="file" id="transcriptFile" accept=".pdf" multiple>
+            </div>
+
+            <button class="upload-btn" id="analyzeTranscriptBtn" onclick="uploadAndAnalyzeTranscript()">
+                🔍 Analyze Transcript(s)
+            </button>
+
+            <div id="errorBox" class="error-message"></div>
+
+            <div class="info-box">
+                <strong>What this does:</strong>
+                <ul style="margin-left: 16px; margin-top: 6px; list-style: disc;">
+                    <li>Runs OCR to extract noisy text.</li>
+                    <li>Computes quick pixel heuristics (ELA, copy-move).</li>
+                    <li>Extracts transcript-specific features (course codes, GPA values, registrar, suspicious phrases).</li>
+                    <li>Uses GPT-based vision to flag visual tampering and content conflicts.</li>
+                    <li>Combines everything into a conservative LOW / MEDIUM / HIGH risk label.</li>
+                </ul>
+                <p style="margin-top: 8px;">
+                    <strong>Note:</strong> This is a pre-screening tool only.
+                    <span style="font-style: italic;">Humans must review any MEDIUM or HIGH results.</span>
+                    <br>
+                    <span style="font-size: 0.8rem; color:#6b7280;">
+                        Up to 20 pages are analyzed automatically per transcript. For larger or multiple PDFs,
+                        analysis may take a moment.
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Results card -->
+        <div class="card" id="resultsCard" style="display: none;">
+            <h2 style="margin-bottom: 8px;">Transcript Results</h2>
+            <p class="subtitle" style="margin-bottom: 8px;">
+                Each uploaded transcript is analyzed independently. Pages and signals appear below.
+            </p>
+
+            <!-- same legend style as financial.html -->
+            <div class="info-box" style="margin-top: 4px; font-size: 0.85rem;">
+                <strong>How to read this:</strong>
+                <ul style="margin-left: 16px; margin-top: 4px; list-style: disc;">
+                    <li><strong>DOC:</strong> Overall risk level for the entire transcript (LOW / MEDIUM / HIGH).</li>
+                    <li><strong>Conf:</strong> Model confidence from 0.00 to 1.00 (higher = more certain).</li>
+                    <li><strong>ELA score:</strong> Image consistency score; very high values can suggest editing.</li>
+                    <li><strong>Copy-move score:</strong> Looks for duplicated regions that may indicate copy–paste.</li>
+                    <li><strong>OCR preview:</strong> Short snippet of text extracted from the page.</li>
+                    <li><strong>Signals:</strong> Key reasons and visual/text findings that support the risk level.</li>
+                </ul>
+            </div>
+
+            <div id="resultsContainer"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setSeverityPill(el, severity, labelPrefix) {
+        el.className = 'severity-pill';
+        const s = (severity || 'LOW').toUpperCase();
+        if (s === 'HIGH')   el.classList.add('severity-high');
+        if (s === 'MEDIUM') el.classList.add('severity-medium');
+        if (s === 'LOW')    el.classList.add('severity-low');
+        el.textContent = (labelPrefix || 'DOC: ') + s;
+    }
+
+    function polarityClass(p) {
+        if (!p) return 'polarity-inc';
+        p = p.toLowerCase();
+        if (p === 'fraud_positive') return 'polarity-fraud';
+        if (p === 'benign')         return 'polarity-benign';
+        return 'polarity-inc';
+    }
+
+    async function uploadAndAnalyzeTranscript() {
+        const fileInput        = document.getElementById('transcriptFile');
+        const btn              = document.getElementById('analyzeTranscriptBtn');
+        const errorBox         = document.getElementById('errorBox');
+        const resultsCard      = document.getElementById('resultsCard');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        errorBox.style.display = 'none';
+        errorBox.textContent   = '';
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            errorBox.textContent = 'Please select at least one PDF file.';
+            errorBox.style.display = 'block';
+            return;
+        }
+
+        const files = Array.from(fileInput.files);
+        const total = files.length;
+
+        // Clear old results
+        resultsContainer.innerHTML = '';
+        resultsCard.style.display  = 'none';
+
+        btn.disabled = true;
+        btn.innerHTML =
+            '<span class="spinner"></span> Analyzing document(s)… this may take a moment for large or multiple PDFs.';
+
+        try {
+            for (let i = 0; i < total; i++) {
+                const file = files[i];
+
+                // Update progress text per file
+                btn.innerHTML =
+                    `<span class="spinner"></span> Analyzing document ${i + 1} of ${total}… ` +
+                    `this may take a moment for large or multiple PDFs.`;
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                let data;
+                try {
+                    const response = await fetch('/api/fraud/transcript', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'include'
+                    });
+
+                    if (!response.ok) {
+                        let msg = `Analysis failed for ${file.name}.`;
+                        try {
+                            const d = await response.json();
+                            if (d.error) msg = d.error;
+                        } catch (_) {}
+                        throw new Error(msg);
+                    }
+
+                    data = await response.json();
+                } catch (err) {
+                    const errBlock = document.createElement('div');
+                    errBlock.className = 'page-card';
+                    errBlock.innerHTML = `
+                        <div class="results-header">
+                            <span class="severity-pill severity-high">ERROR</span>
+                            <h3 style="margin-top: 8px;">${file.name}</h3>
+                            <p class="subtitle">${err.message || 'Unexpected error during analysis.'}</p>
+                        </div>
+                    `;
+                    resultsContainer.appendChild(errBlock);
+                    continue;
+                }
+
+                const severity = data.doc_severity || 'LOW';
+
+                const docBlock = document.createElement('div');
+                docBlock.className = 'page-card';
+
+                docBlock.innerHTML = `
+                    <div class="results-header" style="margin-bottom: 10px;">
+                        <span class="severity-pill"></span>
+                        <h3 style="margin-top: 8px;">${file.name}</h3>
+                        <p class="subtitle">
+                            File: ${file.name}
+                            &nbsp;•&nbsp;
+                            Server path (internal): ${data.file_path || 'n/a'}
+                        </p>
+                    </div>
+                    <div class="doc-pages"></div>
+                `;
+
+                const pill = docBlock.querySelector('.severity-pill');
+                setSeverityPill(pill, severity, 'DOC: ');
+
+                const pagesContainer = docBlock.querySelector('.doc-pages');
+
+                (data.pages || []).forEach(page => {
+                    const extra      = page.extra || {};
+                    const ela        = (extra.ela !== undefined) ? extra.ela.toFixed(3) : 'n/a';
+                    const cm         = (extra.copy_move !== undefined) ? extra.copy_move.toFixed(3) : 'n/a';
+                    const escalated  = !!extra.escalated;
+
+                    const pageDiv = document.createElement('div');
+                    pageDiv.className = 'page-card';
+
+                    pageDiv.innerHTML = `
+                        <div class="page-title-row">
+                            <h4>Page ${page.page_number}</h4>
+                            <div>
+                                <span class="severity-pill ${
+                                    page.severity === 'HIGH'
+                                        ? 'severity-high'
+                                        : page.severity === 'MEDIUM'
+                                            ? 'severity-medium'
+                                            : 'severity-low'
+                                }">
+                                    ${page.severity || 'LOW'}
+                                </span>
+                                <span
+                                    class="pill pill-conf"
+                                    title="Model confidence from 0.00 to 1.00 (higher = more certain)."
+                                >
+                                    Conf: ${(page.confidence || 0).toFixed(2)}
+                                </span>
+                                <span
+                                    class="pill pill-ela"
+                                    title="Image consistency score; higher values can suggest image editing."
+                                >
+                                    ELA score: ${ela}
+                                </span>
+                                <span
+                                    class="pill pill-cm"
+                                    title="Looks for duplicated regions that may indicate copy–paste."
+                                >
+                                    Copy-move score: ${cm}
+                                </span>
+                                ${escalated ? '<span class="pill pill-esc">GPT-5 second opinion</span>' : ''}
+                            </div>
+                        </div>
+
+                        <div class="summary-block">
+                            <strong>Summary:</strong><br>
+                            ${page.ai_summary || '<span style="color:#9ca3af;">(Model did not return a summary.)</span>'}
+                        </div>
+
+                        <div class="ocr-preview">
+                            <strong>OCR preview:</strong><br>
+                            ${
+                                page.ocr_preview
+                                    ? page.ocr_preview.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                                    : '<span style="color:#9ca3af;">(No OCR text extracted.)</span>'
+                            }
+                        </div>
+
+                        <div class="signals-list">
+                            <strong>Signals:</strong>
+                            <div class="signals-container"></div>
+                        </div>
+                    `;
+
+                    const signalsContainer = pageDiv.querySelector('.signals-container');
+                    const signals = page.fraud_signals || [];
+
+                    if (signals.length === 0) {
+                        signalsContainer.innerHTML =
+                            '<div class="signal-item"><span style="color:#9ca3af;">No explicit signals returned.</span></div>';
+                    } else {
+                        signals.forEach(sig => {
+                            const sDiv = document.createElement('div');
+                            sDiv.className = 'signal-item';
+
+                            const pol = (sig.polarity || '').toLowerCase();
+                            const polLabel =
+                                pol === 'fraud_positive'
+                                    ? 'Fraud-positive'
+                                    : pol === 'benign'
+                                        ? 'Benign'
+                                        : 'Inconclusive';
+
+                            sDiv.innerHTML = `
+                                <div>${sig.signal || '(no description)'}</div>
+                                <div class="signal-meta">
+                                    <span class="${polarityClass(sig.polarity)}">${polLabel}</span>
+                                    &nbsp;•&nbsp;
+                                    <span>Category: ${sig.category || 'n/a'}</span>
+                                    &nbsp;•&nbsp;
+                                    <span>Conf: ${(sig.confidence || 0).toFixed(2)}</span>
+                                    ${sig.source ? `&nbsp;•&nbsp;<span>Source: ${sig.source}</span>` : ''}
+                                </div>
+                            `;
+                            signalsContainer.appendChild(sDiv);
+                        });
+                    }
+
+                    pagesContainer.appendChild(pageDiv);
+                });
+
+                resultsContainer.appendChild(docBlock);
+            }
+
+            if (resultsContainer.children.length > 0) {
+                resultsCard.style.display = 'block';
+            }
+        } catch (err) {
+            console.error(err);
+            errorBox.textContent = err.message || 'Unexpected error during analysis.';
+            errorBox.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '🔍 Analyze Transcript(s)';
+        }
+    }
+</script>
+</body>
+</html>

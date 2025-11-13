@@ -570,6 +570,34 @@ def analyze_document(pdf_path: str, max_pages: int = 3, escalate=True) -> List[F
 
     return results
 
+def analyze_financial_pdf(pdf_path: str, max_pages: int = 20) -> dict:
+    """
+    Web-friendly wrapper for use in the app.
+
+    Returns a JSON-serializable dict with:
+      - doc-level severity
+      - page-level details
+    """
+    page_results = analyze_document(pdf_path, max_pages=max_pages, escalate=True)
+    doc_label = doc_severity(page_results)
+
+    return {
+        "file_path": pdf_path,
+        "doc_severity": doc_label,
+        "pages": [
+            {
+                "page_number": r.page_number,
+                "severity": r.severity,
+                "confidence": r.confidence,
+                "ocr_preview": r.ocr_text,
+                "ai_summary": r.ai_summary,
+                "fraud_signals": r.fraud_signals,
+                "extra": r.extra,
+            }
+            for r in page_results
+        ],
+    }
+
 # PIL TO DATA
 def pil_to_data_url(img: Image.Image, fmt: str = "JPEG") -> str:
     """

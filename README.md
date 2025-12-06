@@ -18,6 +18,10 @@ The International Student Scoring Algorithm is designed to assist the Office of 
 - MongoDB (for database management)  
 - pip (Python package manager)  
 
+### Prerequisites New Additions
+- Tesseract OCR - required or doument text extraction
+- Poppler or PDFPlumber - pdf parsing dependent on OS 
+
 ### Add-ons
 - **Pandas** – for data manipulation and preprocessing  
 - **NumPy** – for numerical computations  
@@ -25,6 +29,11 @@ The International Student Scoring Algorithm is designed to assist the Office of 
 - **Jupyter Notebook** – for testing and interactive development  
 - **Flask or FastAPI** (future integration) – for backend API if moving beyond prototype  
 - **MongoDB Compass** – optional GUI for database inspection  
+
+### ADD-ons Sprint 2 Additions
+- **Pillow** - for image processing required for ELA and copy-move detection
+- **OpenCV** - for fraud patten and image validation
+- **PyMuPDF or pdf2image** - for rendering PDFs into analyzable images
 
 ### Installation Steps
 1. Clone the repository:  
@@ -72,9 +81,13 @@ python main.py
 3. Review generated scores and flagged documents.
 4. Export results to CSV for reporting or client review.
 
-## Contributing
-
-TODO: Leave the steps below if you want others to contribute to your project.
+## Usage Walkthrough (fraud systems)
+1. Have applicant data in data folder
+2. Run programs
+python financial_fraud_detector.py "data/financial/authentic" "data/financial/fraudulent" --pages 10
+python transcript_fraud_detector.py "data/transcript/authentic" "data/transcript/fraudulent" --pages 5
+3. Review structured results in respective JSON files
+4. Evaluate with eval_results.py
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`

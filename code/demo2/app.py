@@ -13,6 +13,8 @@ import io
 import csv
 import pandas as pd
 import json
+from financial_fraud_detector import analyze_financial_pdf
+from transcript_fraud_detector import analyze_transcript_pdf
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'wsu-student-scoring-secret-key-2025-change-in-production'
@@ -127,6 +129,17 @@ def analytics_page():
 def batch_page():
     """Batch processing page"""
     return render_template('batch.html', username=session.get('username'))
+
+@app.route('/financial')
+@login_required
+def financial_page():
+    """Financial document fraud screening page"""
+    return render_template('financial.html', username=session.get('username'))
+
+@app.route('/transcript')
+@login_required
+def transcript_page():
+    return render_template('transcript.html', username=session.get('username'))
 
 
 # ==================== API ENDPOINTS ====================
@@ -462,6 +475,79 @@ def get_sample(sample_type):
         return jsonify(SAMPLE_DATA[sample_type])
     return jsonify({'error': 'Invalid sample type'}), 404
 
+@app.route('/api/fraud/financial', methods=['POST'])
+@login_required
+def analyze_financial_document():
+    """
+    Upload a financial PDF and run the fraud detector.
+
+    Expects a multipart/form-data request with:
+      - field name: 'file'
+      - value: the uploaded PDF
+    """
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part in request'}), 400
+
+        file = request.files['file']
+
+        if not file or file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+
+        # For this internal prototype, we can save to a temporary folder
+        upload_dir = os.path.join(os.path.dirname(__file__), 'tmp_uploads')
+        os.makedirs(upload_dir, exist_ok=True)
+
+        temp_path = os.path.join(upload_dir, 'uploaded_financial.pdf')
+        file.save(temp_path)
+
+        try:
+            # Run your detector (uses OCR + OpenAI + heuristics)
+            result = analyze_financial_pdf(temp_path, max_pages=20)
+
+            # Return JSON that the frontend can render
+            return jsonify(result)
+        finally:
+            # Best-effort clean-up of the temp file
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/fraud/transcript', methods=['POST'])
+@login_required
+def analyze_transcript_document():
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part in request'}), 400
+
+        file = request.files['file']
+
+        if not file or file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+
+        upload_dir = os.path.join(os.path.dirname(__file__), 'tmp_uploads')
+        os.makedirs(upload_dir, exist_ok=True)
+
+        temp_path = os.path.join(upload_dir, 'uploaded_transcript.pdf')
+        file.save(temp_path)
+
+        try:
+            # Uses your TranscriptFraudDetector under the hood
+            result = analyze_transcript_pdf(temp_path, max_pages=20)
+            return jsonify(result)
+        finally:
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # ==================== STARTUP ====================
 

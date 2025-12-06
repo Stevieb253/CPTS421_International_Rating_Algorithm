@@ -9,8 +9,6 @@ Batch-capable PDF forensic pre-screen:
 - Escalate suspicious pages to GPT-5 for second opinion
 - Finalize severity using conservative rules (counts only fraud-positive signals)
 - Output combined batch_results.json and colorized console summary
-
-Author: (you)
 """
 
 import os

@@ -1,0 +1,143 @@
+Student ID,Country,GPA,Curriculum,Travel History,POS Score,NEG Score,Final Score,Recommendation,Essay - Clarity & Focus,Essay - Development & Organization,Essay - Creativity & Style,Essay Total,Analyzed At
+,,2.5,N/A,No travel abroad,9.48,5,4.48,HIGH RISK - Requires extensive manual review.,1.26,2.5,1.22,4.98,2025-12-06T07:39:17.929351
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.925884
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.925902
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.925912
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.925925
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.925933
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.925941
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.925949
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.925957
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.925967
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.931155
+,,0.0,,,0.0,0,0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:03:37.931172
+S001,India,3.8,CBSE,Visited UAE for robotics competition,8.94,0,8.94,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:01.809755
+S002,China,3.6,Gaokao,No international travel,8.44,0,8.44,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:02.429580
+S003,Nigeria,3.2,WAEC,Visited UK twice for family,8.08,0,8.08,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:02.921202
+S004,USA,3.9,US High School,Travelled to Canada for sports tournaments,8.6,0,8.6,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:03.399170
+S005,Pakistan,3.5,A-Levels,No international travel,8.2,0,8.2,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:03.917193
+S006,Nepal,3.7,NEB,Visited India multiple times,8.43,0,8.43,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:04.386409
+S007,Brazil,3.4,Brazilian ENEM,Visited Argentina for school trip,8.13,0,8.13,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:04.850511
+S008,Kenya,3.9,KCSE,Traveled to Qatar for debate competition,8.6,0,8.6,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:05.319589
+S009,South Korea,4.0,CSAT,Family trips to Japan and Singapore,8.09,0,8.09,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:05.789811
+S010,Turkey,3.3,Anatolian HS,No international travel,7.39,0,7.39,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:06.399995
+S011,Germany,3.6,Abitur,Visited France and Italy for school trips,7.61,0,7.61,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:06.899716
+S012,Mexico,3.5,Mexican Bachillerato,No international travel,7.51,0,7.51,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:07.383197
+S013,Canada,3.8,Canadian HS,Travelled to USA for science fairs,8.39,0,8.39,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:07.860594
+S014,Japan,3.7,Japanese HS,Visited Singapore for academic exchange,7.6,0,7.6,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:08.377633
+S015,Egypt,3.2,Thanaweya Amma,No international travel,7.75,0,7.75,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:08.855385
+S016,Russia,3.9,Russian HS,Visited Germany for cultural exchange,7.8,0,7.8,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:09.353909
+S017,France,3.6,French Baccalauréat,Travelled to UK for competitions,7.54,0,7.54,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:09.821535
+S018,Indonesia,3.4,Indonesian HS,Visited Malaysia for summer camp,7.3,0,7.3,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:10.306246
+S019,Italy,3.8,Liceo Scientifico,Travelled across Europe for art programs,7.74,0,7.74,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:10.769501
+S020,Argentina,3.5,Argentinian HS,No international travel,7.59,0,7.59,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:11.239298
+S001,India,3.8,CBSE,Visited UAE for robotics competition,8.94,0,8.94,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:31.393345
+S002,China,3.6,Gaokao,No international travel,8.44,0,8.44,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:31.878986
+S003,Nigeria,3.2,WAEC,Visited UK twice for family,8.08,0,8.08,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:32.376013
+S004,USA,3.9,US High School,Travelled to Canada for sports tournaments,8.6,0,8.6,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:32.858648
+S005,Pakistan,3.5,A-Levels,No international travel,8.2,0,8.2,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:33.333876
+S006,Nepal,3.7,NEB,Visited India multiple times,8.43,0,8.43,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:33.813099
+S007,Brazil,3.4,Brazilian ENEM,Visited Argentina for school trip,8.13,0,8.13,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:34.281087
+S008,Kenya,3.9,KCSE,Traveled to Qatar for debate competition,8.6,0,8.6,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:34.746039
+S009,South Korea,4.0,CSAT,Family trips to Japan and Singapore,8.09,0,8.09,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:35.232717
+S010,Turkey,3.3,Anatolian HS,No international travel,7.39,0,7.39,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:35.692186
+S011,Germany,3.6,Abitur,Visited France and Italy for school trips,7.61,0,7.61,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:36.171573
+S012,Mexico,3.5,Mexican Bachillerato,No international travel,7.51,0,7.51,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:36.651670
+S013,Canada,3.8,Canadian HS,Travelled to USA for science fairs,8.39,0,8.39,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:37.138544
+S014,Japan,3.7,Japanese HS,Visited Singapore for academic exchange,7.6,0,7.6,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:37.631539
+S015,Egypt,3.2,Thanaweya Amma,No international travel,7.75,0,7.75,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:38.129740
+S016,Russia,3.9,Russian HS,Visited Germany for cultural exchange,7.8,0,7.8,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:38.661579
+S017,France,3.6,French Baccalauréat,Travelled to UK for competitions,7.54,0,7.54,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:39.149940
+S018,Indonesia,3.4,Indonesian HS,Visited Malaysia for summer camp,7.3,0,7.3,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:39.796456
+S019,Italy,3.8,Liceo Scientifico,Travelled across Europe for art programs,7.74,0,7.74,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:40.275870
+S020,Argentina,3.5,Argentinian HS,No international travel,7.59,0,7.59,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:04:40.742858
+S001,India,4.0,CBSE,Visited USA and UK for robotics competitions,8.51,0,8.51,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:35.171554
+S002,China,3.9,Gaokao,Visited Germany for science fair,8.38,0,8.38,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:35.655775
+S003,USA,4.0,US High School,Traveled to Canada for international debate,8.37,0,8.37,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:36.150642
+S004,South Korea,3.8,CSAT,Family trips to Japan and Singapore,7.63,0,7.63,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:36.633015
+S005,Germany,3.9,Abitur,Traveled across Europe for research programs,7.69,0,7.69,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:37.129575
+S006,Brazil,3.7,Brazilian ENEM,Visited Argentina for academic competitions,7.53,0,7.53,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:37.599974
+S007,Canada,3.6,Canadian HS,USA for science fairs,3.6,0,3.6,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:37.599998
+S008,Japan,3.8,Japanese HS,Singapore academic exchange,3.8,0,3.8,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:37.600010
+S009,Italy,3.7,Liceo Scientifico,Europe art programs,7.42,0,7.42,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:38.069389
+S010,France,3.8,French Baccalauréat,UK competitions,7.67,0,7.67,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:38.552435
+S011,Nigeria,3.2,WAEC,Visited UK twice for family,7.21,0,7.21,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:39.036236
+S012,Pakistan,3.1,A-Levels,No international travel,6.97,0,6.97,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:39.525857
+S013,Indonesia,3.0,Indonesian HS,Visited Malaysia for summer camp,7.33,0,7.33,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:39.993610
+S014,Turkey,3.3,Anatolian HS,No international travel,7.7,0,7.7,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:40.460862
+S015,Egypt,3.2,Thanaweya Amma,No international travel,7.46,0,7.46,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:40.926528
+S016,Nepal,3.5,NEB,Visited India multiple times,7.83,0,7.83,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:41.399041
+S017,Mexico,3.4,Mexican Bachillerato,No international travel,3.4,0,3.4,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:41.399070
+S018,Kenya,3.6,KCSE,Qatar debate competition,7.39,0,7.39,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:41.869886
+S019,Argentina,3.5,Argentinian HS,No international travel,7.26,0,7.26,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:42.337451
+S020,Russia,3.7,Russian HS,Germany cultural exchange,8.1,0,8.1,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:42.812216
+S021,India,2.8,CBSE,No international travel,2.8,0,2.8,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:42.818196
+S022,China,2.9,Gaokao,No international travel,7.12,0,7.12,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:43.430365
+S023,Nigeria,2.7,WAEC,No international travel,7.1,0,7.1,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:43.910363
+S024,USA,3.0,US High School,Travelled to Canada once,3.0,0,3.0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:43.910388
+S025,Brazil,2.9,Brazilian ENEM,No international travel,2.9,0,2.9,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:43.910402
+S026,Pakistan,3.1,A-Levels,No international travel,6.89,0,6.89,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:44.425866
+S027,Turkey,2.8,Anatolian HS,No international travel,2.8,0,2.8,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:44.425888
+S028,Egypt,2.7,Thanaweya Amma,No international travel,2.7,0,2.7,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:44.425901
+S029,Indonesia,3.0,Indonesian HS,No international travel,3.0,0,3.0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:44.425911
+S030,Kenya,3.2,KCSE,No international travel,3.2,0,3.2,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:05:44.425920
+S001,India,4.0,CBSE,Visited USA and UK for robotics competitions,8.51,0,8.51,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:30.259350
+S002,China,3.9,Gaokao,Visited Germany for science fair,8.38,0,8.38,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:30.745440
+S003,USA,4.0,US High School,Traveled to Canada for international debate,8.37,0,8.37,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:31.226657
+S004,Nigeria,3.8,WAEC,Visited UK twice for family,7.67,0,7.67,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:31.754197
+S005,Pakistan,3.9,A-Levels,No international travel,7.77,0,7.77,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:32.251636
+S006,Brazil,3.7,Brazilian ENEM,Visited Argentina for academic competitions,7.53,0,7.53,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:32.722036
+S007,Kenya,3.6,KCSE,Qatar debate competition,7.32,0,7.32,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:33.198299
+S008,Turkey,3.8,Anatolian HS,Travelled to Europe for cultural programs,7.56,0,7.56,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:33.684514
+S009,Egypt,3.7,Thanaweya Amma,No international travel,7.57,0,7.57,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:34.323891
+S010,India,3.5,CBSE,Visited Nepal for science camp,7.37,0,7.37,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:34.797707
+S011,China,3.4,Gaokao,No international travel,3.4,0,3.4,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:34.803314
+S012,USA,3.3,US High School,Travelled to Canada once,3.3,0,3.3,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:34.803332
+S013,Nigeria,3.2,WAEC,No international travel,7.53,0,7.53,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:35.281455
+S014,Pakistan,3.1,A-Levels,No international travel,7.28,0,7.28,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:35.757859
+S015,Brazil,3.0,Brazilian ENEM,No international travel,6.79,0,6.79,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.245031
+S016,Kenya,2.9,KCSE,No international travel,2.9,0,2.9,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.245056
+S017,Turkey,2.8,Anatolian HS,No international travel,2.8,0,2.8,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.245069
+S018,Egypt,2.7,Thanaweya Amma,No international travel,2.7,0,2.7,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.245079
+S019,India,3.3,CBSE,Visited China for summer camp,3.3,0,3.3,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.245087
+S020,China,3.5,Gaokao,Traveled to Japan for academic exchange,3.5,0,3.5,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.245096
+S021,USA,3.2,US High School,No international travel,3.2,0,3.2,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250468
+S022,Nigeria,3.1,WAEC,No international travel,3.1,0,3.1,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250492
+S023,Pakistan,2.9,A-Levels,No international travel,2.9,0,2.9,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250513
+S024,Brazil,3.0,Brazilian ENEM,No international travel,3.0,0,3.0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250529
+S025,Kenya,3.4,KCSE,Travelled to Uganda for sports events,3.4,0,3.4,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250543
+S026,Turkey,3.3,Anatolian HS,No international travel,3.3,0,3.3,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250557
+S027,Egypt,3.2,Thanaweya Amma,No international travel,3.2,0,3.2,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250573
+S028,India,3.6,CBSE,Traveled to UAE for competitions,3.6,0,3.6,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250589
+S029,China,3.7,Gaokao,Visited Germany for academic camp,3.7,0,3.7,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250603
+S030,USA,3.5,US High School,Traveled to UK for debate competitions,3.5,0,3.5,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:08:36.250617
+S001,India,4.0,CBSE,Visited USA and UK for robotics competitions,8.51,0,8.51,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:15.900780
+S002,China,3.9,Gaokao,Visited Germany for science fair,8.38,0,8.38,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:16.614126
+S003,USA,4.0,US High School,Traveled to Canada for international debate,8.37,0,8.37,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:17.322466
+S004,Nigeria,3.8,WAEC,Visited UK twice for family,7.67,0,7.67,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:18.002462
+S005,Pakistan,3.9,A-Levels,No international travel,7.77,0,7.77,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:18.678613
+S006,Brazil,3.7,Brazilian ENEM,Visited Argentina for academic competitions,7.53,0,7.53,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:19.348795
+S007,Kenya,3.6,KCSE,Qatar debate competition,7.32,0,7.32,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:20.018358
+S008,Turkey,3.8,Anatolian HS,Travelled to Europe for cultural programs,7.56,0,7.56,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:20.682082
+S009,Egypt,3.7,Thanaweya Amma,No international travel,7.57,0,7.57,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:21.355134
+S010,India,3.5,CBSE,Visited Nepal for science camp,7.37,0,7.37,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:22.026497
+S011,China,3.4,Gaokao,No international travel,3.4,0,3.4,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:22.034850
+S012,USA,3.3,US High School,Travelled to Canada once,3.3,0,3.3,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:22.034907
+S013,Nigeria,3.2,WAEC,No international travel,7.53,0,7.53,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:22.727972
+S014,Pakistan,3.1,A-Levels,No international travel,7.28,0,7.28,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:23.427078
+S015,Brazil,3.0,Brazilian ENEM,No international travel,6.79,0,6.79,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.106692
+S016,Kenya,2.9,KCSE,No international travel,2.9,0,2.9,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.106721
+S017,Turkey,2.8,Anatolian HS,No international travel,2.8,0,2.8,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.106739
+S018,Egypt,2.7,Thanaweya Amma,No international travel,2.7,0,2.7,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.106754
+S019,India,3.3,CBSE,Visited China for summer camp,3.3,0,3.3,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.106766
+S020,China,3.5,Gaokao,Traveled to Japan for academic exchange,3.5,0,3.5,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.106779
+S021,USA,3.2,US High School,No international travel,3.2,0,3.2,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113095
+S022,Nigeria,3.1,WAEC,No international travel,3.1,0,3.1,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113120
+S023,Pakistan,2.9,A-Levels,No international travel,2.9,0,2.9,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113135
+S024,Brazil,3.0,Brazilian ENEM,No international travel,3.0,0,3.0,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113147
+S025,Kenya,3.4,KCSE,Travelled to Uganda for sports events,3.4,0,3.4,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113159
+S026,Turkey,3.3,Anatolian HS,No international travel,3.3,0,3.3,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113181
+S027,Egypt,3.2,Thanaweya Amma,No international travel,3.2,0,3.2,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113207
+S028,India,3.6,CBSE,Traveled to UAE for competitions,3.6,0,3.6,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113226
+S029,China,3.7,Gaokao,Visited Germany for academic camp,3.7,0,3.7,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113246
+S030,USA,3.5,US High School,Traveled to UK for debate competitions,3.5,0,3.5,HIGH RISK - Requires extensive manual review.,,,,,2025-12-06T07:40:24.113268

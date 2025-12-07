@@ -1,0 +1,31 @@
+studentId,country,gpa,curriculum,travelHistory,essayText,negFactors
+S001,India,4,CBSE,Visited USA and UK for robotics competitions,Built advanced AI projects in high school. Passionate about contributing to global AI research.,none
+S002,China,3.9,Gaokao,Visited Germany for science fair,Inspired by renewable energy challenges in my city. Aiming to innovate sustainable solutions.,none
+S003,USA,4,US High School,Traveled to Canada for international debate,Strong leadership and teamwork skills. Interested in global business strategy.,none
+S004,Nigeria,3.8,WAEC,Visited UK twice for family,Passionate about technology to improve digital access for underserved communities.,none
+S005,Pakistan,3.9,A-Levels,No international travel,Volunteering inspired me to pursue biomedical engineering for affordable healthcare.,none
+S006,Brazil,3.7,Brazilian ENEM,Visited Argentina for academic competitions,Interested in data science to link creativity and analytics.,none
+S007,Kenya,3.6,KCSE,Qatar debate competition,Debate improved communication and advocacy skills.,none
+S008,Turkey,3.8,Anatolian HS,Travelled to Europe for cultural programs,Passionate about civil engineering and disaster-resistant design.,none
+S009,Egypt,3.7,Thanaweya Amma,No international travel,Interested in urban planning to improve infrastructure in my city.,none
+S010,India,3.5,CBSE,Visited Nepal for science camp,Environmental science inspired me to work on water sustainability projects.,none
+S011,China,3.4,Gaokao,No international travel,"Engineering interested, essay average.",none
+S012,USA,3.3,US High School,Travelled to Canada once,Leadership and teamwork average.,none
+S013,Nigeria,3.2,WAEC,No international travel,Limited access to resources. Aims to improve digital infrastructure.,financialConcern
+S014,Pakistan,3.1,A-Levels,No international travel,Average biomedical interests. Documentation missing.,documentationMissing
+S015,Brazil,3,Brazilian ENEM,No international travel,"Essay weak, mid-level GPA, interested in data analytics.",essayWeak
+S016,Kenya,2.9,KCSE,No international travel,"Weak essay and low GPA, average extracurriculars.",lowEnglishProficiency
+S017,Turkey,2.8,Anatolian HS,No international travel,"Limited GPA, weak essay, no travel experience.",lowEnglishProficiency
+S018,Egypt,2.7,Thanaweya Amma,No international travel,"Weak GPA and essay, limited exposure.",financialConcern
+S019,India,3.3,CBSE,Visited China for summer camp,"Average GPA, essay satisfactory.",none
+S020,China,3.5,Gaokao,Traveled to Japan for academic exchange,"GPA above average, essay okay.",none
+S021,USA,3.2,US High School,No international travel,"Mid-level GPA, weak essay.",essayWeak
+S022,Nigeria,3.1,WAEC,No international travel,"GPA low, weak essay, limited resources.",financialConcern
+S023,Pakistan,2.9,A-Levels,No international travel,"Low GPA, weak essay, missing documentation.",documentationMissing
+S024,Brazil,3,Brazilian ENEM,No international travel,"Mid GPA, average essay.",essayWeak
+S025,Kenya,3.4,KCSE,Travelled to Uganda for sports events,"Average GPA, some extracurricular achievements.",none
+S026,Turkey,3.3,Anatolian HS,No international travel,"Mid GPA, essay average.",none
+S027,Egypt,3.2,Thanaweya Amma,No international travel,"Weak GPA, essay needs improvement.",financialConcern
+S028,India,3.6,CBSE,Traveled to UAE for competitions,"Above-average GPA, essay satisfactory.",none
+S029,China,3.7,Gaokao,Visited Germany for academic camp,"Strong GPA, essay good.",none
+S030,USA,3.5,US High School,Traveled to UK for debate competitions,"GPA above average, essay okay.",none

@@ -188,6 +188,91 @@ def analyze_student():
     except Exception as e:
         print(f"Analysis error: {e}")
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/api/batch-analyze', methods=['POST'])
+def batch_analyze():
+    """Batch analysis endpoint for CSV uploads"""
+    try:
+        data = request.get_json()
+        students = data.get('students', [])
+        
+        if not students:
+            return jsonify({'error': 'No students provided'}), 400
+        
+        batch_results = []
+        
+        for student_data in students:
+            try:
+                student_id = student_data.get('studentId', 'N/A')
+                country = student_data.get('country', 'N/A')
+                gpa = float(student_data.get('gpa', 0))
+                curriculum = student_data.get('curriculum', '')
+                travel_history = student_data.get('travelHistory', '')
+                essay_text = student_data.get('essayText', '')
+                neg_factors = student_data.get('negFactors', [])
+                
+                if not curriculum or not travel_history:
+                    batch_results.append({
+                        'studentId': student_id,
+                        'success': False,
+                        'error': 'Missing required fields'
+                    })
+                    continue
+                
+                result = analyzer.analyze_student(
+                    gpa=gpa,
+                    curriculum=curriculum,
+                    travel_history=travel_history,
+                    essay_text=essay_text,
+                    neg_factors=neg_factors
+                )
+                
+                analysis_record = {
+                    'timestamp': datetime.now().isoformat(),
+                    'studentId': student_id,
+                    'country': country,
+                    'gpa': gpa,
+                    'curriculum': curriculum,
+                    'travelHistory': travel_history,
+                    'essayLength': len(essay_text),
+                    'negFactors': ', '.join(neg_factors),
+                    'posScore': result.pos_score,
+                    'negScore': result.neg_score,
+                    'finalScore': result.final_score,
+                    'rankEstimate': result.rank_estimate,
+                    'recommendation': result.recommendation,
+                    'clarityFocus': result.essay_analysis.clarity_focus,
+                    'developmentOrg': result.essay_analysis.development_organization,
+                    'creativityStyle': result.essay_analysis.creativity_style,
+                    'essayRubricScore': result.essay_analysis.rubric_score,
+                    'grammarScore': result.essay_analysis.grammar_score,
+                    'coherenceScore': result.essay_analysis.coherence_score,
+                    'vocabularyRichness': result.essay_analysis.vocabulary_richness,
+                    'analysisConfidence': result.overall_confidence
+                }
+                
+                analysis_results.append(analysis_record)
+                
+                batch_results.append({
+                    'studentId': student_id,
+                    'country': country,
+                    'success': True,
+                    'finalScore': result.final_score,
+                    'recommendation': result.recommendation
+                })
+                
+            except Exception as e:
+                batch_results.append({
+                    'studentId': student_data.get('studentId', 'Unknown'),
+                    'success': False,
+                    'error': str(e)
+                })
+        
+        return jsonify({'results': batch_results})
+    
+    except Exception as e:
+        print(f"Batch analysis error: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/export/csv', methods=['POST'])
 def export_csv():

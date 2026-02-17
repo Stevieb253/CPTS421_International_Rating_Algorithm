@@ -1,17 +1,24 @@
-fastapi==0.115.0
-uvicorn[standard]==0.30.0
-pydantic==2.9.0
-pymongo==4.9.0
-python-dotenv==1.0.1
-numpy==2.1.3
-pandas==2.2.3
-opencv-python==4.10.0.84
-Pillow==11.0.0
-pytesseract==0.3.13
-pdfplumber==0.11.4
+# Flask Backend
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Data Processing
+numpy
+requests==2.31.0
+
+# Excel Export
+openpyxl==3.1.2
+
+# Environment Variables (optional but recommended)
+python-dotenv==1.0.0
+
+# Production Server (optional)
+gunicorn==21.2.0
+
+# Phase 4: Fraud Detection Dependencies
 pdf2image==1.17.0
-PyMuPDF==1.24.10
-python-multipart==0.0.9
-loguru==0.7.2
-pytest==8.3.3
-httpx==0.27.2
+Pillow==11.0.0
+opencv-python==4.10.0.84
+pytesseract==0.3.13
+openai==1.3.5
+

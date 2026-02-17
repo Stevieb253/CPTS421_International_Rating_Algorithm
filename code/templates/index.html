@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1700px;
             margin: 0 auto;
         }
         
@@ -360,6 +360,19 @@
                             <option value="Bangladesh">Bangladesh</option>
                             <option value="South Korea">South Korea</option>
                             <option value="Thailand">Thailand</option>
+                            <option value="Nigeria">Nigeria</option>
+                            <option value="Ghana">Ghana</option>
+                            <option value="Nepal">Nepal</option>
+                            <option value="Sri Lanka">Sri Lanka</option>
+                            <option value="Philippines">Philippines</option>
+                            <option value="Indonesia">Indonesia</option>
+                            <option value="Malaysia">Malaysia</option>
+                            <option value="Saudi Arabia">Saudi Arabia</option>
+                            <option value="UAE">UAE</option>
+                            <option value="Turkey">Turkey</option>
+                            <option value="Egypt">Egypt</option>
+                            <option value="Brazil">Brazil</option>
+                            <option value="Mexico">Mexico</option>
                         </select>
                     </div>
                     
@@ -557,7 +570,9 @@
             btn.innerHTML = '<span class="spinner"></span> Analyzing...';
             
             try {
-                // Collect form data
+                // ✅ FIXED: Now collecting studentId and country
+                const studentId = document.getElementById('studentId').value.trim() || 'N/A';
+                const country = document.getElementById('country').value || 'N/A';
                 const gpa = parseFloat(document.getElementById('gpa').value) || 0;
                 const curriculum = document.getElementById('curriculum').value;
                 const travelHistory = document.getElementById('travelHistory').value;
@@ -571,13 +586,15 @@
                     }
                 });
                 
-                // Send to backend
+                // ✅ FIXED: Now sending studentId and country
                 const response = await fetch('/api/analyze', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        studentId,      // ✅ ADDED
+                        country,        // ✅ ADDED
                         gpa,
                         curriculum,
                         travelHistory,

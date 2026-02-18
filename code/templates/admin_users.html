@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .nav-links { margin-top: 16px; display: flex; gap: 16px; flex-wrap: wrap; }
+        .nav-links a { color: #667eea; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 4px; }
+        .nav-links a:hover { background: #f0f0f0; }
+        
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .content-box {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .content-box h2 { margin-bottom: 20px; color: #2c3e50; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #374151; font-size: 0.9rem; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn:hover { background: #5568d3; }
+        .btn-full { width: 100%; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e9ecef;
+        }
+        td { padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+        tr:hover { background: #f8f9fa; }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-admin { background: #fef3c7; color: #92400e; }
+        .badge-reviewer { background: #dbeafe; color: #1e3a8a; }
+        .badge-active { background: #d1fae5; color: #065f46; }
+        .badge-inactive { background: #fee2e2; color: #991b1b; }
+        
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            z-index: 9999;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: #059669; }
+        .toast.error { background: #dc2626; }
+        
+        @media (max-width: 1024px) { .content-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👥 User Management</h1>
+            <p style="color: #6c757d;">Manage system users and view activity logs</p>
+            <div class="nav-links">
+                <a href="/">← Back to Analysis</a>
+                <a href="/dashboard">📊 Dashboard</a>
+                <a href="/reports">📄 Reports</a>
+                <a href="/logout">🚪 Logout</a>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Create User Form -->
+            <div class="content-box">
+                <h2>➕ Create New User</h2>
+                <form id="createUserForm" onsubmit="createUser(event)">
+                    <div class="form-group">
+                        <label>Username *</label>
+                        <input type="text" id="username" required placeholder="e.g., jsmith">
+                    </div>
+                    <div class="form-group">
+                        <label>Password *</label>
+                        <input type="password" id="password" required placeholder="Min 8 characters">
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="full_name" placeholder="e.g., John Smith">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" placeholder="john.smith@wsu.edu">
+                    </div>
+                    <div class="form-group">
+                        <label>Role *</label>
+                        <select id="role" required>
+                            <option value="reviewer">Reviewer</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-full">Create User</button>
+                </form>
+            </div>
+
+            <!-- Users List -->
+            <div class="content-box">
+                <h2>📋 Existing Users</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td><strong>{{ user.username }}</strong></td>
+                            <td>{{ user.full_name or '—' }}</td>
+                            <td><span class="badge badge-{{ user.role }}">{{ user.role }}</span></td>
+                            <td>
+                                <span class="badge badge-{{ 'active' if user.is_active else 'inactive' }}">
+                                    {{ 'Active' if user.is_active else 'Inactive' }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="content-box">
+            <h2>📝 Recent Activity</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in activity %}
+                    <tr>
+                        <td>{{ log.username or 'System' }}</td>
+                        <td><strong>{{ log.action }}</strong></td>
+                        <td>{{ log.details or '—' }}</td>
+                        <td>{{ log.timestamp[:16] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `toast ${type} show`;
+            setTimeout(() => { t.className = 'toast'; }, 3500);
+        }
+
+        async function createUser(event) {
+            event.preventDefault();
+            
+            const data = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                full_name: document.getElementById('full_name').value,
+                email: document.getElementById('email').value,
+                role: document.getElementById('role').value
+            };
+
+            try {
+                const response = await fetch('/api/admin/create-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showToast('✅ User created successfully');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast('❌ ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('❌ Error: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

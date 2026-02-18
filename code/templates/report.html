@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports History - Student Scoring System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 1.75rem;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        .nav-links {
+            margin-top: 16px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .nav-links a:hover { background: #f0f0f0; }
+        .reports-container {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .reports-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .reports-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .reports-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+        .reports-table tr:hover { background: #f8f9fa; }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-pdf { background: #dbeafe; color: #1e3a8a; }
+        .badge-txt { background: #f3f4f6; color: #374151; }
+        .btn-download {
+            padding: 6px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-download:hover { background: #5568d3; }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Reports History</h1>
+            <p style="color: #6c757d;">All generated admission reports</p>
+            <div class="nav-links">
+                <a href="/">← Back to Analysis</a>
+                <a href="/dashboard">📊 Dashboard</a>
+                <a href="/analytics">📈 Analytics</a>
+                <a href="/batch">📁 Batch Process</a>
+                <a href="/logout">🚪 Logout</a>
+            </div>
+        </div>
+
+        <div class="reports-container">
+            <h2 style="margin-bottom: 16px;">Generated Reports</h2>
+            
+            {% if reports %}
+            <table class="reports-table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Report Type</th>
+                        <th>Reviewed By</th>
+                        <th>Generated</th>
+                        <th>Size</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>
+                            <a href="/student/{{ report.student_id }}" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                                {{ report.student_id }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ report.report_type }}">
+                                {{ report.report_type.upper() }}
+                            </span>
+                        </td>
+                        <td>{{ report.reviewer_name }}</td>
+                        <td>{{ report.reviewed_at[:16] }}</td>
+                        <td>{{ "%.1f"|format(report.file_size / 1024) }} KB</td>
+                        <td>
+                            <a href="/api/report/{{ report.id }}/download" class="btn-download">
+                                ⬇️ Download
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div style="font-size: 3rem; margin-bottom: 16px; opacity: 0.3;">📄</div>
+                <h3 style="color: #6c757d; font-weight: 500;">No Reports Yet</h3>
+                <p style="color: #adb5bd; margin-top: 8px;">Generate your first report from the analysis page</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

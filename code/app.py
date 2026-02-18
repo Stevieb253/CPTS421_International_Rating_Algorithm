@@ -3,63 +3,28 @@ Flask Backend Integration for Enhanced Student Scoring System
 Integrates the enhanced essay analyzer with your existing frontend
 """
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_file
-from student_analyzer import StudentAnalyzer, StudentScore
+from services.student_analyzer import StudentAnalyzerSafe
+from db.database import get_db
+from db.report_generator import generate_report as build_pdf_report
+from services.nlp_service import NLPService
 import io
 import csv
 from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 
+nlp_service = NLPService()
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here-change-in-production'
 
 # Initialize the enhanced analyzer
-analyzer = StudentAnalyzer()
-
-# Store analysis results in memory (you can replace with database)
+analyzer = StudentAnalyzerSafe()
 analysis_results = []
 
-# Sample data for testing
-SAMPLE_DATA = {
-    'high': {
-        'studentId': 'STU_2025_001',
-        'country': 'India',
-        'gpa': 3.8,
-        'curriculum': 'IGCSE/IB',
-        'travelHistory': 'Multiple listed',
-        'essayText': """Throughout my academic journey, I have developed a profound passion for computer science and artificial intelligence. My experiences in leading the robotics team at my high school taught me the importance of collaboration, innovation, and perseverance. I successfully organized three international STEM workshops that brought together students from diverse backgrounds to explore cutting-edge technology.
+# --- SAMPLE DATA ---
+SAMPLE_DATA = { ... }  # Keep your existing SAMPLE_DATA as-is
 
-I am particularly drawn to Washington State University because of its renowned research programs in machine learning and its commitment to fostering a diverse academic community. I have spent considerable time analyzing WSU's curriculum and believe that the interdisciplinary approach aligns perfectly with my goal of developing AI solutions for healthcare accessibility in underserved communities.
-
-My vision extends beyond personal achievement. Having witnessed the healthcare challenges in rural areas of my country, I am determined to leverage technology to create meaningful change. I have already initiated a pilot project that uses basic machine learning algorithms to predict disease outbreaks in my local community, and I am eager to expand this work with the resources and mentorship available at WSU.
-
-I recognize that success requires not just technical skills but also cultural awareness and adaptability. My experiences traveling to multiple countries and engaging with different educational systems have prepared me to thrive in WSU's international environment. I am committed to contributing to campus life through student organizations, research opportunities, and community service initiatives.""",
-        'negFactors': []
-    },
-    'medium': {
-        'studentId': 'STU_2025_002',
-        'country': 'Vietnam',
-        'gpa': 3.2,
-        'curriculum': 'Standard Intl Secondary',
-        'travelHistory': '1 listed or multiple non-listed',
-        'essayText': """I want to study at Washington State University because it is a good school. I have always dreamed of studying in America since I was a child. My passion for learning drives me to pursue my goals.
-
-I believe WSU will help me reach my full potential. I am a hard worker and I always give 110% effort. I want to make a difference in the world and give back to my community. This has been my dream for as long as I can remember.
-
-I think I would be a good fit for WSU because I am dedicated and motivated. I am looking forward to the opportunities that await me. Thank you for considering my application.""",
-        'negFactors': ['bankDocsPending']
-    },
-    'low': {
-        'studentId': 'STU_2025_003',
-        'country': 'Pakistan',
-        'gpa': 2.4,
-        'curriculum': 'N/A',
-        'travelHistory': 'No travel abroad',
-        'essayText': """I want study USA. Good university. I work hard and study. My family support me. I want learn computer. Thank you.""",
-        'negFactors': ['reqAppFeeWaiver', 'cannotPayFee', 'earlyI20']
-    }
-}
-
+# --- ROUTES ---
 @app.route('/')
 def index():
     if 'username' not in session:
@@ -69,138 +34,123 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Accept JSON OR form data (frontend flexibility)
-        data = request.get_json(silent=True)
-
-        if data:
-            username = data.get("username")
-            password = data.get("password")
-        else:
-            # fallback for form submissions
-            username = request.form.get("username")
-            password = request.form.get("password")
-
-        # Authentication
-        if username == "admin" and password == "admin123":
-            session["username"] = username
+        data = request.get_json(silent=True) or request.form
+        username = data.get("username")
+        password = data.get("password")
+        if not username or not password:
+            return jsonify({"success": False, "error": "Username and password required"})
+        db = get_db()
+        user = db.authenticate_user(username, password)
+        if user:
+            session["user_id"] = user['id']
+            session["username"] = user['username']
+            session["full_name"] = user['full_name'] or user['username']
+            session["role"] = user['role']
             return jsonify({"success": True, "redirect": url_for("index")})
         else:
             return jsonify({"success": False, "error": "Invalid credentials"})
-
     return render_template("login.html")
 
 @app.route('/logout')
 def logout():
+    if 'user_id' in session:
+        db = get_db()
+        db.log_activity(session['user_id'], 'logout', f"User {session['username']} logged out")
     session.clear()
     return redirect(url_for('login'))
 
+def require_login():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return None
+
 @app.route('/api/sample/<type>')
 def get_sample(type):
-    """Get sample student data"""
     if type not in SAMPLE_DATA:
         return jsonify({'error': 'Invalid sample type'}), 400
-    
     return jsonify(SAMPLE_DATA[type])
 
-@app.route('/api/analyze', methods=['POST'])
+# --- STUDENT ANALYSIS ---
+@app.route("/api/analyze", methods=["POST"])
 def analyze_student():
-    """
-    Main analysis endpoint - uses enhanced essay analyzer
-    """
     try:
         data = request.get_json()
-        
-        # Extract data
+        if not data:
+            return jsonify({'error': 'No input data provided'}), 400
+
+        essay = data.get("essayText") or data.get("essay")
+        prompt = data.get("prompt", "")
+        if not essay:
+            return jsonify({'error': 'No essay text provided'}), 400
+
+        sentiment = nlp_service.analyze_sentiment(essay)
+        similarity = nlp_service.compute_similarity(essay, prompt)
+
         gpa = float(data.get('gpa', 0))
         curriculum = data.get('curriculum', '')
         travel_history = data.get('travelHistory', '')
-        essay_text = data.get('essayText', '')
         neg_factors = data.get('negFactors', [])
-        
-        # Validate inputs
-        if not curriculum or not travel_history:
-            return jsonify({'error': 'Missing required fields'}), 400
-        
-        # Run enhanced analysis
-        result = analyzer.analyze_student(
+
+        result_resp = analyzer.analyze_student_safe(
             gpa=gpa,
             curriculum=curriculum,
             travel_history=travel_history,
-            essay_text=essay_text,
+            essay_text=essay,
             neg_factors=neg_factors
         )
-        
-        # Store result for later export
-        analysis_record = {
-            'timestamp': datetime.now().isoformat(),
-            'studentId': data.get('studentId', 'N/A'),
-            'country': data.get('country', 'N/A'),
-            'gpa': gpa,
-            'curriculum': curriculum,
-            'travelHistory': travel_history,
-            'essayLength': len(essay_text),
-            'negFactors': ', '.join(neg_factors),
-            'posScore': result.pos_score,
-            'negScore': result.neg_score,
-            'finalScore': result.final_score,
-            'rankEstimate': result.rank_estimate,
-            'recommendation': result.recommendation,
-            'clarityFocus': result.essay_analysis.clarity_focus,
-            'developmentOrg': result.essay_analysis.development_organization,
-            'creativityStyle': result.essay_analysis.creativity_style,
-            'essayRubricScore': result.essay_analysis.rubric_score,
-            'grammarScore': result.essay_analysis.grammar_score,
-            'coherenceScore': result.essay_analysis.coherence_score,
-            'vocabularyRichness': result.essay_analysis.vocabulary_richness,
-            'analysisConfidence': result.overall_confidence
-        }
-        
-        analysis_results.append(analysis_record)
-        
-        # Format response for frontend
+
+        # Convert to dict safely
+        # ✅ FIXED
+        if isinstance(result_resp, dict):
+            result = result_resp
+        elif hasattr(result_resp, "model_dump"):
+            result = result_resp.model_dump()
+        elif hasattr(result_resp, "dict") and callable(getattr(result_resp, "dict", None)):
+            result = result_resp.dict()
+        else:
+            try:
+                result = dict(result_resp)
+            except:
+                result = result_resp
+
         response = {
-            'posScore': result.pos_score,
-            'negScore': result.neg_score,
-            'finalScore': result.final_score,
-            'rankEstimate': result.rank_estimate,
-            'recommendation': result.recommendation,
-            'confidence': result.overall_confidence,
-            'breakdown': result.breakdown,
-            'essayAnalysis': {
-                'clarityFocus': result.essay_analysis.clarity_focus,
-                'developmentOrganization': result.essay_analysis.development_organization,
-                'creativityStyle': result.essay_analysis.creativity_style,
-                'totalScore': result.essay_analysis.total_score,
-                'rubricScore': result.essay_analysis.rubric_score,
-                'weightedScore': result.essay_analysis.weighted_score,
-                'grammarScore': result.essay_analysis.grammar_score,
-                'coherenceScore': result.essay_analysis.coherence_score,
-                'vocabularyRichness': result.essay_analysis.vocabulary_richness,
-                'insights': result.essay_analysis.insights,
-                'strengths': result.essay_analysis.strengths,
-                'weaknesses': result.essay_analysis.weaknesses,
-                'confidence': result.essay_analysis.analysis_confidence
-            }
+       'posScore': float(result.get('pos_score', 0)),
+       'negScore': float(result.get('neg_score', 0)),
+       'finalScore': float(result.get('final_score', 0)),
+       'breakdown': result.get('breakdown', {}),   # ← ADD THIS
+       'rankEstimate': result.get('rank_estimate', "N/A"),
+       'recommendation': result.get('recommendation', "No recommendation"),
+        'essayAnalysis': {
+            'clarity_focus': result.get('essay_analysis', {}).get('clarity_focus', ''),
+            'development_organization': result.get('essay_analysis', {}).get('development_organization', ''),
+            'creativity_style': result.get('essay_analysis', {}).get('creativity_style', ''),
+            'rubric_score': float(result.get('essay_analysis', {}).get('rubric_score', 0)),
+            'grammar_score': float(result.get('essay_analysis', {}).get('grammar_score', 0)),
+            'coherence_score': float(result.get('essay_analysis', {}).get('coherence_score', 0)),
+            'vocabulary_richness': float(result.get('essay_analysis', {}).get('vocabulary_richness', 0)),
+            'insights': result.get('essay_analysis', {}).get('insights', []),   # ← ADD THIS
+            },
+            'overall_confidence': float(result.get('overall_confidence', 0))
         }
-        
+
+
         return jsonify(response)
-    
+
     except Exception as e:
         print(f"Analysis error: {e}")
         return jsonify({'error': str(e)}), 500
-    
+
+# --- BATCH ANALYSIS ---
 @app.route('/api/batch-analyze', methods=['POST'])
 def batch_analyze():
-    """Batch analysis endpoint for CSV uploads"""
     try:
         data = request.get_json()
         students = data.get('students', [])
-        
         if not students:
             return jsonify({'error': 'No students provided'}), 400
-        
+
         batch_results = []
-        
+
         for student_data in students:
             try:
                 student_id = student_data.get('studentId', 'N/A')
@@ -210,7 +160,7 @@ def batch_analyze():
                 travel_history = student_data.get('travelHistory', '')
                 essay_text = student_data.get('essayText', '')
                 neg_factors = student_data.get('negFactors', [])
-                
+
                 if not curriculum or not travel_history:
                     batch_results.append({
                         'studentId': student_id,
@@ -218,15 +168,26 @@ def batch_analyze():
                         'error': 'Missing required fields'
                     })
                     continue
-                
-                result = analyzer.analyze_student(
+
+                result_resp = analyzer.analyze_student_safe(
                     gpa=gpa,
                     curriculum=curriculum,
                     travel_history=travel_history,
                     essay_text=essay_text,
                     neg_factors=neg_factors
                 )
-                
+
+                # Convert to dict safely
+                if hasattr(result_resp, "dict"):
+                    result = result_resp.dict()
+                elif hasattr(result_resp, "json"):
+                    import json
+                    result = json.loads(result_resp.json())
+                else:
+                    result = result_resp  # assume dict
+
+                ea = result.get('essay_analysis', {})
+
                 analysis_record = {
                     'timestamp': datetime.now().isoformat(),
                     'studentId': student_id,
@@ -236,40 +197,43 @@ def batch_analyze():
                     'travelHistory': travel_history,
                     'essayLength': len(essay_text),
                     'negFactors': ', '.join(neg_factors),
-                    'posScore': result.pos_score,
-                    'negScore': result.neg_score,
-                    'finalScore': result.final_score,
-                    'rankEstimate': result.rank_estimate,
-                    'recommendation': result.recommendation,
-                    'clarityFocus': result.essay_analysis.clarity_focus,
-                    'developmentOrg': result.essay_analysis.development_organization,
-                    'creativityStyle': result.essay_analysis.creativity_style,
-                    'essayRubricScore': result.essay_analysis.rubric_score,
-                    'grammarScore': result.essay_analysis.grammar_score,
-                    'coherenceScore': result.essay_analysis.coherence_score,
-                    'vocabularyRichness': result.essay_analysis.vocabulary_richness,
-                    'analysisConfidence': result.overall_confidence
+                    'posScore': float(result.get('pos_score', 0)),
+                    'negScore': float(result.get('neg_score', 0)),
+                    'finalScore': float(result.get('final_score', 0)),
+                    'rankEstimate': result.get('rank_estimate', 'N/A'),
+                    'recommendation': result.get('recommendation', 'No recommendation'),
+                    'clarityFocus': ea.get('clarity_focus', ''),
+                    'developmentOrg': ea.get('development_organization', ''),
+                    'creativityStyle': ea.get('creativity_style', ''),
+                    'essayRubricScore': float(ea.get('rubric_score', 0)),
+                    'grammarScore': float(ea.get('grammar_score', 0)),
+                    'coherenceScore': float(ea.get('coherence_score', 0)),
+                    'vocabularyRichness': float(ea.get('vocabulary_richness', 0)),
+                    'analysisConfidence': float(result.get('overall_confidence', 0))
                 }
-                
+
                 analysis_results.append(analysis_record)
-                
+
                 batch_results.append({
                     'studentId': student_id,
                     'country': country,
                     'success': True,
-                    'finalScore': result.final_score,
-                    'recommendation': result.recommendation
+                    'posScore': analysis_record['posScore'],
+                    'negScore': analysis_record['negScore'],
+                    'finalScore': analysis_record['finalScore'],
+                    'rankEstimate': analysis_record['rankEstimate'],
+                    'recommendation': analysis_record['recommendation']
                 })
-                
+
             except Exception as e:
                 batch_results.append({
                     'studentId': student_data.get('studentId', 'Unknown'),
                     'success': False,
                     'error': str(e)
                 })
-        
+
         return jsonify({'results': batch_results})
-    
+
     except Exception as e:
         print(f"Batch analysis error: {e}")
         return jsonify({'error': str(e)}), 500
@@ -401,6 +365,238 @@ def export_excel():
     except Exception as e:
         print(f"Excel export error: {e}")
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/generate-report', methods=['POST'])
+def generate_report_endpoint():
+    """Generate and SAVE report to database."""
+    try:
+        data           = request.get_json()
+        student_data   = data.get('studentData', {})
+        result_data    = data.get('resultData', {})
+        staff_comments = data.get('staffComments', '')
+        reviewer_name  = data.get('reviewerName', session.get('full_name', 'Staff'))
+        fmt            = data.get('format', 'pdf').lower()
+        analysis_id    = data.get('analysisId')  # From the analyze response
+        
+        student_id = student_data.get('studentId', 'N/A')
+        
+        db = get_db()
+        
+        # Generate PDF
+        if fmt == 'pdf':
+            from db.report_generator import generate_report as build_pdf_report
+            
+            pdf_buffer = build_pdf_report(
+                student_data   = student_data,
+                result_data    = result_data,
+                staff_comments = staff_comments,
+                reviewer_name  = reviewer_name,
+            )
+            
+            pdf_bytes = pdf_buffer.read()
+            
+            # Save to database
+            report_id = db.save_report(
+                analysis_id    = analysis_id,
+                student_id     = student_id,
+                user_id        = session['user_id'],
+                staff_comments = staff_comments,
+                reviewer_name  = reviewer_name,
+                pdf_blob       = pdf_bytes,
+                report_type    = 'pdf'
+            )
+            
+            return send_file(
+                io.BytesIO(pdf_bytes),
+                mimetype='application/pdf',
+                as_attachment=True,
+                download_name=f"admission_report_{student_id}_{datetime.now().strftime('%Y%m%d')}.pdf"
+            )
+        
+        # Generate plain text
+        else:
+            now = datetime.now().strftime('%B %d, %Y  %I:%M %p')
+            sep = '=' * 65
+            thin = '-' * 65
+            
+            neg_str = ', '.join(student_data.get('negFactors', [])) or 'None'
+            ea = result_data.get('essayAnalysis', {})
+            bd = result_data.get('breakdown', {})
+            
+            lines = [
+                sep,
+                'WSU OFFICE OF INTERNATIONAL PROGRAMS',
+                'ADMISSION ANALYSIS REPORT — CONFIDENTIAL',
+                sep,
+                f"Student ID   : {student_id}",
+                f"Country      : {student_data.get('country', 'N/A')}",
+                f"Reviewed by  : {reviewer_name}",
+                f"Report Date  : {now}",
+                sep,
+                '',
+                'SCORE SUMMARY',
+                thin,
+                f"  POS Score    : +{result_data.get('posScore', 0):.2f}",
+                f"  NEG Score    :  -{abs(result_data.get('negScore', 0)):.2f}",
+                f"  FINAL Score  :  {result_data.get('finalScore', 0):.2f}",
+                '',
+                'RECOMMENDATION',
+                thin,
+                f"  {result_data.get('recommendation', 'N/A')}",
+                '',
+                'STAFF COMMENTS',
+                thin,
+                staff_comments.strip() if staff_comments.strip() else '(No additional comments recorded.)',
+                '',
+                sep,
+            ]
+            
+            txt_content = '\n'.join(lines)
+            
+            # Save to database
+            report_id = db.save_report(
+                analysis_id    = analysis_id,
+                student_id     = student_id,
+                user_id        = session['user_id'],
+                staff_comments = staff_comments,
+                reviewer_name  = reviewer_name,
+                txt_content    = txt_content,
+                report_type    = 'txt'
+            )
+            
+            return send_file(
+                io.BytesIO(txt_content.encode('utf-8')),
+                mimetype='text/plain',
+                as_attachment=True,
+                download_name=f"admission_report_{student_id}_{datetime.now().strftime('%Y%m%d')}.txt"
+            )
+    
+    except Exception as e:
+        print(f"Report generation error: {e}")
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/reports')
+def reports_page():
+    """View all reports."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+    
+    db = get_db()
+    reports = db.get_all_reports(limit=100)
+    
+    return render_template('reports.html', 
+                         username=session.get('full_name'),
+                         reports=reports)
+
+@app.route('/student/<student_id>')
+def student_detail(student_id):
+    """View a specific student's history."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+    
+    db = get_db()
+    analyses = db.get_student_analyses(student_id)
+    reports = db.get_student_reports(student_id)
+    
+    return render_template('student_detail.html',
+                         username=session.get('full_name'),
+                         student_id=student_id,
+                         analyses=analyses,
+                         reports=reports)
+
+@app.route('/api/report/<int:report_id>/download')
+def download_report(report_id):
+    """Download a saved report."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+    
+    db = get_db()
+    report = db.get_report_by_id(report_id)
+    
+    if not report:
+        return jsonify({'error': 'Report not found'}), 404
+    
+    if report['report_type'] == 'pdf':
+        return send_file(
+            io.BytesIO(report['pdf_blob']),
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f"report_{report['student_id']}_{report_id}.pdf"
+        )
+    else:
+        return send_file(
+            io.BytesIO(report['txt_content'].encode('utf-8')),
+            mimetype='text/plain',
+            as_attachment=True,
+            download_name=f"report_{report['student_id']}_{report_id}.txt"
+        )
+# NEW ROUTES - User Management (Admin Only)
+
+@app.route('/admin/users')
+def admin_users():
+    """User management page (admin only)."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+    
+    if session.get('role') != 'admin':
+        return "Access denied", 403
+    
+    db = get_db()
+    users = db.get_all_users()
+    activity = db.get_activity_log(limit=50)
+    
+    return render_template('admin_users.html',
+                         username=session.get('full_name'),
+                         users=users,
+                         activity=activity)
+
+@app.route('/api/admin/create-user', methods=['POST'])
+def create_user():
+    """Create a new user (admin only)."""
+    if session.get('role') != 'admin':
+        return jsonify({'error': 'Access denied'}), 403
+    
+    data = request.get_json()
+    
+    username = data.get('username')
+    password = data.get('password')
+    full_name = data.get('full_name')
+    email = data.get('email')
+    role = data.get('role', 'reviewer')
+    
+    if not username or not password:
+        return jsonify({'error': 'Username and password required'}), 400
+    
+    db = get_db()
+    user_id = db.create_user(username, password, full_name, email, role)
+    
+    if user_id:
+        return jsonify({'success': True, 'user_id': user_id})
+    else:
+        return jsonify({'error': 'Username already exists'}), 400
+
+# NEW ROUTE - Dashboard with stats
+@app.route('/dashboard')
+def dashboard():
+    """Dashboard with statistics."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+    
+    db = get_db()
+    stats = db.get_dashboard_stats()
+    recent_reports = db.get_all_reports(limit=10)
+    
+    return render_template('dashboard.html',
+                         username=session.get('full_name'),
+                         stats=stats,
+                         recent_reports=recent_reports)
+
 
 # Analytics dashboard
 @app.route('/analytics')

@@ -8,7 +8,7 @@ Computes recall, precision, and confusion matrix from batch_results.json
 
 import os
 import json
-from financial_fraud_detector import doc_severity, FraudResult
+from services.financial_fraud_detector import doc_severity, FraudResult
 
 # Load the saved JSON from your last run
 RESULT_PATH = os.path.join(os.getcwd(), "batch_results.json")

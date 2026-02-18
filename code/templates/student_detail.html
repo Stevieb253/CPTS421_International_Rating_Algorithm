@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Detail - {{ student_id }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .content-box {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .nav-links { margin-top: 16px; display: flex; gap: 16px; flex-wrap: wrap; }
+        .nav-links a { color: #667eea; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 4px; }
+        .nav-links a:hover { background: #f0f0f0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th { background: #f8f9fa; padding: 12px; text-align: left; font-size: 0.85rem; font-weight: 600; color: #6c757d; text-transform: uppercase; border-bottom: 2px solid #e9ecef; }
+        td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+        tr:hover { background: #f8f9fa; }
+        .btn { padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; font-size: 0.85rem; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #5568d3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Student: {{ student_id }}</h1>
+            <p style="color: #6c757d;">Complete analysis and report history</p>
+            <div class="nav-links">
+                <a href="/">← Back to Analysis</a>
+                <a href="/reports">📄 All Reports</a>
+                <a href="/logout">🚪 Logout</a>
+            </div>
+        </div>
+
+        <div class="content-box">
+            <h2>Analysis History</h2>
+            {% if analyses %}
+            <table>
+                <tr><th>Date</th><th>Analyst</th><th>Final Score</th><th>Recommendation</th></tr>
+                {% for a in analyses %}
+                <tr>
+                    <td>{{ a.analyzed_at[:16] }}</td>
+                    <td>{{ a.analyzer_name or 'Unknown' }}</td>
+                    <td><strong>{{ "%.2f"|format(a.final_score) }}</strong></td>
+                    <td>{{ a.recommendation[:60] }}...</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p style="color: #6c757d; text-align: center; padding: 40px;">No analyses yet</p>
+            {% endif %}
+        </div>
+
+        <div class="content-box">
+            <h2>Generated Reports</h2>
+            {% if reports %}
+            <table>
+                <tr><th>Type</th><th>Reviewed By</th><th>Date</th><th>Comments Preview</th><th>Action</th></tr>
+                {% for r in reports %}
+                <tr>
+                    <td>{{ r.report_type.upper() }}</td>
+                    <td>{{ r.reviewer_name }}</td>
+                    <td>{{ r.reviewed_at[:16] }}</td>
+                    <td>{{ r.staff_comments[:50] if r.staff_comments else '(none)' }}...</td>
+                    <td><a href="/api/report/{{ r.id }}/download" class="btn">⬇️ Download</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p style="color: #6c757d; text-align: center; padding: 40px;">No reports yet</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

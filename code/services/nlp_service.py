@@ -17,7 +17,10 @@ class NLPService:
 
         # Hugging Face essay scoring model
         model_name = "yjernite/bart_eli5"  # replace with your private repo if different
-        HF_TOKEN = "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"
+        import os
+
+        HF_TOKEN = os.getenv("HF_USER_TOKEN")  # load token from system or .env
+
 
         # Tokenizer
         self.essay_tokenizer = AutoTokenizer.from_pretrained(

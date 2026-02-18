@@ -17,7 +17,7 @@ The International Student Scoring System supports WSU’s admissions office by s
 
 ## Demo Video
 
-**Sprint 4 Demo** – Direct link: https://youtu.be/XXXXXXX 
+**Sprint 4 Demo** – Direct link:  https://youtu.be/2RWjarZzjTI
 
 ---
 

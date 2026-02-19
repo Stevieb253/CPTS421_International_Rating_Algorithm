@@ -284,6 +284,64 @@
             margin-right: 6px;
         }
 
+                /* ---- Export / reviewer notes ---- */
+        .export-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .export-grid { grid-template-columns: 1fr; }
+        }
+
+        .text-input, .text-area {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .text-input:focus, .text-area:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+        }
+
+        .text-area {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .secondary-btn {
+            padding: 10px 12px;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .secondary-btn:hover { opacity: 0.92; }
+
+        .secondary-btn:disabled,
+        .upload-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+
         @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 1024px) {
@@ -347,14 +405,13 @@
         <!-- Results card -->
         <div class="card" id="resultsCard" style="display: none;">
             <div class="results-header">
-                <span id="docSeverityPill" class="severity-pill">DOC: --</span>
                 <h2 style="margin-top: 8px;">Document Results</h2>
                 <p class="subtitle">
                     Each uploaded PDF is analyzed independently. Pages and signals appear below.
                 </p>
             </div>
 
-            <!-- NEW: quick legend for non-technical reviewers -->
+            <!-- Quick legend for non-technical reviewers -->
             <div class="info-box small">
                 <strong>How to read this:</strong>
                 <ul style="margin-left: 16px; margin-top: 4px; list-style: disc;">
@@ -367,12 +424,34 @@
                 </ul>
             </div>
 
+                        <!-- Export / reviewer notes -->
+            <div class="info-box" style="margin-top: 14px;">
+                <strong>Export for applicant file:</strong>
+                <p style="margin-top: 6px;">
+                    Add optional metadata, add per-document reviewer notes below each result, then export a combined report.
+                </p>
+
+                <div class="export-actions">
+                    <button class="secondary-btn" id="exportPdfBtn" onclick="exportReport('pdf')" disabled>
+                        ⬇️ Export PDF Report
+                    </button>
+                    <button class="secondary-btn" id="exportTxtBtn" onclick="exportReport('txt')" disabled>
+                        ⬇️ Export TXT Report
+                    </button>
+                    <span id="exportStatus" style="font-size:0.85rem; color:#4b5563; align-self:center;"></span>
+                </div>
+            </div>
+
             <div id="pagesContainer"></div>
-        </div>
-    </div>
-</div>
+        </div> <!-- end resultsCard -->
+    </div> <!-- end main-content -->
+</div> <!-- end container -->
 
 <script>
+    const latestResultsByFilename = {};
+    const reviewerNotesByFilename = {};  
+    const metaByFilename = {};
+    let lastAnalyzedFilename = null;
     function setSeverityPill(el, severity, labelPrefix) {
         el.className = 'severity-pill';
         const s = (severity || 'LOW').toUpperCase();
@@ -396,7 +475,7 @@
         const errorBox        = document.getElementById('errorBox');
         const resultsCard     = document.getElementById('resultsCard');
         const pagesContainer  = document.getElementById('pagesContainer');
-        const docSeverityPill = document.getElementById('docSeverityPill');
+        // const docSeverityPill = document.getElementById('docSeverityPill');
 
         errorBox.style.display = 'none';
         errorBox.textContent   = '';
@@ -413,8 +492,11 @@
         // Clear old results
         pagesContainer.innerHTML = '';
         resultsCard.style.display = 'none';
-        docSeverityPill.className = 'severity-pill';
-        docSeverityPill.textContent = 'DOC: --';
+        Object.keys(latestResultsByFilename).forEach(k => delete latestResultsByFilename[k]);
+        Object.keys(reviewerNotesByFilename).forEach(k => delete reviewerNotesByFilename[k]);
+        Object.keys(metaByFilename).forEach(k => delete metaByFilename[k]);
+        // docSeverityPill.className = 'severity-pill';
+        // docSeverityPill.textContent = 'DOC: --';
 
         btn.disabled = true;
 
@@ -448,6 +530,15 @@
                     }
 
                     data = await response.json();
+                    // Save the full result for export later
+                    latestResultsByFilename[file.name] = data;
+                    lastAnalyzedFilename = file.name;
+
+
+                    // Enable export buttons once at least one result exists
+                    document.getElementById('exportPdfBtn').disabled = false;
+                    document.getElementById('exportTxtBtn').disabled = false;
+
                 } catch (err) {
                     const errBlock = document.createElement('div');
                     errBlock.className = 'page-card';
@@ -473,19 +564,81 @@
                         <span class="severity-pill"></span>
                         <h3 style="margin-top: 8px;">${file.name}</h3>
                         <p class="subtitle">
-                            File: ${file.name}
-                            &nbsp;•&nbsp;
-                            Server path (internal): ${data.file_path || 'n/a'}
+                        File: ${file.name}
+                        &nbsp;•&nbsp;
+                        Server path (internal): ${data.file_path || 'n/a'}
                         </p>
                     </div>
+
+                    <div class="info-box" style="margin-top: 8px; margin-bottom: 12px;">
+                        <strong>Applicant Metadata (saved with export):</strong>
+
+                        <div class="export-grid" style="margin-top:10px;">
+                        <div>
+                            <label style="display:block; font-weight:600; margin: 10px 0 6px 0;">Student ID (optional)</label>
+                            <input class="text-input" data-meta="studentId" data-filename="${file.name}" placeholder="e.g., STU_2026_0142">
+                        </div>
+                        <div>
+                            <label style="display:block; font-weight:600; margin: 10px 0 6px 0;">Applicant Name (optional)</label>
+                            <input class="text-input" data-meta="applicantName" data-filename="${file.name}" placeholder="e.g., Jane Doe">
+                        </div>
+                        <div>
+                            <label style="display:block; font-weight:600; margin: 10px 0 6px 0;">Program/Term (optional)</label>
+                            <input class="text-input" data-meta="program" data-filename="${file.name}" placeholder="e.g., CS BS Fall 2026">
+                        </div>
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                        <strong>Reviewer Notes (saved with export):</strong>
+                        <textarea
+                            class="text-area"
+                            data-filename="${file.name}"
+                            placeholder="Type notes for this document (why flagged, what to verify, follow-ups, etc.)"
+                        ></textarea>
+                        </div>
+                    </div>
+
                     <div class="doc-pages"></div>
-                `;
+                    `;
+
+
 
                 const pill = docBlock.querySelector('.severity-pill');
                 setSeverityPill(pill, severity, 'DOC: ');
 
+                const notesBox = docBlock.querySelector(`textarea[data-filename="${file.name}"]`);
+
+                // restore any prior notes if re-rendered
+                notesBox.value = reviewerNotesByFilename[file.name] || '';
+
+                // save on change
+                notesBox.addEventListener('input', () => {
+                reviewerNotesByFilename[file.name] = notesBox.value;
+                });
+
+                // --- per-document meta wiring ---
+                if (!metaByFilename[file.name]) {
+                metaByFilename[file.name] = { studentId: "", applicantName: "", program: "" };
+                }
+
+                const metaInputs = docBlock.querySelectorAll(`input[data-filename="${file.name}"][data-meta]`);
+
+                metaInputs.forEach(inp => {
+                const key = inp.getAttribute("data-meta"); // studentId | applicantName | program
+
+                // restore
+                inp.value = (metaByFilename[file.name][key] || "");
+
+                // save on input
+                inp.addEventListener("input", () => {
+                    metaByFilename[file.name][key] = inp.value;
+                });
+                });
+
+
+
                 // Also keep the last doc’s severity in the header pill
-                setSeverityPill(docSeverityPill, severity, 'DOC: ');
+                // setSeverityPill(docSeverityPill, severity, 'DOC: ');
 
                 const perDocPagesContainer = docBlock.querySelector('.doc-pages');
 
@@ -588,6 +741,85 @@
         } finally {
             btn.disabled = false;
             btn.innerHTML = '🔍 Analyze Document(s)';
+        }
+    }
+        
+            async function exportReport(format) {
+        const exportPdfBtn = document.getElementById('exportPdfBtn');
+        const exportTxtBtn = document.getElementById('exportTxtBtn');
+        const statusEl = document.getElementById('exportStatus');
+
+        statusEl.textContent = '';
+
+        const filenames = Object.keys(latestResultsByFilename);
+        if (filenames.length === 0) {
+            statusEl.textContent = 'No analysis results available to export yet.';
+            return;
+        }
+
+        const documents = filenames.map(fn => ({
+            originalFilename: fn,
+            result: latestResultsByFilename[fn],
+            comments: (reviewerNotesByFilename[fn] || '').trim(),
+            meta: {
+                studentId: (metaByFilename[fn]?.studentId || "").trim(),
+                applicantName: (metaByFilename[fn]?.applicantName || "").trim(),
+                program: (metaByFilename[fn]?.program || "").trim()
+            }
+            }));
+
+
+        exportPdfBtn.disabled = true;
+        exportTxtBtn.disabled = true;
+        statusEl.textContent = `Generating combined ${format.toUpperCase()} report…`;
+
+        try {
+            const resp = await fetch('/api/fraud/financial/report/all', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ documents, format })
+            });
+
+            if (!resp.ok) {
+            let msg = 'Combined report export failed.';
+            try {
+                const d = await resp.json();
+                if (d && d.error) msg = d.error;
+            } catch (_) {}
+            throw new Error(msg);
+            }
+
+            const blob = await resp.blob();
+
+            let filename = '';
+            const cd = resp.headers.get('Content-Disposition') || resp.headers.get('content-disposition');
+            if (cd) {
+            const match = cd.match(/filename="?([^"]+)"?/i);
+            if (match && match[1]) filename = match[1];
+            }
+            if (!filename) {
+            filename = (format === 'txt')
+                ? 'financial_fraud_combined.txt'
+                : 'financial_fraud_combined.pdf';
+            }
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+
+            statusEl.textContent = `Downloaded: ${filename}`;
+        } catch (err) {
+            console.error(err);
+            statusEl.textContent = err.message || 'Unexpected error exporting combined report.';
+        } finally {
+            exportPdfBtn.disabled = false;
+            exportTxtBtn.disabled = false;
         }
     }
 </script>

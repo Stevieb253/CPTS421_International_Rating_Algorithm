@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - Student Scoring System</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 28px 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .header-title {
+            flex: 1;
+        }
+        
+        .header h1 {
+            font-size: 1.85rem;
+            color: #2c3e50;
+            margin-bottom: 6px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header p {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #667eea;
+            border: 2px solid #e9ecef;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding-top: 16px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-links a:hover {
+            background: #f0f0ff;
+            transform: translateX(4px);
+        }
+        
+        .last-updated {
+            font-size: 0.8rem;
+            color: #adb5bd;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+        
+        .stat-card.primary { --accent-color: #667eea; }
+        .stat-card.success { --accent-color: #28a745; }
+        .stat-card.warning { --accent-color: #ffc107; }
+        .stat-card.danger { --accent-color: #dc3545; }
+        .stat-card.info { --accent-color: #17a2b8; }
+        .stat-card.purple { --accent-color: #764ba2; }
+        
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .stat-card h3 {
+            font-size: 0.75rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+        
+        .stat-icon {
+            font-size: 1.5rem;
+            opacity: 0.3;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .stat-trend {
+            font-size: 0.8rem;
+            color: #28a745;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .stat-trend.down {
+            color: #dc3545;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .chart-container h2 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chart-info {
+            font-size: 0.8rem;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+        
+        .chart-wrapper.small {
+            height: 240px;
+        }
+        
+        .chart-wrapper.large {
+            height: 400px;
+        }
+        
+        canvas {
+            max-height: 100%;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .country-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        
+        .country-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .country-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+        
+        .country-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .country-flag {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        
+        .score-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .score-badge.high {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .score-badge.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .score-badge.low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .empty-state h3 {
+            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+        }
+        
+        .empty-state p {
+            color: #adb5bd;
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+        
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .insight-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .insight-card h4 {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .insight-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        
+        .insight-card .description {
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-grid, .insights-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-actions {
+                width: 100%;
+            }
+            
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-title">
+                    <h1>
+                        📊 Analytics Dashboard
+                    </h1>
+                    <p>Comprehensive insights and enrollment trends</p>
+                    <div class="last-updated">
+                        <div class="pulse"></div>
+                        <span>Last updated: <span id="lastUpdated">Just now</span></span>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="exportToCSV()">
+                        📥 Export CSV
+                    </button>
+                    <button class="btn btn-primary" onclick="exportToExcel()">
+                        📊 Export Excel
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadAnalytics()">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <div class="nav-links">
+                <a href="/">← Back to Analysis</a>
+                <a href="/batch">📁 Batch Process</a>
+                <a href="/financial">💰 Financial Docs</a>
+                <a href="/transcript">📄 Transcripts</a>
+                <a href="/logout">🚪 Logout</a>
+            </div>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            Loading analytics...
+        </div>
+        
+        <div id="analyticsContent" style="display: none;">
+            <!-- Key Metrics -->
+            <div class="stats-grid">
+                <div class="stat-card primary">
+                    <div class="stat-card-header">
+                        <h3>Total Students</h3>
+                        <div class="stat-icon">👥</div>
+                    </div>
+                    <div class="value" id="totalStudents">0</div>
+                    <div class="label">analyzed to date</div>
+                </div>
+                
+                <div class="stat-card success">
+                    <div class="stat-card-header">
+                        <h3>High Potential</h3>
+                        <div class="stat-icon">⭐</div>
+                    </div>
+                    <div class="value" id="highPotential">0</div>
+                    <div class="label">strongly recommended</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="highPotentialBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div class="stat-card warning">
+                    <div class="stat-card-header">
+                        <h3>Medium Risk</h3>
+                        <div class="stat-icon">⚠️</div>
+                    </div>
+                    <div class="value" id="mediumRisk">0</div>
+                    <div class="label">monitoring needed</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="mediumRiskBar" style="width: 0%; background: #ffc107;"></div>
+                    </div>
+                </div>
+                
+                <div class="stat-card danger">
+                    <div class="stat-card-header">
+                        <h3>High Risk</h3>
+                        <div class="stat-icon">🚨</div>
+                    </div>
+                    <div class="value" id="highRisk">0</div>
+                    <div class="label">review required</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="highRiskBar" style="width: 0%; background: #dc3545;"></div>
+                    </div>
+                </div>
+                
+                <div class="stat-card info">
+                    <div class="stat-card-header">
+                        <h3>Avg Final Score</h3>
+                        <div class="stat-icon">📈</div>
+                    </div>
+                    <div class="value" id="avgFinalScore">0</div>
+                    <div class="label">out of ~40 points</div>
+                </div>
+                
+             
+            </div>
+            
+            <!-- Insights -->
+            <div class="insights-grid" id="insightsGrid"></div>
+            
+            <!-- Charts Grid 1 -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>📊 Score Distribution</h2>
+                        <div class="chart-info">
+                            <span id="distributionTotal">0 students</span>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper small">
+                        <canvas id="scoreChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>🌍 Top Countries</h2>
+                        <div class="chart-info">
+                            <span id="countryTotal">0 countries</span>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper small">
+                        <canvas id="countryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Score Breakdown -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>📈 Average Score Components</h2>
+                    <div class="chart-info">Breakdown by category</div>
+                </div>
+                <div class="chart-wrapper small">
+                    <canvas id="avgScoresChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Country Performance Table -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>🏆 Country Performance Leaderboard</h2>
+                    <div class="chart-info">
+                        <span id="tableCountries">Top 10 countries</span>
+                    </div>
+                </div>
+                <table class="country-table" id="countryTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Country</th>
+                            <th>Students</th>
+                            <th>Avg Score</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody id="countryTableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Essay Analysis Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>✍️ Essay Quality Distribution</h2>
+                    <div class="chart-info">Grammar & coherence metrics</div>
+                </div>
+                <div class="chart-wrapper small">
+                    <canvas id="essayChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div id="emptyState" style="display: none;">
+            <div class="chart-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📊</div>
+                    <h3>No Data Yet</h3>
+                    <p>Start analyzing students to see comprehensive analytics and insights</p>
+                    <a href="/" class="btn btn-primary">
+                        🚀 Start Analyzing
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scoreChart, countryChart, avgScoresChart, essayChart;
+
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        function formatPercentage(num) {
+            return (num * 100).toFixed(1) + '%';
+        }
+
+        function getScoreRating(score) {
+            if (score >= 7.5) return 'high';
+            if (score >= 6.5) return 'medium';
+            return 'low';
+        }
+
+        function getScoreBadge(score) {
+            const rating = getScoreRating(score);
+            let label = '';
+            if (rating === 'high') label = 'Excellent';
+            else if (rating === 'medium') label = 'Good';
+            else label = 'Needs Review';
+            return `<span class="score-badge ${rating}">${label} (${score.toFixed(1)})</span>`;
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+            document.getElementById('lastUpdated').textContent = timeStr;
+        }
+
+        function generateInsights(data) {
+            const insights = [];
+            const total = data.totalStudents || 0;
+            
+            if (total === 0) return '';
+            
+            const dist = data.distribution || {};
+            const highPotentialPct = ((dist.highPotential || 0) / total) * 100;
+            
+            if (highPotentialPct > 40) {
+                insights.push({
+                    icon: '🎯',
+                    title: 'High Success Rate',
+                    value: `${highPotentialPct.toFixed(0)}%`,
+                    description: 'of students are high-potential candidates'
+                });
+            }
+            
+            const avgFinal = data.avgFinalScore || 0;
+            if (avgFinal > 7) {
+                insights.push({
+                    icon: '⭐',
+                    title: 'Strong Cohort',
+                    value: avgFinal.toFixed(1),
+                    description: 'average final score indicates quality applicants'
+                });
+            }            
+
+            
+            if (insights.length === 0) return '';
+            
+            return insights.map(insight => `
+                <div class="insight-card">
+                    <h4>${insight.icon} ${insight.title}</h4>
+                    <div class="value">${insight.value}</div>
+                    <div class="description">${insight.description}</div>
+                </div>
+            `).join('');
+        }
+
+        async function exportToCSV() {
+            try {
+                const response = await fetch('/api/export/csv', { method: 'POST' });
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `student_analysis_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        }
+
+        async function exportToExcel() {
+            try {
+                const response = await fetch('/api/export/excel', { method: 'POST' });
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `student_analysis_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        }
+
+        async function loadAnalytics() {
+            try {
+                const response = await fetch('/api/analytics/summary');
+                const data = await response.json();
+                
+                const totalStudents = data.totalStudents || 0;
+                
+                // Show empty state if no students
+                if (totalStudents === 0) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('analyticsContent').style.display = 'none';
+                    document.getElementById('emptyState').style.display = 'block';
+                    return;
+                }
+                
+                // Update stats
+                document.getElementById('totalStudents').textContent = formatNumber(totalStudents);
+                const highPot = data.distribution?.highPotential || 0;
+                const medRisk = data.distribution?.mediumRisk || 0;
+                const highRisk = data.distribution?.highRisk || 0;
+                
+                document.getElementById('highPotential').textContent = formatNumber(highPot);
+                document.getElementById('mediumRisk').textContent = formatNumber(medRisk);
+                document.getElementById('highRisk').textContent = formatNumber(highRisk);
+                
+                // Update progress bars
+                document.getElementById('highPotentialBar').style.width = ((highPot / totalStudents) * 100) + '%';
+                document.getElementById('mediumRiskBar').style.width = ((medRisk / totalStudents) * 100) + '%';
+                document.getElementById('highRiskBar').style.width = ((highRisk / totalStudents) * 100) + '%';
+                
+                // Generate insights
+                document.getElementById('insightsGrid').innerHTML = generateInsights(data);
+                
+                // Score Distribution Chart
+                document.getElementById('distributionTotal').textContent = `${totalStudents} students`;
+                const scoreCtx = document.getElementById('scoreChart').getContext('2d');
+                if (scoreChart) scoreChart.destroy();
+                scoreChart = new Chart(scoreCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['High Potential', 'Medium Risk', 'High Risk'],
+                        datasets: [{
+                            data: [highPot, medRisk, highRisk],
+                            backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                            borderWidth: 3,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 16,
+                                    font: { size: 12, weight: '500' },
+                                    color: '#2c3e50',
+                                    boxWidth: 15,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // Country Chart
+                const countries = data.countryStats || [];
+                document.getElementById('countryTotal').textContent = `${countries.length} countries`;
+                const countryCtx = document.getElementById('countryChart').getContext('2d');
+                if (countryChart) countryChart.destroy();
+                
+                countryChart = new Chart(countryCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: countries.slice(0, 8).map(c => c.country || 'Unknown'),
+                        datasets: [{
+                            label: 'Students',
+                            data: countries.slice(0, 8).map(c => c.count),
+                            backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                            borderRadius: 6,
+                            barThickness: 35
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                padding: 12,
+                                titleFont: { size: 13, weight: '600' },
+                                bodyFont: { size: 12 }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1,
+                                    color: '#6c757d',
+                                    font: { size: 11 }
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)',
+                                    drawBorder: false
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#6c757d',
+                                    font: { size: 11, weight: '500' }
+                                },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+                
+                // Average Scores Chart
+                const avgCtx = document.getElementById('avgScoresChart').getContext('2d');
+                if (avgScoresChart) avgScoresChart.destroy();
+                
+                avgScoresChart = new Chart(avgCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Avg Final Score', 'High Potential %', 'Medium Risk %', 'High Risk %'],
+                        datasets: [{
+                            label: 'Percentage',
+                            data: [
+                                data.avgFinalScore || 0,
+                                ((highPot / totalStudents) * 100) || 0,
+                                ((medRisk / totalStudents) * 100) || 0,
+                                ((highRisk / totalStudents) * 100) || 0
+                            ],
+                            backgroundColor: [
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(40, 167, 69, 0.8)',
+                                'rgba(255, 193, 7, 0.8)',
+                                'rgba(220, 53, 69, 0.8)'
+                            ],
+                            borderRadius: 6,
+                            barThickness: 45
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y.toFixed(1);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#6c757d',
+                                    font: { size: 11 }
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)',
+                                    drawBorder: false
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#6c757d',
+                                    font: { size: 11 }
+                                },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+                
+                // Country Performance Table
+                const tableBody = document.getElementById('countryTableBody');
+                tableBody.innerHTML = '';
+                
+                const countriesWithScores = countries.map(c => ({
+                    ...c,
+                    avgScore: data.avgScoresPerCountry ? (data.avgScoresPerCountry[c.country] || 0) : 0
+                })).sort((a, b) => b.avgScore - a.avgScore).slice(0, 10);
+                
+                document.getElementById('tableCountries').textContent = `Top ${countriesWithScores.length} countries`;
+                
+                countriesWithScores.forEach((country, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>#${index + 1}</strong></td>
+                        <td>${country.country || 'Unknown'}</td>
+                        <td>${formatNumber(country.count)}</td>
+                        <td>${country.avgScore.toFixed(2)}</td>
+                        <td>${getScoreBadge(country.avgScore)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // Essay Quality Chart
+                const essayCtx = document.getElementById('essayChart').getContext('2d');
+                if (essayChart) essayChart.destroy();
+                
+                essayChart = new Chart(essayCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Grammar', 'Coherence', 'Vocabulary', 'Overall'],
+                        datasets: [{
+                            label: 'Average Score',
+                            data: [
+                                data.avgGrammarScore || 0,
+                                75, // Placeholder - would need real data
+                                70, // Placeholder
+                                (data.avgGrammarScore || 0) * 0.9
+                            ],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#667eea',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    color: '#6c757d',
+                                    font: { size: 11 },
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)',
+                                    drawBorder: false
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#6c757d',
+                                    font: { size: 11 }
+                                },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+                
+                // Show content
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('analyticsContent').style.display = 'block';
+                
+                updateLastUpdated();
+                
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `
+                    <div style="color: #dc3545;">
+                        ❌ Error loading analytics<br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">${error.message}</span>
+                    </div>
+                `;
+            }
+        }
+
+        // Load on page load
+        loadAnalytics();
+        
+        // Refresh every 30 seconds
+        setInterval(loadAnalytics, 30000);
+    </script>
+</body>
+</html>

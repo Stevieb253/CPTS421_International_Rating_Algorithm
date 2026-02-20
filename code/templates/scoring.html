@@ -1,0 +1,156 @@
+<!-- 
+Add this to your existing index.html results section 
+Replace everything after the main scores grid
+-->
+
+<!-- Enhanced Essay Metrics Grid -->
+<div style="margin-bottom: 24px;">
+    <h3 style="color: #1f2937; margin-bottom: 16px; font-size: 1.1rem;">📝 Essay Analysis Metrics</h3>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+        <div style="background: #f0f9ff; padding: 16px; border-radius: 12px; border-left: 4px solid #3b82f6;">
+            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">Clarity & Focus</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;" id="clarityScore">--/10</div>
+        </div>
+        <div style="background: #f0fdf4; padding: 16px; border-radius: 12px; border-left: 4px solid #10b981;">
+            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">Development & Org</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;" id="developmentScore">--/10</div>
+        </div>
+        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; border-left: 4px solid #f59e0b;">
+            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">Creativity & Style</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;" id="creativityScore">--/10</div>
+        </div>
+        <div style="background: #fce7f3; padding: 16px; border-radius: 12px; border-left: 4px solid #ec4899;">
+            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">Grammar Quality</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;" id="grammarScore">--/100</div>
+        </div>
+        <div style="background: #ede9fe; padding: 16px; border-radius: 12px; border-left: 4px solid #8b5cf6;">
+            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">Coherence</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;" id="coherenceScore">--/100</div>
+        </div>
+        <div style="background: #dbeafe; padding: 16px; border-radius: 12px; border-left: 4px solid #3b82f6;">
+            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">Vocabulary Richness</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;" id="vocabScore">--%</div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Insights Section -->
+<div id="insightsSection" style="display: none; background: #f0f9ff; border-radius: 12px; padding: 20px; margin-bottom: 24px; border-left: 4px solid #3b82f6;">
+    <h3 style="color: #1e40af; margin-bottom: 12px; font-size: 1.1rem;">🤖 AI Analysis Insights</h3>
+    <div id="insightsList" style="color: #1f2937; line-height: 1.8;"></div>
+</div>
+
+<!-- Strengths and Weaknesses -->
+<div id="strengthsWeaknesses" style="display: none; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+    <div style="background: #f0fdf4; border-radius: 12px; padding: 20px; border-left: 4px solid #10b981;">
+        <h3 style="color: #065f46; margin-bottom: 12px; font-size: 1.1rem;">✓ Strengths</h3>
+        <div id="strengthsList" style="color: #374151; line-height: 1.8;"></div>
+    </div>
+    <div style="background: #fef2f2; border-radius: 12px; padding: 20px; border-left: 4px solid #ef4444;">
+        <h3 style="color: #991b1b; margin-bottom: 12px; font-size: 1.1rem;">⚠ Areas for Improvement</h3>
+        <div id="weaknessesList" style="color: #374151; line-height: 1.8;"></div>
+    </div>
+</div>
+
+<!-- Update your existing analyzeStudent() JavaScript function -->
+<script>
+async function analyzeStudent() {
+    const btn = document.getElementById('analyzeBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Analyzing with Enhanced AI...';
+    
+    try {
+        const gpa = parseFloat(document.getElementById('gpa').value) || 0;
+        const curriculum = document.getElementById('curriculum').value;
+        const travelHistory = document.getElementById('travelHistory').value;
+        const essayText = document.getElementById('essayText').value.trim();
+        const studentId = document.getElementById('studentId').value;
+        const country = document.getElementById('country').value;
+        
+        const negFactors = [];
+        ['reqAppFeeWaiver', 'cannotPayFee', 'reqEnrollmentFeeWaiver', 'bankDocsPending', 'earlyI20'].forEach(id => {
+            if (document.getElementById(id).checked) {
+                negFactors.push(id);
+            }
+        });
+        
+        const response = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                gpa, 
+                curriculum, 
+                travelHistory, 
+                essayText, 
+                negFactors,
+                studentId,
+                country
+            })
+        });
+        
+        if (!response.ok) throw new Error('Analysis failed');
+        
+        const result = await response.json();
+        
+        // Update main scores (your existing code)
+        document.getElementById('posScore').textContent = result.posScore.toFixed(2);
+        document.getElementById('negScore').textContent = result.negScore.toFixed(2);
+        document.getElementById('finalScore').textContent = result.finalScore.toFixed(2);
+        
+        // Update essay metrics (NEW)
+        const essay = result.essayAnalysis;
+        document.getElementById('clarityScore').textContent = essay.clarityFocus.toFixed(1) + '/10';
+        document.getElementById('developmentScore').textContent = essay.developmentOrganization.toFixed(1) + '/10';
+        document.getElementById('creativityScore').textContent = essay.creativityStyle.toFixed(1) + '/10';
+        document.getElementById('grammarScore').textContent = essay.grammarScore.toFixed(0) + '/100';
+        document.getElementById('coherenceScore').textContent = essay.coherenceScore.toFixed(0) + '/100';
+        document.getElementById('vocabScore').textContent = essay.vocabularyRichness.toFixed(0) + '%';
+        
+        // Update factor breakdown (enhance your existing code)
+        const breakdown = document.getElementById('factorBreakdown');
+        breakdown.innerHTML = Object.entries(result.breakdown)
+            .map(([key, value]) => `<div style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">${key}: ${typeof value === 'number' ? value.toFixed(2) : value}</div>`)
+            .join('');
+        
+        // AI Insights (NEW)
+        if (essay.insights && essay.insights.length > 0) {
+            const insightsSection = document.getElementById('insightsSection');
+            const insightsList = document.getElementById('insightsList');
+            insightsSection.style.display = 'block';
+            insightsList.innerHTML = essay.insights.map(i => 
+                `<div style="padding: 6px 0;">• ${i}</div>`
+            ).join('');
+        }
+        
+        // Strengths and Weaknesses (NEW)
+        if (essay.strengths && essay.weaknesses) {
+            const swSection = document.getElementById('strengthsWeaknesses');
+            swSection.style.display = 'grid';
+            document.getElementById('strengthsList').innerHTML = 
+                essay.strengths.map(s => `<div style="padding: 6px 0;">• ${s}</div>`).join('') || 
+                '<div style="color: #6b7280;">No specific strengths identified</div>';
+            document.getElementById('weaknessesList').innerHTML = 
+                essay.weaknesses.map(w => `<div style="padding: 6px 0;">• ${w}</div>`).join('') ||
+                '<div style="color: #6b7280;">No specific weaknesses identified</div>';
+        }
+        
+        // Recommendation (enhance your existing code)
+        const recommendation = document.getElementById('recommendation');
+        const recommendationText = document.getElementById('recommendationText');
+        recommendation.style.display = 'block';
+        recommendationText.innerHTML = `
+            <strong>${result.recommendation}</strong><br>
+            <span style="opacity: 0.9; font-size: 0.95rem;">Estimated Rank: #${result.rankEstimate}</span><br>
+            <span style="opacity: 0.85; font-size: 0.9rem;">Analysis Confidence: ${(result.confidence * 100).toFixed(0)}%</span>
+            ${result.usingEnhancedAI ? '<br><span style="opacity: 0.8; font-size: 0.85rem;">✨ Enhanced AI Analysis</span>' : ''}
+        `;
+        
+    } catch (error) {
+        alert('Error: ' + error.message);
+        console.error(error);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🚀 Analyze Student';
+    }
+}
+</script> | Final: {score.final_score}"

@@ -1,102 +1,106 @@
-# International Applicant Rating Algorithm 
+# Team 25 – Washington State University
 
-## Project summary
+**Project Lead:** Khushi Panchal  
+**Team Member:** Steven Bennet  
+**Client:** Trevor Kingsley  
+**Mentor:** Parteek Kumar  
 
+---
 
-A data-driven system to predict which international applicants are most likely to enroll at Washington State University.
+## Project Overview
 
-The International Student Scoring Algorithm is designed to assist the Office of International Programs at WSU in evaluating applicants using real data. It generates both category-specific and overall scores for applicants, flags suspicious documents for manual review, and allows automated output of applicant scores in a spreadsheet format. The project also considers regional trends (South Asia, Vietnam, Kenya, and Nigeria) and provides a prototype framework that could be integrated with existing platforms like Slate.
+The International Student Scoring System supports WSU’s admissions office by scoring international applicants accurately and efficiently.  
+
+**Sprint 4** focuses on usability, data handling, and security: file restructuring, database integration, feedback textbox, redesigned analysis dashboard, and role-based login. The system is now more modular, maintainable, and multi-user ready.  
+
+---
+
+## Demo Video
+
+**Sprint 4 Demo** – Direct link:  https://youtu.be/2RWjarZzjTI
+
+---
+
+## Sprint 4 Features
+
+- **File Restructuring** – Organized project into `services/`, `db/`, `templates/`, `static/`.  
+- **Database Integration** – MongoDB backend to store analyses, feedback, and logs.  
+- **Feedback Textbox** – Users can submit essay feedback, stored in DB.  
+- **Redesigned Dashboard** – Improved UI for scores, essay analysis, and recommendations.  
+- **Role-Based Login** – Admin, reviewer, and guest roles with proper access control.  
+- **API Improvements** – Robust `/api/analyze` and `/api/batch-analyze` handling with safe JSON/dict conversions.  
+- **Scalable Prototype** – Backend ready for batch processing and potential integration with Slate.
+- **Transcript & Financial Templates** – Added structured transcript and financial evaluation views.
+- **Export Formatting** – Implemented clean report layout for administrative review.
+- **Application Refactor** – Integrated new features into updated project structure.
 
 ---
 
 ## Installation
 
 ### Prerequisites
-- Python 3.10 or higher  
+
+- Python 3.11+  
 - Git  
-- Node.js 18+ (for any front-end/back-end integration)  
-- MongoDB (for database management)  
-- pip (Python package manager)  
+- Node.js 18+  
+- MongoDB  
+- pip  
 
-### Prerequisites New Additions
-- Tesseract OCR - required or doument text extraction
-- Poppler or PDFPlumber - pdf parsing dependent on OS 
+### Additional Requirements
 
-### Add-ons
-- **Pandas** – for data manipulation and preprocessing  
-- **NumPy** – for numerical computations  
-- **Matplotlib** – for basic data visualization  
-- **Jupyter Notebook** – for testing and interactive development  
-- **Flask or FastAPI** (future integration) – for backend API if moving beyond prototype  
-- **MongoDB Compass** – optional GUI for database inspection  
+- Tesseract OCR, Poppler / PDFPlumber  
+- Pandas, NumPy, Matplotlib  
+- Flask / FastAPI  
+- Pillow, OpenCV, PyMuPDF / pdf2image  
+- Flask-Login, WTForms (Sprint 4 additions)  
 
-### ADD-ons Sprint 2 Additions
-- **Pillow** - for image processing required for ELA and copy-move detection
-- **OpenCV** - for fraud patten and image validation
-- **PyMuPDF or pdf2image** - for rendering PDFs into analyzable images
+### Setup
 
-### Installation Steps
-1. Clone the repository:  
 ```bash
 git clone https://github.com/Stevieb253/CPTS421_International_Rating_Algorithm.git
 cd CPTS421_International_Rating_Algorithm
-```
-2. Set up a virtual environment:
-```bash
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
-```
-3. Install required Python packages:
-```bash
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
 pip install -r requirements.txt
 ```
-4. Set up MongoDB (if using for prototype storage):
+Start MongoDB and create student_scoring database
 
-- Start the MongoDB server locally
-- Create a database called student_scoring
-- Use sample or client-provided anonymized datasets to seed data
+Seed with anonymized datasets in data/ folder
 
-5. Load test or real data:
-
-- Place CSV/JSON datasets in the data/ folder
-- Ensure filenames match the configuration in config.py or your data loader script
-
-6. Run the prototype scoring algorithm:
+Run the app:
 ```bash
-python main.py
+python app.py
 ```
-## Functionality
 
-- **Applicant Scoring:** Calculates category-specific and overall scores.
-- **Document Handling:** Supports multiple document types (transcripts, financials, essays).
-- **Manual Review:** Flags documents with potential fraud indicators.
-- **Spreadsheet Output:** Generates CSV output for client review.
-- **Prototype Integration:** Designed as a standalone system with potential future integration into Slate.
+### Usage
+#### Single Applicant
 
-## Usage Walkthrough:
+- Place applicant data in data/
 
-1. Place applicant data in the data/ folder.
-2. Run main.py to process applications.
-3. Review generated scores and flagged documents.
-4. Export results to CSV for reporting or client review.
+- Access /api/analyze via dashboard or Postman
 
-## Usage Walkthrough (fraud systems)
-1. Have applicant data in data folder
-2. Run programs
-python financial_fraud_detector.py "data/financial/authentic" "data/financial/fraudulent" --pages 10
-python transcript_fraud_detector.py "data/transcript/authentic" "data/transcript/fraudulent" --pages 5
-3. Review structured results in respective JSON files
-4. Evaluate with eval_results.py
+- Review scores, essay analysis, and recommendations
 
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
+- Leave feedback in the textbox
 
-## License
+#### Batch Analysis
+- Submit JSON list of students to /api/batch-analyze
 
-MIT License
+- Review structured results and analytics
 
-Copyright (c) [2025] [International Scoring system]
+#### Role-Based Access
+- Admin: Full access
+
+- Reviewer: Score students and leave feedback
+
+- Guest: Limited view
+
+### Contribution
+```bash
+
+git checkout -b my-new-feature
+git commit -am 'Add feature'
+git push origin my-new-feature
+```
+Submit a pull request.

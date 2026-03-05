@@ -29,7 +29,10 @@ The International Student Scoring System supports WSU’s admissions office by s
 - **Redesigned Dashboard** – Improved UI for scores, essay analysis, and recommendations.  
 - **Role-Based Login** – Admin, reviewer, and guest roles with proper access control.  
 - **API Improvements** – Robust `/api/analyze` and `/api/batch-analyze` handling with safe JSON/dict conversions.  
-- **Scalable Prototype** – Backend ready for batch processing and potential integration with Slate.  
+- **Scalable Prototype** – Backend ready for batch processing and potential integration with Slate.
+- **Transcript & Financial Templates** – Added structured transcript and financial evaluation views.
+- **Export Formatting** – Implemented clean report layout for administrative review.
+- **Application Refactor** – Integrated new features into updated project structure.
 
 ---
 

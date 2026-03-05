@@ -9,9 +9,20 @@ from db.report_generator import generate_report as build_pdf_report
 from services.nlp_service import NLPService
 import io
 import csv
+import os
+import re
+import uuid
+from typing import Optional, Dict
+from textwrap import shorten
+from werkzeug.utils import secure_filename
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
 from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
+from services.financial_fraud_detector import analyze_financial_pdf
+from services.transcript_fraud_detector import analyze_transcript_pdf
 
 nlp_service = NLPService()
 app = Flask(__name__)
@@ -705,6 +716,569 @@ def transcript():
     if 'username' not in session:
         return redirect(url_for('login'))
     return render_template('transcript.html', username=session.get('username'))
+
+# ==================== FRAUD DETECTION API ====================
+
+@app.route('/api/fraud/financial', methods=['POST'])
+def analyze_financial_document():
+    """Upload a financial PDF and run the fraud detector."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part in request'}), 400
+
+        file = request.files['file']
+        if not file or file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+
+        upload_dir = os.path.join(os.path.dirname(__file__), 'tmp_uploads')
+        os.makedirs(upload_dir, exist_ok=True)
+
+        safe_name = secure_filename(file.filename or "uploaded_financial.pdf")
+        unique = uuid.uuid4().hex
+        temp_path = os.path.join(upload_dir, f"{unique}_{safe_name}")
+
+        file.save(temp_path)
+
+        try:
+            result = analyze_financial_pdf(temp_path, max_pages=20)
+            return jsonify(result)
+        finally:
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/fraud/financial/report', methods=['POST'])
+def export_financial_fraud_report():
+    """Export one financial fraud report as PDF or TXT."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+
+    try:
+        payload = request.get_json(silent=True) or {}
+        result = payload.get("result")
+
+        if not isinstance(result, dict):
+            return jsonify({"error": "Missing or invalid 'result' object"}), 400
+
+        comments = payload.get("comments", "") or ""
+        meta = payload.get("meta", {}) or {}
+        fmt = (payload.get("format", "pdf") or "pdf").lower()
+        original_filename = payload.get("originalFilename", "") or ""
+
+        reviewer = session.get("full_name") or session.get("username") or "unknown"
+
+        report_text = build_financial_txt_report(
+            result=result,
+            reviewer=reviewer,
+            comments=comments,
+            meta=meta
+        )
+
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        base = meta.get("studentId") or os.path.splitext(original_filename)[0] or "financial_fraud"
+        safe_base = re.sub(r"[^A-Za-z0-9_\-]+", "_", base).strip("_") or "financial_fraud"
+
+        if fmt == "txt":
+            return send_file(
+                io.BytesIO(report_text.encode("utf-8")),
+                mimetype="text/plain",
+                as_attachment=True,
+                download_name=f"{safe_base}_report_{ts}.txt"
+            )
+
+        pdf_bytes = build_pdf_bytes_from_text(report_text)
+        return send_file(
+            io.BytesIO(pdf_bytes),
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name=f"{safe_base}_report_{ts}.pdf"
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/fraud/financial/report/all', methods=['POST'])
+def export_financial_fraud_report_all():
+    """Export one combined financial fraud report for multiple documents."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+
+    try:
+        payload = request.get_json(silent=True) or {}
+        documents = payload.get("documents", [])
+        fmt = (payload.get("format", "pdf") or "pdf").lower()
+
+        if not isinstance(documents, list) or len(documents) == 0:
+            return jsonify({"error": "No documents provided for export."}), 400
+
+        cleaned = []
+        for d in documents:
+            if not isinstance(d, dict):
+                continue
+            r = d.get("result")
+            if not isinstance(r, dict):
+                continue
+            cleaned.append({
+                "originalFilename": d.get("originalFilename", "") or "",
+                "result": r,
+                "comments": d.get("comments", "") or "",
+                "meta": d.get("meta", {}) or {}
+            })
+
+        if len(cleaned) == 0:
+            return jsonify({"error": "No valid document results found for export."}), 400
+
+        reviewer = session.get("full_name") or session.get("username") or "unknown"
+        report_text = build_multi_financial_txt_report(cleaned, reviewer=reviewer)
+
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_base = "financial_fraud_combined"
+
+        if fmt == "txt":
+            return send_file(
+                io.BytesIO(report_text.encode("utf-8")),
+                mimetype="text/plain",
+                as_attachment=True,
+                download_name=f"{safe_base}_{ts}.txt"
+            )
+
+        pdf_bytes = build_pdf_bytes_from_text(report_text)
+        return send_file(
+            io.BytesIO(pdf_bytes),
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name=f"{safe_base}_{ts}.pdf"
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/fraud/transcript', methods=['POST'])
+def analyze_transcript_document():
+    """Upload a transcript PDF and run the fraud detector."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part in request'}), 400
+
+        file = request.files['file']
+        if not file or file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+
+        upload_dir = os.path.join(os.path.dirname(__file__), 'tmp_uploads')
+        os.makedirs(upload_dir, exist_ok=True)
+
+        safe_name = secure_filename(file.filename or "uploaded_transcript.pdf")
+        unique = uuid.uuid4().hex
+        temp_path = os.path.join(upload_dir, f"{unique}_{safe_name}")
+
+        file.save(temp_path)
+
+        try:
+            result = analyze_transcript_pdf(temp_path, max_pages=20)
+            return jsonify(result)
+        finally:
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/fraud/transcript/report', methods=['POST'])
+def export_transcript_fraud_report():
+    """Export one transcript fraud report as PDF or TXT."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+
+    try:
+        payload = request.get_json(silent=True) or {}
+        result = payload.get("result")
+
+        if not isinstance(result, dict):
+            return jsonify({"error": "Missing or invalid 'result' object"}), 400
+
+        comments = payload.get("comments", "") or ""
+        meta = payload.get("meta", {}) or {}
+        fmt = (payload.get("format", "pdf") or "pdf").lower()
+        original_filename = payload.get("originalFilename", "") or ""
+
+        reviewer = session.get("full_name") or session.get("username") or "unknown"
+
+        report_text = build_transcript_txt_report(
+            result=result,
+            reviewer=reviewer,
+            comments=comments,
+            meta=meta
+        )
+
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        base = meta.get("studentId") or os.path.splitext(original_filename)[0] or "transcript_fraud"
+        safe_base = re.sub(r"[^A-Za-z0-9_\-]+", "_", base).strip("_") or "transcript_fraud"
+
+        if fmt == "txt":
+            return send_file(
+                io.BytesIO(report_text.encode("utf-8")),
+                mimetype="text/plain",
+                as_attachment=True,
+                download_name=f"{safe_base}_report_{ts}.txt"
+            )
+
+        pdf_bytes = build_pdf_bytes_from_text(report_text)
+        return send_file(
+            io.BytesIO(pdf_bytes),
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name=f"{safe_base}_report_{ts}.pdf"
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/fraud/transcript/report/all', methods=['POST'])
+def export_transcript_fraud_report_all():
+    """Export one combined transcript fraud report for multiple documents."""
+    redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+
+    try:
+        payload = request.get_json(silent=True) or {}
+        documents = payload.get("documents", [])
+        fmt = (payload.get("format", "pdf") or "pdf").lower()
+
+        if not isinstance(documents, list) or len(documents) == 0:
+            return jsonify({"error": "No documents provided for export."}), 400
+
+        cleaned = []
+        for d in documents:
+            if not isinstance(d, dict):
+                continue
+            r = d.get("result")
+            if not isinstance(r, dict):
+                continue
+            cleaned.append({
+                "originalFilename": d.get("originalFilename", "") or "",
+                "result": r,
+                "comments": d.get("comments", "") or "",
+                "meta": d.get("meta", {}) or {}
+            })
+
+        if len(cleaned) == 0:
+            return jsonify({"error": "No valid document results found for export."}), 400
+
+        reviewer = session.get("full_name") or session.get("username") or "unknown"
+        report_text = build_multi_transcript_txt_report(cleaned, reviewer=reviewer)
+
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_base = "transcript_fraud_combined"
+
+        if fmt == "txt":
+            return send_file(
+                io.BytesIO(report_text.encode("utf-8")),
+                mimetype="text/plain",
+                as_attachment=True,
+                download_name=f"{safe_base}_{ts}.txt"
+            )
+
+        pdf_bytes = build_pdf_bytes_from_text(report_text)
+        return send_file(
+            io.BytesIO(pdf_bytes),
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name=f"{safe_base}_{ts}.pdf"
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def build_financial_txt_report(
+    result: dict,
+    reviewer: str,
+    comments: str = "",
+    meta: Optional[Dict] = None,
+    include_header: bool = True
+) -> str:
+
+    meta = meta or {}
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+
+    file_path = result.get("file_path", "")
+    doc_sev = result.get("doc_severity", "UNKNOWN")
+    pages = result.get("pages", []) or []
+
+    def safe(s: str, width: int = 240) -> str:
+        return shorten((s or "").strip().replace("\n", " "), width=width, placeholder="...")
+
+    lines = []
+
+    if include_header:
+        lines.append("INTERNATIONAL APPLICANT RATING ALGORITHM (IARA)")
+        lines.append("Financial Document Fraud Screening Report")
+        lines.append("=" * 78)
+        lines.append(f"Generated: {now}")
+        lines.append(f"Reviewer: {reviewer}")
+
+        if meta.get("studentId"):
+            lines.append(f"Student ID: {meta.get('studentId')}")
+        if meta.get("applicantName"):
+            lines.append(f"Applicant Name: {meta.get('applicantName')}")
+        if meta.get("program"):
+            lines.append(f"Program/Term: {meta.get('program')}")
+        lines.append("-" * 78)
+
+
+    lines.append(f"Document: {os.path.basename(file_path) if file_path else '(uploaded file)'}")
+    lines.append(f"Document Severity: {doc_sev}")
+    lines.append(f"Pages Analyzed: {len(pages)}")
+    lines.append("-" * 78)
+
+    # Only include fraud-positive signals in the justification section (clean & defensible)
+    for p in pages:
+        pnum = p.get("page_number")
+        sev = p.get("severity", "UNKNOWN")
+        conf = float(p.get("confidence", 0.0) or 0.0)
+
+        summary = safe(p.get("ai_summary", ""), width=260)
+        lines.append(f"Page {pnum}: Severity={sev}  Confidence={conf:.2f}")
+        if summary:
+            lines.append(f"  Summary: {summary}")
+
+        sigs = p.get("fraud_signals", []) or []
+        fraud_pos = [
+            s for s in sigs
+            if isinstance(s, dict) and (s.get("polarity") == "fraud_positive")
+        ]
+
+        if fraud_pos:
+            lines.append("  Fraud-Positive Signals:")
+            for s in fraud_pos[:12]:
+                signal = safe(s.get("signal", ""), width=260)
+                cat = s.get("category", "other")
+                src = s.get("source", "llm")
+                sc = float(s.get("confidence", 0.0) or 0.0)
+                lines.append(f"    - [{cat}] ({src}, {sc:.2f}) {signal}")
+        else:
+            lines.append("  Fraud-Positive Signals: None detected on this page.")
+
+        lines.append("")
+
+    lines.append("-" * 78)
+    lines.append("Reviewer Comments (for applicant file):")
+    lines.append((comments or "").strip() if (comments or "").strip() else "(none)")
+    lines.append("=" * 78)
+    lines.append("Note: This report is a pre-screening aid. Final decisions require human review.")
+    return "\n".join(lines)
+
+def build_multi_financial_txt_report(documents: list, reviewer: str) -> str:
+    """
+    documents: list of dicts like:
+      {
+        "originalFilename": "...pdf",
+        "result": { ... detector JSON ... },
+        "comments": "...",
+        "meta": { "studentId": "...", "applicantName": "...", "program": "..." }
+      }
+    """
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    lines = []
+    lines.append("INTERNATIONAL APPLICANT RATING ALGORITHM (IARA)")
+    lines.append("Financial Document Fraud Screening Report (Combined)")
+    lines.append("=" * 78)
+    lines.append(f"Generated: {now}")
+    lines.append(f"Reviewer: {reviewer}")
+    lines.append(f"Documents Included: {len(documents)}")
+    lines.append("=" * 78)
+    lines.append("")
+
+    for idx, doc in enumerate(documents, start=1):
+        result = doc.get("result") or {}
+        comments = doc.get("comments") or ""
+        meta = doc.get("meta") or {}
+        original_filename = doc.get("originalFilename") or "(unknown file)"
+
+        # Section header for each PDF
+        lines.append("#" * 78)
+        lines.append(f"DOCUMENT {idx}: {original_filename}")
+        if meta.get("studentId"):
+            lines.append(f"Student ID: {meta.get('studentId')}")
+        if meta.get("applicantName"):
+            lines.append(f"Applicant Name: {meta.get('applicantName')}")
+        if meta.get("program"):
+            lines.append(f"Program/Term: {meta.get('program')}")
+        lines.append("#" * 78)
+
+        # Reuse your single-doc builder (keeps style consistent)
+        lines.append(build_financial_txt_report(
+            result=result,
+            reviewer=reviewer,
+            comments=comments,
+            meta=meta,
+            include_header=False
+        ))
+
+        lines.append("")  # spacer
+
+    return "\n".join(lines)
+
+def build_transcript_txt_report(
+    result: dict,
+    reviewer: str,
+    comments: str = "",
+    meta: Optional[Dict] = None,
+    include_header: bool = True
+) -> str:
+    meta = meta or {}
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+
+    file_path = result.get("file_path", "")
+    doc_sev = result.get("doc_severity", "UNKNOWN")
+    pages = result.get("pages", []) or []
+
+    def safe(s: str, width: int = 240) -> str:
+        return shorten((s or "").strip().replace("\n", " "), width=width, placeholder="...")
+
+    lines = []
+
+    if include_header:
+        lines.append("INTERNATIONAL APPLICANT RATING ALGORITHM (IARA)")
+        lines.append("Transcript Fraud Pre-Screening Report")
+        lines.append("=" * 78)
+        lines.append(f"Generated: {now}")
+        lines.append(f"Reviewer: {reviewer}")
+
+        if meta.get("studentId"):
+            lines.append(f"Student ID: {meta.get('studentId')}")
+        if meta.get("applicantName"):
+            lines.append(f"Applicant Name: {meta.get('applicantName')}")
+        if meta.get("program"):
+            lines.append(f"Program/Term: {meta.get('program')}")
+        lines.append("-" * 78)
+
+    lines.append(f"Document: {os.path.basename(file_path) if file_path else '(uploaded file)'}")
+    lines.append(f"Document Severity: {doc_sev}")
+    lines.append(f"Pages Analyzed: {len(pages)}")
+    lines.append("-" * 78)
+
+    # Only include fraud-positive signals in justification section (defensible)
+    for p in pages:
+        pnum = p.get("page_number")
+        sev = p.get("severity", "UNKNOWN")
+        conf = float(p.get("confidence", 0.0) or 0.0)
+
+        summary = safe(p.get("ai_summary", ""), width=260)
+        lines.append(f"Page {pnum}: Severity={sev}  Confidence={conf:.2f}")
+        if summary:
+            lines.append(f"  Summary: {summary}")
+
+        sigs = p.get("fraud_signals", []) or []
+        fraud_pos = [
+            s for s in sigs
+            if isinstance(s, dict) and (s.get("polarity") == "fraud_positive")
+        ]
+
+        if fraud_pos:
+            lines.append("  Fraud-Positive Signals:")
+            for s in fraud_pos[:12]:
+                signal = safe(s.get("signal", ""), width=260)
+                cat = s.get("category", "other")
+                src = s.get("source", "llm")
+                sc = float(s.get("confidence", 0.0) or 0.0)
+                lines.append(f"    - [{cat}] ({src}, {sc:.2f}) {signal}")
+        else:
+            lines.append("  Fraud-Positive Signals: None detected on this page.")
+
+        lines.append("")
+
+    lines.append("-" * 78)
+    lines.append("Reviewer Comments (for applicant file):")
+    lines.append((comments or "").strip() if (comments or "").strip() else "(none)")
+    lines.append("=" * 78)
+    lines.append("Note: This report is a pre-screening aid. Final decisions require human review.")
+    return "\n".join(lines)
+
+def build_multi_transcript_txt_report(documents: list, reviewer: str) -> str:
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    lines = []
+    lines.append("INTERNATIONAL APPLICANT RATING ALGORITHM (IARA)")
+    lines.append("Transcript Fraud Pre-Screening Report (Combined)")
+    lines.append("=" * 78)
+    lines.append(f"Generated: {now}")
+    lines.append(f"Reviewer: {reviewer}")
+    lines.append(f"Documents Included: {len(documents)}")
+    lines.append("=" * 78)
+    lines.append("")
+
+    for idx, doc in enumerate(documents, start=1):
+        result = doc.get("result") or {}
+        comments = doc.get("comments") or ""
+        meta = doc.get("meta") or {}
+        original_filename = doc.get("originalFilename") or "(unknown file)"
+
+        lines.append("#" * 78)
+        lines.append(f"DOCUMENT {idx}: {original_filename}")
+        if meta.get("studentId"):
+            lines.append(f"Student ID: {meta.get('studentId')}")
+        if meta.get("applicantName"):
+            lines.append(f"Applicant Name: {meta.get('applicantName')}")
+        if meta.get("program"):
+            lines.append(f"Program/Term: {meta.get('program')}")
+        lines.append("#" * 78)
+
+        lines.append(build_transcript_txt_report(
+            result=result,
+            reviewer=reviewer,
+            comments=comments,
+            meta=meta,
+            include_header=False
+        ))
+
+        lines.append("")
+
+    return "\n".join(lines)
+
+def build_pdf_bytes_from_text(report_text: str) -> bytes:
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=letter)
+    width, height = letter
+
+    x = 0.75 * inch
+    y = height - 0.75 * inch
+
+    c.setFont("Courier", 10)
+
+    for line in report_text.splitlines():
+        if y < 0.75 * inch:
+            c.showPage()
+            c.setFont("Courier", 10)
+            y = height - 0.75 * inch
+        # prevent running off the page horizontally
+        c.drawString(x, y, (line or "")[:120])
+        y -= 12
+
+    c.save()
+    buf.seek(0)
+    return buf.getvalue()
 
 
 if __name__ == '__main__':

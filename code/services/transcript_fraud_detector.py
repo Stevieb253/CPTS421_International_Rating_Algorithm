@@ -27,7 +27,7 @@ from PIL import Image
 from openai import OpenAI
 
 # Reuse helpers + dataclass from your financial detector
-import code.services.financial_fraud_detector as fin
+from services import financial_fraud_detector as fin
 
 # OpenAI client (new-style)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))

@@ -1,704 +1,870 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Scoring System - WSU</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IARA — Student Analysis · WSU International Programs</title>
+  <!-- WSU Official Design System -->
+  <link rel="stylesheet" href="https://cdn-web-wsu.s3-us-west-2.amazonaws.com/designsystem/1.x/build/dist/wsu-design-system.bundle.dist.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── WSU Tokens ─────────────────────────────────────── */
+    :root {
+      --c:        #a60f2d;
+      --c-dark:   #7a0b21;
+      --c-light:  #ca1237;
+      --c-tint:   #fae6ea;
+      --g-text:   #262626;
+      --g-mid:    #737373;
+      --g-border: #e6e6e6;
+      --g-bg:     #f5f5f5;
+      --g-dark:   #1a1a1a;
+      --green:    #1a6b2e;
+      --green-bg: #e6f4ea;
+      --amber:    #7a4a00;
+      --amber-bg: #fef3c7;
+      --red:      #b91c1c;
+      --red-bg:   #fee2e2;
+      --blue:     #1d4e89;
+      --blue-bg:  #dbeafe;
+      --font:     'Montserrat', sans-serif;
+      --r:        4px;
+      --r-md:     8px;
+      --sh:       0 1px 4px rgba(0,0,0,0.09);
+      --sh-md:    0 3px 14px rgba(0,0,0,0.10);
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+    body {
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--g-text);
+      background: var(--g-bg);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        .container { max-width: 1700px; margin: 0 auto; }
+    /* ── Utility bar ── */
+    .util-bar {
+      background: var(--g-dark);
+      color: #999;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .05em;
+      padding: 5px 24px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .util-bar a { color: #999; text-decoration: none; }
+    .util-bar a:hover { color: #fff; }
 
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            padding: 20px;
-        }
-        .header h1 { font-size: 2.5rem; margin-bottom: 8px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        .header p { font-size: 1.1rem; opacity: 0.95; }
+    /* ── Global header ── */
+    .site-header {
+      background: var(--c);
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 6px rgba(0,0,0,.22);
+    }
+    .site-brand {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      gap: 0;
+      text-decoration: none;
+      color: #fff;
+    }
+    .brand-rule {
+      width: 3px;
+      height: 36px;
+      background: rgba(255,255,255,.3);
+      margin: 0 14px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .brand-wsu  { font-size: 18px; font-weight: 900; letter-spacing: -.01em; line-height: 1; }
+    .brand-app  { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; opacity: .75; margin-top: 3px; }
 
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
+    .site-nav { display: flex; align-items: stretch; }
+    .site-nav a {
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      color: rgba(255,255,255,.82);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-bottom: 3px solid transparent;
+      transition: all .15s;
+    }
+    .site-nav a:hover { color: #fff; background: rgba(255,255,255,.1); border-bottom-color: rgba(255,255,255,.5); }
+    .site-nav a.current { color: #fff; border-bottom-color: #fff; }
+    .site-nav a.nav-logout { opacity: .7; }
+    .site-nav a.nav-logout:hover { background: rgba(0,0,0,.15); opacity: 1; }
+    .nav-divider { width: 1px; background: rgba(255,255,255,.15); margin: 12px 0; }
 
-        .input-section, .results-section {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-        }
+    /* ── Page hero ── */
+    .page-hero {
+      background: var(--g-dark);
+      color: #fff;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .hero-text h1 { font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+    .hero-text p  { font-size: 12px; color: rgba(255,255,255,.55); margin-top: 3px; font-weight: 400; }
+    .hero-actions { display: flex; gap: 8px; }
+    .btn-outline {
+      padding: 7px 14px;
+      border: 1.5px solid rgba(255,255,255,.35);
+      background: transparent;
+      color: rgba(255,255,255,.85);
+      border-radius: var(--r);
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.6); color: #fff; }
 
-        .form-group { margin-bottom: 20px; }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #374151;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
+    /* ── Layout ── */
+    .page-body {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
 
-        .sample-buttons { display: flex; gap: 12px; margin-bottom: 24px; }
-        .sample-btn {
-            flex: 1; padding: 10px;
-            background: #f3f4f6;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        .sample-btn:hover { background: #667eea; color: white; border-color: #667eea; }
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border-radius: var(--r-md);
+      box-shadow: var(--sh);
+      overflow: hidden;
+    }
+    .card-head {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--g-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-head h2 {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--g-mid);
+    }
+    .card-head .step-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--g-mid);
+      background: var(--g-bg);
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+    .card-body { padding: 20px; }
 
-        .essay-container { margin-bottom: 20px; }
-        .essay-textarea {
-            width: 100%; padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 150px;
-        }
-        .essay-textarea:focus { outline: none; border-color: #667eea; }
-        .char-info { text-align: right; color: #6b7280; font-size: 0.875rem; margin-top: 4px; }
-        .essay-actions { display: flex; gap: 8px; margin-top: 8px; }
-        .action-btn {
-            padding: 8px 16px;
-            background: #f3f4f6;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-        }
-        .action-btn:hover { background: #e5e7eb; }
-        .text-preview, .text-stats {
-            display: none; margin-top: 12px; padding: 12px;
-            background: #f9fafb; border-radius: 8px; font-size: 0.875rem;
-        }
+    /* ── Sample buttons ── */
+    .sample-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .sample-btn {
+      padding: 7px 4px;
+      border: 1.5px solid var(--g-border);
+      background: #fff;
+      border-radius: var(--r);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: var(--g-mid);
+      transition: all .15s;
+    }
+    .sample-btn:hover        { border-color: var(--c); color: var(--c); background: var(--c-tint); }
+    .sample-btn.s-high:hover { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+    .sample-btn.s-risk:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
 
-        .risk-factors { display: flex; flex-direction: column; gap: 8px; }
-        .checkbox-item { display: flex; align-items: center; gap: 8px; }
-        .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
-        .checkbox-item label { margin: 0; cursor: pointer; font-weight: 500; }
+    /* ── Form ── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-group { margin-bottom: 13px; }
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--g-mid);
+      margin-bottom: 5px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid var(--g-border);
+      border-radius: var(--r);
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--g-text);
+      background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+      -webkit-appearance: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--c);
+      box-shadow: 0 0 0 3px rgba(166,15,45,.08);
+    }
+    .form-group textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
 
-        .analyze-btn {
-            width: 100%; padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 8px;
-            font-size: 1.1rem; font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .analyze-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
-        .analyze-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .essay-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
+    .char-count { font-size: 10px; color: var(--g-mid); font-weight: 600; }
+    .essay-tools { display: flex; gap: 5px; }
+    .tool-btn {
+      padding: 3px 9px;
+      background: var(--g-bg);
+      border: 1px solid var(--g-border);
+      border-radius: var(--r);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--g-mid);
+      transition: background .15s;
+    }
+    .tool-btn:hover { background: var(--g-border); }
+    .text-preview, .text-stats {
+      display: none;
+      margin-top: 8px;
+      padding: 10px;
+      background: var(--g-bg);
+      border-radius: var(--r);
+      font-size: 12px;
+      line-height: 1.6;
+      border: 1px solid var(--g-border);
+    }
 
-        /* ── Score cards ── */
-        .scores-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
-        .score-card { padding: 20px; border-radius: 12px; text-align: center; }
-        .score-card.academic  { background: linear-gradient(135deg,#10b981,#059669); color:white; }
-        .score-card.deductions{ background: linear-gradient(135deg,#ef4444,#dc2626); color:white; }
-        .score-card.overall   { background: linear-gradient(135deg,#3b82f6,#2563eb); color:white; }
-        .score-card h3 { font-size:.875rem; margin-bottom:12px; opacity:.9; font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
-        .score-value { font-size:2.5rem; font-weight:700; margin-bottom:4px; }
-        .score-label { font-size:.75rem; opacity:.85; }
+    /* ── Section divider ── */
+    .form-divider {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--g-mid);
+      padding: 12px 0 8px;
+      border-top: 1px solid var(--g-border);
+      margin-top: 4px;
+    }
 
-        /* ── Factor breakdown ── */
-        .analysis-details { background:#f9fafb; border-radius:12px; padding:20px; margin-bottom:20px; }
-        .analysis-details h3 { margin-bottom:16px; color:#1f2937; }
-        #factorBreakdown div { padding:8px 0; border-bottom:1px solid #e5e7eb; color:#374151; }
-        #factorBreakdown div:last-child { border-bottom:none; }
+    /* ── Checkboxes ── */
+    .risk-stack { display: flex; flex-direction: column; gap: 6px; }
+    .check-row { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 5px 8px; border-radius: var(--r); transition: background .12s; }
+    .check-row:hover { background: var(--g-bg); }
+    /* Custom checkbox — label-wrap pattern, immune to global *::after reset */
+    .check-row input[type="checkbox"] { display: none; }
+    .check-box {
+      width: 16px; height: 16px; flex-shrink: 0;
+      border: 1.5px solid var(--g-border); border-radius: 3px;
+      background: #fff; cursor: pointer; display: inline-flex;
+      align-items: center; justify-content: center;
+      transition: border-color .12s, background .12s;
+    }
+    .check-row input[type="checkbox"]:checked + .check-box {
+      background: var(--c); border-color: var(--c);
+    }
+    .check-row input[type="checkbox"]:checked + .check-box svg { display: block; }
+    .check-box svg { display: none; width: 10px; height: 10px; }
+    .check-row label { font-size: 12px; font-weight: 500; color: var(--g-text); cursor: pointer; user-select: none; display: flex; align-items: center; gap: 10px; }
+    /* ── Primary button ── */
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      background: var(--c);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      margin-top: 6px;
+    }
+    .btn-primary:hover { background: var(--c-dark); transform: translateY(-1px); }
+    .btn-primary:active { transform: none; }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
-        /* ── Recommendation ── */
-        .recommendation { background:linear-gradient(135deg,#fbbf24,#f59e0b); border-radius:12px; padding:24px; color:white; margin-bottom:20px; }
-        .recommendation h3 { margin-bottom:12px; font-size:1.25rem; }
-        .recommendation-text { font-size:1.1rem; font-weight:600; }
+    /* ── Score tiles ── */
+    .scores-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .score-tile {
+      border-radius: var(--r);
+      padding: 16px 10px;
+      text-align: center;
+      border: 1.5px solid;
+    }
+    .score-tile.pos { background: var(--green-bg); border-color: #9ecfab; }
+    .score-tile.neg { background: var(--red-bg);   border-color: #f0a0a8; }
+    .score-tile.fin { background: var(--blue-bg);  border-color: #93b8da; }
+    .tile-lbl {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 6px;
+    }
+    .score-tile.pos .tile-lbl { color: var(--green); }
+    .score-tile.neg .tile-lbl { color: var(--red); }
+    .score-tile.fin .tile-lbl { color: var(--blue); }
+    .tile-val {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -.02em;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .score-tile.pos .tile-val { color: var(--green); }
+    .score-tile.neg .tile-val { color: var(--red); }
+    .score-tile.fin .tile-val { color: var(--blue); }
+    .tile-sub { font-size: 9px; color: var(--g-mid); font-weight: 500; }
 
-        /* ── Staff Comments ── */
-        .comments-section {
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            background: #fffbeb;
-            border-color: #fcd34d;
-        }
-        .comments-section h3 {
-            margin-bottom: 6px;
-            color: #92400e;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .comments-section p.hint {
-            font-size: 0.82rem;
-            color: #b45309;
-            margin-bottom: 12px;
-        }
-        .comments-textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1.5px solid #fcd34d;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 100px;
-            background: white;
-            line-height: 1.6;
-            transition: border-color 0.2s;
-        }
-        .comments-textarea:focus { outline: none; border-color: #f59e0b; }
-        .comments-textarea::placeholder { color: #d1b878; }
+    /* ── Breakdown ── */
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--g-border);
+      font-size: 12px;
+    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .bd-key { color: var(--g-mid); font-weight: 500; }
+    .bd-val { font-weight: 800; color: var(--g-text); font-variant-numeric: tabular-nums; }
 
-        .reviewer-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 10px;
-        }
-        .reviewer-row label { font-size: 0.85rem; font-weight: 600; color: #92400e; white-space: nowrap; }
-        .reviewer-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1.5px solid #fcd34d;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            background: white;
-        }
-        .reviewer-input:focus { outline: none; border-color: #f59e0b; }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--g-mid);
+    }
+    .empty-state .empty-icon { font-size: 32px; opacity: .2; margin-bottom: 10px; }
+    .empty-state p { font-size: 12px; font-weight: 500; }
 
-        /* ── Report button ── */
-        .report-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 4px;
-        }
-        .btn-report {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn-report-pdf {
-            background: linear-gradient(135deg, #7c3aed, #5b21b6);
-            color: white;
-        }
-        .btn-report-pdf:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(124,58,237,0.35); }
-        .btn-report-pdf:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    /* ── Recommendation ── */
+    .rec-strip {
+      border-radius: var(--r);
+      padding: 14px 16px;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid;
+    }
+    .rec-strip.green  { background: var(--green-bg); border-color: var(--green); }
+    .rec-strip.amber  { background: var(--amber-bg); border-color: #d97706; }
+    .rec-strip.red    { background: var(--red-bg);   border-color: var(--red); }
+    .rec-strip.blue   { background: var(--blue-bg);  border-color: var(--blue); }
+    .rec-icon { font-size: 18px; flex-shrink: 0; }
+    .rec-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; opacity: .6; margin-bottom: 2px; }
+    .rec-text  { font-size: 14px; font-weight: 800; letter-spacing: -.01em; }
+    .rec-strip.green .rec-text { color: var(--green); }
+    .rec-strip.amber .rec-text { color: var(--amber); }
+    .rec-strip.red   .rec-text { color: var(--red); }
+    .rec-strip.blue  .rec-text { color: var(--blue); }
 
-        .btn-report-text {
-            background: #f3f4f6;
-            color: #374151;
-            border: 2px solid #e5e7eb;
-        }
-        .btn-report-text:hover { background: #e5e7eb; }
-        .btn-report-text:disabled { opacity: 0.5; cursor: not-allowed; }
+    /* ── Insights ── */
+    .insights-box {
+      background: var(--g-bg);
+      border: 1px solid var(--g-border);
+      border-radius: var(--r);
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    .insights-box .ins-head { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--g-mid); margin-bottom: 7px; }
+    .insights-box ul { list-style: none; }
+    .insights-box li { font-size: 12px; padding: 2px 0 2px 13px; position: relative; color: var(--g-text); }
+    .insights-box li::before { content: '–'; position: absolute; left: 0; color: var(--c); font-weight: 700; }
 
-        /* ── Spinner ── */
-        .spinner {
-            display: inline-block; width: 14px; height: 14px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%; border-top-color: white;
-            animation: spin 0.6s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── Comments ── */
+    .comments-wrap {
+      margin-top: 14px;
+      border: 1.5px solid #e8c94a;
+      border-radius: var(--r-md);
+      overflow: hidden;
+    }
+    .comments-head {
+      background: var(--amber-bg);
+      padding: 10px 16px;
+      border-bottom: 1px solid #e8c94a;
+    }
+    .comments-head h3 { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--amber); }
+    .comments-head p  { font-size: 11px; color: #a16207; margin-top: 2px; font-weight: 400; }
+    .comments-body { background: #fff; padding: 14px 16px; }
+    .comments-body textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid #e8c94a;
+      border-radius: var(--r);
+      font-family: var(--font);
+      font-size: 12px;
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.6;
+    }
+    .comments-body textarea:focus { outline: none; border-color: #d97706; }
+    .reviewer-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .reviewer-row label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--amber); white-space: nowrap; }
+    .reviewer-row input { flex: 1; padding: 7px 11px; border: 1.5px solid #e8c94a; border-radius: var(--r); font-family: var(--font); font-size: 12px; }
+    .reviewer-row input:focus { outline: none; border-color: #d97706; }
 
-        /* ── Toast ── */
-        .toast {
-            position: fixed; bottom: 24px; right: 24px;
-            padding: 14px 20px;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s;
-            z-index: 9999;
-            pointer-events: none;
-        }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.success { background: #059669; }
-        .toast.error { background: #dc2626; }
+    /* ── Report buttons ── */
+    .report-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .btn-report {
+      padding: 11px;
+      border-radius: var(--r);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all .15s;
+    }
+    .btn-rpt-pdf { background: var(--g-dark); color: #fff; border: none; }
+    .btn-rpt-pdf:hover { background: #000; }
+    .btn-rpt-pdf:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-rpt-txt { background: #fff; color: var(--g-text); border: 1.5px solid var(--g-border); }
+    .btn-rpt-txt:hover { background: var(--g-bg); }
+    .btn-rpt-txt:disabled { opacity: .5; cursor: not-allowed; }
 
-        @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
-    </style>
+    /* ── Spinner ── */
+    .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 20px; right: 20px;
+      padding: 11px 18px; border-radius: var(--r);
+      color: #fff; font-size: 12px; font-weight: 700;
+      opacity: 0; transform: translateY(6px);
+      transition: all .22s; z-index: 9999; pointer-events: none;
+      font-family: var(--font);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: var(--green); }
+    .toast.error   { background: var(--c); }
+
+    /* ── Footer ── */
+    .site-footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 11px;
+      color: var(--g-mid);
+      font-weight: 500;
+      border-top: 1px solid var(--g-border);
+      margin-top: 8px;
+      letter-spacing: .03em;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1100px) { .page-body { grid-template-columns: 1fr; } }
+    @media (max-width: 640px)  { .site-nav a span.lbl { display: none; } .hero-actions { display: none; } }
+  </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>🎓 Student Scoring System</h1>
-        <p>AI-Powered International Student Admissions Analysis</p>
-        <div style="margin-top:16px;">
-            <span style="color:white;margin-right:16px;">👤 {{ username }}</span>
-            <a href="/analytics" style="color:white;margin-right:16px;text-decoration:none;padding:8px 12px;background:rgba(255,255,255,0.1);border-radius:6px;">📊 Analytics</a>
-            <a href="/batch"    style="color:white;margin-right:16px;text-decoration:none;padding:8px 12px;background:rgba(255,255,255,0.1);border-radius:6px;">📁 Batch Process</a>
-            <button onclick="exportData()"  style="background:rgba(255,255,255,0.2);border:1px solid white;color:white;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px;">⬇️ Export CSV</button>
-            <button onclick="exportExcel()" style="background:rgba(255,255,255,0.2);border:1px solid white;color:white;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px;">📊 Export Excel</button>
-            <a href="/financial"  style="color:white;margin-right:16px;text-decoration:none;padding:8px 12px;background:rgba(255,255,255,0.1);border-radius:6px;">💵 Financial Docs</a>
-            <a href="/transcript" style="color:white;margin-right:16px;text-decoration:none;padding:8px 12px;background:rgba(255,255,255,0.1);border-radius:6px;">📄 Transcript Docs</a>
-            <a href="/logout" style="background:rgba(220,38,38,0.8);border:1px solid white;color:white;padding:8px 16px;border-radius:6px;text-decoration:none;">🚪 Logout</a>
-        </div>
+
+<!-- Header -->
+<header class="site-header">
+  <a class="site-brand" href="/">
+    <div>
+      <div class="brand-wsu">WSU</div>
+      <div class="brand-app">IARA System</div>
     </div>
+    <div class="brand-rule"></div>
+    <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.75);line-height:1.4;">International<br>Admissions Rating</div>
+  </a>
+  <nav class="site-nav">
+    <div class="nav-divider"></div>
+    <a href="/" class="current"><span class="lbl">Analysis</span></a>
+    <a href="/analytics"><span class="lbl">Analytics</span></a>
+    <a href="/batch"><span class="lbl">Batch</span></a>
+    <a href="/dashboard"><span class="lbl">Dashboard</span></a>
+    <a href="/financial"><span class="lbl">Financial</span></a>
+    <a href="/transcript"><span class="lbl">Transcripts</span></a>
+    <div class="nav-divider"></div>
+    <a href="/logout" class="nav-logout"><span class="lbl">{{ username }} · Logout</span></a>
+  </nav>
+</header>
 
-    <div class="main-content">
-        <!-- ══════════════════════ INPUT PANEL ══════════════════════ -->
-        <div class="input-section">
-            <h2 style="margin-bottom:24px;color:#1f2937;font-size:1.5rem;font-weight:700;">Student Profile</h2>
-
-            <div class="sample-buttons">
-                <button class="sample-btn" onclick="loadSample('high')">High Potential</button>
-                <button class="sample-btn" onclick="loadSample('medium')">Medium Risk</button>
-                <button class="sample-btn" onclick="loadSample('low')">High Risk</button>
-            </div>
-
-            <form id="studentForm" onsubmit="event.preventDefault(); analyzeStudent();">
-                <div class="form-group">
-                    <label>Student ID</label>
-                    <input type="text" id="studentId" placeholder="STU_2025_001">
-                </div>
-
-                <div class="form-group">
-                    <label>Country</label>
-                    <select id="country">
-                        <option value="">Select Country</option>
-                        <option value="India">India</option>
-                        <option value="Vietnam">Vietnam</option>
-                        <option value="Kenya">Kenya</option>
-                        <option value="China">China</option>
-                        <option value="Pakistan">Pakistan</option>
-                        <option value="Bangladesh">Bangladesh</option>
-                        <option value="South Korea">South Korea</option>
-                        <option value="Thailand">Thailand</option>
-                        <option value="Nigeria">Nigeria</option>
-                        <option value="Ghana">Ghana</option>
-                        <option value="Nepal">Nepal</option>
-                        <option value="Sri Lanka">Sri Lanka</option>
-                        <option value="Philippines">Philippines</option>
-                        <option value="Indonesia">Indonesia</option>
-                        <option value="Malaysia">Malaysia</option>
-                        <option value="Saudi Arabia">Saudi Arabia</option>
-                        <option value="UAE">UAE</option>
-                        <option value="Turkey">Turkey</option>
-                        <option value="Egypt">Egypt</option>
-                        <option value="Brazil">Brazil</option>
-                        <option value="Mexico">Mexico</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Admissions GPA</label>
-                    <input type="number" id="gpa" min="0" max="5" step="0.01" placeholder="3.5" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Curriculum Type</label>
-                    <select id="curriculum" required>
-                        <option value="">Select Curriculum</option>
-                        <option value="N/A">N/A</option>
-                        <option value="Standard Intl Secondary">Standard Intl Secondary Completion Boards/Transcripts</option>
-                        <option value="International University/HS English MOI">International University/HS with English MOI</option>
-                        <option value="IGCSE/IB">IGCSE / IB</option>
-                        <option value="US HS/University">US HS or University</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Travel History</label>
-                    <select id="travelHistory" required>
-                        <option value="">Select Travel History</option>
-                        <option value="No travel abroad">No travel abroad</option>
-                        <option value="1 non-listed">1 trip to non-listed country</option>
-                        <option value="1 listed or multiple non-listed">1 trip to country on list or multiple trips to non-list countries</option>
-                        <option value="Multiple listed">Traveled multiple times to countries on our list</option>
-                        <option value="SEVIS/Multiple US trips">Active or completed SEVIS record/multiple US trips</option>
-                    </select>
-                </div>
-
-                <div class="essay-container">
-                    <label>Personal Essay</label>
-                    <textarea id="essayText" class="essay-textarea" rows="6"
-                        placeholder="Paste the student's personal statement or essay here..."
-                        oninput="updateCharCount()"></textarea>
-                    <div class="char-info" id="essayCounter">0 chars</div>
-                    <div class="essay-actions">
-                        <button type="button" class="action-btn" onclick="togglePreview()">📖 Preview</button>
-                        <button type="button" class="action-btn" onclick="showStats()">📊 Stats</button>
-                        <button type="button" class="action-btn" onclick="clearText()">🗑️ Clear</button>
-                    </div>
-                    <div class="text-preview" id="textPreview"></div>
-                    <div class="text-stats"   id="textStats"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Negative / Risk Factors</label>
-                    <div class="risk-factors">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="reqAppFeeWaiver">
-                            <label for="reqAppFeeWaiver">Requested Application Fee Waiver</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="cannotPayFee">
-                            <label for="cannotPayFee">Cannot Pay App Fee (No Card)</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="reqEnrollmentFeeWaiver">
-                            <label for="reqEnrollmentFeeWaiver">Requested Enrollment Fee Waiver</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="bankDocsPending">
-                            <label for="bankDocsPending">Bank Documents Pending</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="earlyI20">
-                            <label for="earlyI20">Requested Early I-20</label>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="analyze-btn" id="analyzeBtn">
-                    🚀 Analyze Student
-                </button>
-            </form>
-        </div>
-
-        <!-- ══════════════════════ RESULTS PANEL ══════════════════════ -->
-        <div class="results-section">
-            <h2 style="margin-bottom:32px;color:#1f2937;font-size:1.5rem;font-weight:700;">Analysis Results</h2>
-
-            <!-- Scores -->
-            <div class="scores-grid">
-                <div class="score-card academic">
-                    <h3>POS Score</h3>
-                    <div class="score-value" id="posScore">--</div>
-                    <div class="score-label">positive attributes</div>
-                </div>
-                <div class="score-card deductions">
-                    <h3>NEG Deductions</h3>
-                    <div class="score-value" id="negScore">--</div>
-                    <div class="score-label">risk factors</div>
-                </div>
-                <div class="score-card overall">
-                    <h3>Final Score</h3>
-                    <div class="score-value" id="finalScore">--</div>
-                    <div class="score-label">POS - NEG</div>
-                </div>
-            </div>
-
-            <!-- Factor breakdown -->
-            <div class="analysis-details">
-                <h3>Factor Breakdown</h3>
-                <div id="factorBreakdown">
-                    <p style="color:#6b7280;text-align:center;padding:40px;">
-                        Enter student information and click "Analyze Student" to see detailed analysis.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Recommendation -->
-            <div class="recommendation" id="recommendation" style="display:none;">
-                <h3>🎯 Recommendation</h3>
-                <div class="recommendation-text" id="recommendationText"></div>
-            </div>
-
-            <!-- ══ STAFF COMMENTS ══ -->
-            <div class="comments-section" id="commentsSection" style="display:none;">
-                <h3>📝 Staff Comments &amp; Notes</h3>
-                <p class="hint">
-                    These comments will be included verbatim in the generated report and
-                    stored with the applicant's record. Use this space to justify your
-                    admission decision, flag concerns, or note next steps.
-                </p>
-                <textarea
-                    id="staffComments"
-                    class="comments-textarea"
-                    placeholder="e.g. Applicant's research project aligns well with our AI initiative. Recommend expedited review. Pending bank docs should be resolved before issuing I-20..."
-                ></textarea>
-
-                <div class="reviewer-row">
-                    <label for="reviewerName">Reviewed by:</label>
-                    <input
-                        type="text"
-                        id="reviewerName"
-                        class="reviewer-input"
-                        placeholder="Your name (appears on the report)"
-                    >
-                </div>
-            </div>
-
-            <!-- ══ REPORT ACTIONS ══ -->
-            <div class="report-actions" id="reportActions" style="display:none;">
-                <button class="btn-report btn-report-pdf" id="reportPdfBtn" onclick="generateReport('pdf')">
-                    📄 Download PDF Report
-                </button>
-                <button class="btn-report btn-report-text" id="reportTxtBtn" onclick="generateReport('txt')">
-                    📃 Plain Text Report
-                </button>
-            </div>
-        </div>
-    </div>
+<!-- Hero -->
+<div class="page-hero">
+  <div class="hero-text">
+    <h1>Student Analysis</h1>
+    <p>AI-powered scoring &amp; essay evaluation for international admissions decisions</p>
+  </div>
+  <div class="hero-actions">
+    <button class="btn-outline" onclick="exportData()">Export CSV</button>
+    <button class="btn-outline" onclick="exportExcel()">Export Excel</button>
+  </div>
 </div>
 
-<!-- Toast notification -->
+<!-- Main -->
+<main class="page-body">
+
+  <!-- ── INPUT ─────────────────────────────────────────── -->
+  <div>
+    <div class="card">
+      <div class="card-head">
+        <h2>Student Profile</h2>
+        <span class="step-tag">Step 1</span>
+      </div>
+      <div class="card-body">
+
+        <div class="sample-row">
+          <button class="sample-btn s-high" onclick="loadSample('high')">✓ High Potential</button>
+          <button class="sample-btn"        onclick="loadSample('medium')">⚠ Medium Risk</button>
+          <button class="sample-btn s-risk" onclick="loadSample('low')">✕ High Risk</button>
+        </div>
+
+        <form id="studentForm" onsubmit="event.preventDefault(); analyzeStudent();">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Student ID</label>
+              <input type="text" id="studentId" placeholder="STU_2025_001">
+            </div>
+            <div class="form-group">
+              <label>Country</label>
+              <select id="country">
+                <option value="">Select Country</option>
+                <option>India</option><option>Vietnam</option><option>Kenya</option>
+                <option>China</option><option>Pakistan</option><option>Bangladesh</option>
+                <option>South Korea</option><option>Thailand</option><option>Nigeria</option>
+                <option>Ghana</option><option>Nepal</option><option>Sri Lanka</option>
+                <option>Philippines</option><option>Indonesia</option><option>Malaysia</option>
+                <option>Saudi Arabia</option><option>UAE</option><option>Turkey</option>
+                <option>Egypt</option><option>Brazil</option><option>Mexico</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Admissions GPA</label>
+            <input type="number" id="gpa" min="0" max="5" step="0.01" placeholder="3.50" required>
+          </div>
+
+          <div class="form-group">
+            <label>Curriculum Type</label>
+            <select id="curriculum" required>
+              <option value="">Select Curriculum</option>
+              <option value="N/A">N/A</option>
+              <option value="Standard Intl Secondary">Standard Intl Secondary</option>
+              <option value="International University/HS English MOI">Intl University / HS English MOI</option>
+              <option value="IGCSE/IB">IGCSE / IB</option>
+              <option value="US HS/University">US HS or University</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Travel History</label>
+            <select id="travelHistory" required>
+              <option value="">Select Travel History</option>
+              <option value="No travel abroad">No travel abroad</option>
+              <option value="1 non-listed">1 trip — non-listed country</option>
+              <option value="1 listed or multiple non-listed">1 listed or multiple non-listed</option>
+              <option value="Multiple listed">Multiple listed countries</option>
+              <option value="SEVIS/Multiple US trips">Active SEVIS / Multiple US trips</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Personal Essay</label>
+            <textarea id="essayText" placeholder="Paste the student's personal statement here…" oninput="updateCharCount()"></textarea>
+            <div class="essay-meta">
+              <span class="char-count" id="essayCounter">0 chars</span>
+              <div class="essay-tools">
+                <button type="button" class="tool-btn" onclick="togglePreview()">Preview</button>
+                <button type="button" class="tool-btn" onclick="showStats()">Stats</button>
+                <button type="button" class="tool-btn" onclick="clearText()">Clear</button>
+              </div>
+            </div>
+            <div class="text-preview" id="textPreview"></div>
+            <div class="text-stats"   id="textStats"></div>
+          </div>
+
+          <div class="form-divider">Risk Factors</div>
+          <div class="form-group" style="margin-bottom:4px;">
+            <div class="risk-stack">
+              <div class="check-row"><label><input type="checkbox" id="reqAppFeeWaiver"><span class="check-box"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Requested Application Fee Waiver</label></div>
+              <div class="check-row"><label><input type="checkbox" id="cannotPayFee"><span class="check-box"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Cannot Pay App Fee (No Card)</label></div>
+              <div class="check-row"><label><input type="checkbox" id="reqEnrollmentFeeWaiver"><span class="check-box"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Requested Enrollment Fee Waiver</label></div>
+              <div class="check-row"><label><input type="checkbox" id="bankDocsPending"><span class="check-box"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Bank Documents Pending</label></div>
+              <div class="check-row"><label><input type="checkbox" id="earlyI20"><span class="check-box"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Requested Early I-20</label></div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="analyzeBtn">Analyze Student</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULTS ────────────────────────────────────────── -->
+  <div>
+    <div class="card">
+      <div class="card-head">
+        <h2>Analysis Results</h2>
+        <span class="step-tag">Step 2</span>
+      </div>
+      <div class="card-body">
+
+        <div class="scores-row">
+          <div class="score-tile pos">
+            <div class="tile-lbl">POS Score</div>
+            <div class="tile-val" id="posScore">—</div>
+            <div class="tile-sub">positive factors</div>
+          </div>
+          <div class="score-tile neg">
+            <div class="tile-lbl">NEG Score</div>
+            <div class="tile-val" id="negScore">—</div>
+            <div class="tile-sub">risk deductions</div>
+          </div>
+          <div class="score-tile fin">
+            <div class="tile-lbl">Final Score</div>
+            <div class="tile-val" id="finalScore">—</div>
+            <div class="tile-sub">POS minus NEG</div>
+          </div>
+        </div>
+
+        <div class="form-divider" style="margin-top:0;">Factor Breakdown</div>
+        <div id="factorBreakdown">
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <p>Submit a student profile to see the scoring breakdown.</p>
+          </div>
+        </div>
+
+        <div id="recSection" style="display:none;">
+          <div class="form-divider">Recommendation</div>
+          <div id="recBanner"></div>
+        </div>
+
+        <div id="commentsSection" style="display:none;">
+          <div class="comments-wrap">
+            <div class="comments-head">
+              <h3>Staff Comments &amp; Notes</h3>
+              <p>Included verbatim in the generated report. Justify your decision, flag concerns, or note next steps.</p>
+            </div>
+            <div class="comments-body">
+              <textarea id="staffComments" placeholder="e.g. Strong research background. Recommend expedited review. Pending bank docs before I-20…"></textarea>
+              <div class="reviewer-row">
+                <label for="reviewerName">Reviewed by</label>
+                <input type="text" id="reviewerName" placeholder="Your name (appears on report)">
+              </div>
+            </div>
+          </div>
+          <div class="report-row">
+            <button class="btn-report btn-rpt-pdf" id="reportPdfBtn" onclick="generateReport('pdf')">Download PDF</button>
+            <button class="btn-report btn-rpt-txt" id="reportTxtBtn" onclick="generateReport('txt')">Plain Text</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  IARA — International Admissions Rating Algorithm
+</footer>
+
 <div class="toast" id="toast"></div>
 
-<script>
-    // ─── State ─────────────────────────────────────────────────────────────────
-    let lastStudentData  = null;
-    let lastResultData   = null;
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  let lastStudentData = null, lastResultData = null;
 
-    // ─── Toast helper ──────────────────────────────────────────────────────────
-    function showToast(msg, type = 'success') {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.className   = `toast ${type} show`;
-        setTimeout(() => { t.className = 'toast'; }, 3500);
-    }
+  function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast ${type} show`;
+    setTimeout(() => { t.className = 'toast'; }, 3200);
+  }
 
-    // ─── Char count ────────────────────────────────────────────────────────────
-    function updateCharCount() {
-        const text = document.getElementById('essayText').value;
-        document.getElementById('essayCounter').textContent = `${text.length} chars`;
-    }
+  function updateCharCount() {
+    document.getElementById('essayCounter').textContent =
+      document.getElementById('essayText').value.length.toLocaleString() + ' chars';
+  }
 
-    function togglePreview() {
-        const preview = document.getElementById('textPreview');
-        const text    = document.getElementById('essayText').value;
-        preview.style.display = preview.style.display === 'block' ? 'none' : 'block';
-        preview.innerHTML = text.replace(/\n/g, '<br>');
-    }
+  function togglePreview() {
+    const el = document.getElementById('textPreview');
+    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    el.innerHTML = document.getElementById('essayText').value.replace(/\n/g,'<br>');
+  }
 
-    function showStats() {
-        const stats = document.getElementById('textStats');
-        const text  = document.getElementById('essayText').value;
-        const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
-        const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
-        if (stats.style.display === 'block') { stats.style.display = 'none'; return; }
-        stats.innerHTML = `<strong>Text Statistics:</strong><br>
-            Characters: ${text.length}<br>Words: ${words}<br>
-            Sentences: ${sentences}<br>
-            Avg words/sentence: ${sentences > 0 ? (words/sentences).toFixed(1) : 0}`;
-        stats.style.display = 'block';
-    }
+  function showStats() {
+    const el = document.getElementById('textStats');
+    if (el.style.display === 'block') { el.style.display = 'none'; return; }
+    const text = document.getElementById('essayText').value;
+    const words = text.trim().split(/\s+/).filter(w=>w).length;
+    const sents = text.split(/[.!?]+/).filter(s=>s.trim()).length;
+    el.innerHTML = `<strong>Text stats</strong> &nbsp;·&nbsp; Chars: ${text.length} &nbsp;·&nbsp; Words: ${words} &nbsp;·&nbsp; Sentences: ${sents} &nbsp;·&nbsp; Avg words/sentence: ${sents?Math.round(words/sents):0}`;
+    el.style.display = 'block';
+  }
 
-    function clearText() {
-        if (confirm('Clear the essay text?')) {
-            document.getElementById('essayText').value = '';
-            updateCharCount();
-        }
-    }
+  function clearText() {
+    if (confirm('Clear essay text?')) { document.getElementById('essayText').value=''; updateCharCount(); }
+  }
 
-    // ─── Sample loader ─────────────────────────────────────────────────────────
-    async function loadSample(type) {
-        try {
-            const response = await fetch(`/api/sample/${type}`);
-            const data     = await response.json();
-            document.getElementById('studentId').value    = data.studentId    || '';
-            document.getElementById('country').value      = data.country      || '';
-            document.getElementById('gpa').value          = data.gpa          || '';
-            document.getElementById('curriculum').value   = data.curriculum   || '';
-            document.getElementById('travelHistory').value= data.travelHistory|| '';
-            document.getElementById('essayText').value    = data.essayText    || '';
-            ['reqAppFeeWaiver','cannotPayFee','reqEnrollmentFeeWaiver','bankDocsPending','earlyI20']
-                .forEach(id => { document.getElementById(id).checked = false; });
-            if (data.negFactors) {
-                data.negFactors.forEach(f => {
-                    const el = document.getElementById(f);
-                    if (el) el.checked = true;
-                });
-            }
-            updateCharCount();
-        } catch (error) { alert('Error loading sample: ' + error.message); }
-    }
+  async function loadSample(type) {
+    try {
+      const r = await fetch(`/api/sample/${type}`);
+      const d = await r.json();
+      document.getElementById('studentId').value     = d.studentId    || '';
+      document.getElementById('country').value       = d.country      || '';
+      document.getElementById('gpa').value           = d.gpa          || '';
+      document.getElementById('curriculum').value    = d.curriculum   || '';
+      document.getElementById('travelHistory').value = d.travelHistory|| '';
+      document.getElementById('essayText').value     = d.essayText    || '';
+      ['reqAppFeeWaiver','cannotPayFee','reqEnrollmentFeeWaiver','bankDocsPending','earlyI20']
+        .forEach(id => { document.getElementById(id).checked = false; });
+      (d.negFactors||[]).forEach(f => { const el=document.getElementById(f); if(el) el.checked=true; });
+      updateCharCount();
+      showToast('Sample loaded');
+    } catch(e) { showToast('Error: '+e.message,'error'); }
+  }
 
-    // ─── Main analysis ─────────────────────────────────────────────────────────
-    async function analyzeStudent() {
-        const btn = document.getElementById('analyzeBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> Analyzing...';
+  function recStyle(rec, score) {
+    if (!rec) return 'blue';
+    const r = rec.toUpperCase();
+    if (r.includes('HIGHLY')) return 'green';
+    if (r.includes('HIGH RISK') || r.includes('BORDERLINE')) return 'red';
+    if (r.includes('CONDITIONAL') || r.includes('MONITORING')) return 'amber';
+    if (r.includes('RECOMMENDED')) return 'green';
+    return score >= 6.5 ? 'green' : score >= 5.5 ? 'amber' : 'red';
+  }
+  const recIcons = { green:'✅', amber:'⚠️', red:'🚨', blue:'ℹ️' };
 
-        try {
-            // ✅ Collect ALL fields including studentId and country
-            const studentId    = document.getElementById('studentId').value.trim() || 'N/A';
-            const country      = document.getElementById('country').value           || 'N/A';
-            const gpa          = parseFloat(document.getElementById('gpa').value)   || 0;
-            const curriculum   = document.getElementById('curriculum').value;
-            const travelHistory= document.getElementById('travelHistory').value;
-            const essayText    = document.getElementById('essayText').value.trim();
+  async function analyzeStudent() {
+    const btn = document.getElementById('analyzeBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Analyzing…';
+    try {
+      const studentId=document.getElementById('studentId').value.trim()||'N/A';
+      const country=document.getElementById('country').value||'N/A';
+      const gpa=parseFloat(document.getElementById('gpa').value)||0;
+      const curriculum=document.getElementById('curriculum').value;
+      const travelHistory=document.getElementById('travelHistory').value;
+      const essayText=document.getElementById('essayText').value.trim();
+      const negFactors=[];
+      ['reqAppFeeWaiver','cannotPayFee','reqEnrollmentFeeWaiver','bankDocsPending','earlyI20']
+        .forEach(id=>{ if(document.getElementById(id).checked) negFactors.push(id); });
 
-            const negFactors = [];
-            ['reqAppFeeWaiver','cannotPayFee','reqEnrollmentFeeWaiver','bankDocsPending','earlyI20']
-                .forEach(id => { if (document.getElementById(id).checked) negFactors.push(id); });
+      lastStudentData = {studentId,country,gpa,curriculum,travelHistory,essayText,negFactors,essayLength:essayText.length};
 
-            // Save for report generation later
-            lastStudentData = { studentId, country, gpa, curriculum, travelHistory, essayText, negFactors, essayLength: essayText.length };
+      const resp = await fetch('/api/analyze',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({studentId,country,gpa,curriculum,travelHistory,essayText,negFactors})
+      });
+      if (!resp.ok) throw new Error('Analysis failed');
+      const result = await resp.json();
+      lastResultData = result;
 
-            const response = await fetch('/api/analyze', {
-                method : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body   : JSON.stringify({ studentId, country, gpa, curriculum, travelHistory, essayText, negFactors })
-            });
+      document.getElementById('posScore').textContent   = result.posScore.toFixed(2);
+      document.getElementById('negScore').textContent   = result.negScore.toFixed(2);
+      document.getElementById('finalScore').textContent = result.finalScore.toFixed(2);
 
-            if (!response.ok) throw new Error('Analysis failed');
+      const bd = document.getElementById('factorBreakdown');
+      const rows = Object.entries(result.breakdown||{}).map(([k,v])=>
+        `<div class="breakdown-row"><span class="bd-key">${k}</span><span class="bd-val">${typeof v==='number'?v.toFixed(2):v}</span></div>`
+      ).join('');
+      const ins = (result.essayAnalysis?.insights||[]);
+      const insHtml = ins.length ? `<div class="insights-box"><div class="ins-head">Essay Insights</div><ul>${ins.map(i=>`<li>${i}</li>`).join('')}</ul></div>` : '';
+      bd.innerHTML = rows + insHtml;
 
-            const result = await response.json();
-            lastResultData = result;
+      const rec=result.recommendation||'';
+      const sty=recStyle(rec,result.finalScore);
+      document.getElementById('recBanner').innerHTML =
+        `<div class="rec-strip ${sty}"><span class="rec-icon">${recIcons[sty]||'ℹ️'}</span><div><div class="rec-label">Recommendation</div><div class="rec-text">${rec}</div></div></div>`;
+      document.getElementById('recSection').style.display = 'block';
+      document.getElementById('commentsSection').style.display = 'block';
+      showToast('Analysis complete ✓');
+    } catch(e) { showToast('Error: '+e.message,'error'); }
+    finally { btn.disabled=false; btn.innerHTML='Analyze Student'; }
+  }
 
-            // ── Update score cards
-            document.getElementById('posScore').textContent  = result.posScore.toFixed(2);
-            document.getElementById('negScore').textContent  = result.negScore.toFixed(2);
-            document.getElementById('finalScore').textContent= result.finalScore.toFixed(2);
+  async function generateReport(format) {
+    if (!lastStudentData||!lastResultData) { showToast('Run an analysis first','error'); return; }
+    const btn = format==='pdf'?document.getElementById('reportPdfBtn'):document.getElementById('reportTxtBtn');
+    const orig = btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Generating…';
+    try {
+      const resp = await fetch('/api/generate-report',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          studentData:lastStudentData, resultData:lastResultData,
+          staffComments:document.getElementById('staffComments').value.trim(),
+          reviewerName:document.getElementById('reviewerName').value.trim()||'Staff',
+          format
+        })
+      });
+      if (!resp.ok) { const e=await resp.json(); throw new Error(e.error||'Failed'); }
+      const blob=await resp.blob();
+      const a=Object.assign(document.createElement('a'),{
+        href:URL.createObjectURL(blob),
+        download:`${lastStudentData.studentId}_report_${new Date().toISOString().split('T')[0]}.${format}`
+      });
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(a.href);
+      showToast(`${format.toUpperCase()} downloaded ✓`);
+    } catch(e) { showToast('Report failed: '+e.message,'error'); }
+    finally { btn.disabled=false; btn.innerHTML=orig; }
+  }
 
-            // ── Factor breakdown
-            const breakdown = document.getElementById('factorBreakdown');
-            breakdown.innerHTML =
-                Object.entries(result.breakdown)
-                    .map(([k, v]) => `<div>${k}: ${typeof v === 'number' ? v.toFixed(2) : v}</div>`)
-                    .join('') +
-                `<div style="margin-top:16px;padding-top:16px;border-top:2px solid #e5e7eb;">
-                    <strong>Essay Analysis Insights:</strong><br>
-                    ${(result.essayAnalysis.insights || []).map(i => `<div style="margin-top:4px;">• ${i}</div>`).join('')}
-                 </div>`;
-
-            // ── Recommendation
-            document.getElementById('recommendation').style.display = 'block';
-            document.getElementById('recommendationText').innerHTML = `<strong>${result.recommendation}</strong>`;
-
-            // ── Reveal comments & report buttons
-            document.getElementById('commentsSection').style.display = 'block';
-            document.getElementById('reportActions').style.display   = 'flex';
-
-            showToast('Analysis complete ✓');
-
-        } catch (error) {
-            showToast('Error: ' + error.message, 'error');
-        } finally {
-            btn.disabled  = false;
-            btn.innerHTML = '🚀 Analyze Student';
-        }
-    }
-
-    // ─── Report generation ─────────────────────────────────────────────────────
-    async function generateReport(format) {
-        if (!lastStudentData || !lastResultData) {
-            showToast('Run an analysis first', 'error');
-            return;
-        }
-
-        const pdfBtn = document.getElementById('reportPdfBtn');
-        const txtBtn = document.getElementById('reportTxtBtn');
-        const activeBtn = format === 'pdf' ? pdfBtn : txtBtn;
-
-        activeBtn.disabled = true;
-        const origText     = activeBtn.innerHTML;
-        activeBtn.innerHTML = '<span class="spinner"></span> Generating...';
-
-        try {
-            const staffComments = document.getElementById('staffComments').value.trim();
-            const reviewerName  = document.getElementById('reviewerName').value.trim() || 'Staff';
-
-            const payload = {
-                studentData  : lastStudentData,
-                resultData   : lastResultData,
-                staffComments: staffComments,
-                reviewerName : reviewerName,
-                format       : format
-            };
-
-            const response = await fetch('/api/generate-report', {
-                method : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body   : JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error || 'Report generation failed');
-            }
-
-            const blob  = await response.blob();
-            const url   = window.URL.createObjectURL(blob);
-            const a     = document.createElement('a');
-            const sid   = lastStudentData.studentId || 'report';
-            const date  = new Date().toISOString().split('T')[0];
-            a.href      = url;
-            a.download  = `${sid}_admission_report_${date}.${format}`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-
-            showToast(`${format.toUpperCase()} report downloaded ✓`);
-
-        } catch (error) {
-            showToast('Report failed: ' + error.message, 'error');
-        } finally {
-            activeBtn.disabled  = false;
-            activeBtn.innerHTML = origText;
-        }
-    }
-
-    // ─── CSV / Excel exports (unchanged) ──────────────────────────────────────
-    async function exportData() {
-        try {
-            const response = await fetch('/api/export/csv', {
-                method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'
-            });
-            const blob = await response.blob();
-            const url  = window.URL.createObjectURL(blob);
-            const a    = document.createElement('a');
-            a.href     = url;
-            a.download = `student_analysis_${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(a); a.click(); a.remove();
-            window.URL.revokeObjectURL(url);
-        } catch (error) { showToast('Export failed: ' + error.message, 'error'); }
-    }
-
-    async function exportExcel() {
-        try {
-            const response = await fetch('/api/export/excel', {
-                method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'
-            });
-            const blob = await response.blob();
-            const url  = window.URL.createObjectURL(blob);
-            const a    = document.createElement('a');
-            a.href     = url;
-            a.download = `student_analysis_${new Date().toISOString().split('T')[0]}.xlsx`;
-            document.body.appendChild(a); a.click(); a.remove();
-            window.URL.revokeObjectURL(url);
-        } catch (error) { showToast('Export failed: ' + error.message, 'error'); }
-    }
+  async function exportData() {
+    try {
+      const r=await fetch('/api/export/csv',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+      const b=await r.blob();
+      const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:`wsu_analysis_${new Date().toISOString().split('T')[0]}.csv`});
+      document.body.appendChild(a);a.click();a.remove();
+    } catch(e){showToast('Export failed','error');}
+  }
+  async function exportExcel() {
+    try {
+      const r=await fetch('/api/export/excel',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+      const b=await r.blob();
+      const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:`wsu_analysis_${new Date().toISOString().split('T')[0]}.xlsx`});
+      document.body.appendChild(a);a.click();a.remove();
+    } catch(e){showToast('Export failed','error');}
+  }
 </script>
 </body>
 </html>

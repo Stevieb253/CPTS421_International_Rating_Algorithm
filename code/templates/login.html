@@ -1,197 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Student Scoring System</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .login-container {
-            background: white;
-            border-radius: 16px;
-            padding: 48px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        
-        .login-header h1 {
-            font-size: 2rem;
-            color: #1f2937;
-            margin-bottom: 8px;
-        }
-        
-        .login-header p {
-            color: #6b7280;
-        }
-        
-        .form-group {
-            margin-bottom: 24px;
-        }
-        
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #374151;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .login-btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .login-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .error-message {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        
-        .info-box {
-            background: #f3f4f6;
-            padding: 16px;
-            border-radius: 8px;
-            margin-top: 24px;
-            text-align: center;
-        }
-        
-        .info-box p {
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin: 4px 0;
-        }
-        
-        .info-box strong {
-            color: #1f2937;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — IARA · WSU International Programs</title>
+  <link rel="stylesheet" href="https://cdn-web-wsu.s3-us-west-2.amazonaws.com/designsystem/1.x/build/dist/wsu-design-system.bundle.dist.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--c:#a60f2d;--cd:#7a0b21;--ct:#fae6ea;--gt:#262626;--gm:#737373;--gb:#e6e6e6;--gbg:#f5f5f5;--gd:#1a1a1a;--font:'Montserrat',sans-serif;--r:4px}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);min-height:100vh;display:grid;grid-template-columns:1fr 400px;background:var(--gd);-webkit-font-smoothing:antialiased}
+    .left{background:var(--c);padding:48px;display:flex;flex-direction:column;justify-content:space-between;color:#fff}
+    .l-uni{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+    .l-app{font-size:13px;font-weight:800;letter-spacing:.04em;margin-bottom:48px}
+    .l-rule{width:40px;height:3px;background:rgba(255,255,255,.3);border-radius:2px;margin-bottom:32px}
+    .l-head{font-size:34px;font-weight:900;line-height:1.1;letter-spacing:-.02em;margin-bottom:18px}
+    .l-desc{font-size:13px;line-height:1.75;opacity:.72;max-width:420px}
+    .feature-list{list-style:none;margin-top:32px;display:flex;flex-direction:column;gap:10px}
+    .feature-list li{font-size:12px;font-weight:500;opacity:.8;display:flex;align-items:center;gap:10px}
+    .feature-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);flex-shrink:0}
+    .left-foot{font-size:10px;opacity:.4;letter-spacing:.04em}
+    .right{background:#fff;display:flex;flex-direction:column;justify-content:center;padding:52px 40px}
+    .r-head{font-size:22px;font-weight:900;color:var(--gd);margin-bottom:4px;letter-spacing:-.01em}
+    .r-sub{font-size:12px;color:var(--gm);margin-bottom:32px;font-weight:400}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--gm);margin-bottom:5px}
+    .form-group input{width:100%;padding:11px 13px;border:1.5px solid var(--gb);border-radius:var(--r);font-family:var(--font);font-size:13px;color:var(--gd);transition:border-color .15s,box-shadow .15s}
+    .form-group input:focus{outline:none;border-color:var(--c);box-shadow:0 0 0 3px rgba(166,15,45,.09)}
+    .btn-submit{width:100%;padding:13px;background:var(--c);color:#fff;border:none;border-radius:var(--r);font-family:var(--font);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s,transform .1s;margin-top:6px}
+    .btn-submit:hover{background:var(--cd);transform:translateY(-1px)}
+    .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .error-box{background:var(--ct);color:var(--c);border:1.5px solid #f0a0a8;border-radius:var(--r);padding:10px 13px;font-size:12px;font-weight:600;margin-bottom:16px;display:none}
+    .creds-box{margin-top:28px;padding:14px;background:var(--gbg);border-radius:var(--r);border:1px solid var(--gb)}
+    .cb-head{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--gm);margin-bottom:8px}
+    .cb-row{display:flex;justify-content:space-between;font-size:12px;color:var(--gm);margin-top:4px}
+    .cb-row strong{color:var(--gd);font-weight:700}
+    @media(max-width:700px){body{grid-template-columns:1fr}.left{display:none}}
+  </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>🎓 Student Scoring</h1>
-            <p>International Admissions Analysis System</p>
-        </div>
-        
-        <div class="error-message" id="errorMessage"></div>
-        
-        <form id="loginForm" onsubmit="event.preventDefault(); login();">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="username" required autocomplete="username">
-            </div>
-            
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" required autocomplete="current-password">
-            </div>
-            
-            <button type="submit" class="login-btn" id="loginBtn">
-                Login
-            </button>
-        </form>
-        
-        <div class="info-box">
-            <p><strong>Default Login:</strong></p>
-            <p>Username: <strong>admin</strong></p>
-            <p>Password: <strong>admin123</strong></p>
-        </div>
-    </div>
-
-    <script>
-        async function login() {
-            const btn = document.getElementById('loginBtn');
-            const errorMsg = document.getElementById('errorMessage');
-            
-            btn.disabled = true;
-            btn.textContent = 'Logging in...';
-            errorMsg.style.display = 'none';
-            
-            try {
-                const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',  // ✅ important: allows cookies/sessions
-                body: JSON.stringify({
-                    username: document.getElementById('username').value,
-                    password: document.getElementById('password').value
-                })
-            });
-
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    window.location.href = '/';
-                } else {
-                    errorMsg.textContent = data.message || 'Invalid credentials';
-                    errorMsg.style.display = 'block';
-                }
-            } catch (error) {
-                errorMsg.textContent = 'Login failed. Please try again.';
-                errorMsg.style.display = 'block';
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Login';
-            }
-        }
-    </script>
+<div class="left">
+  <div>
+    <div class="l-uni">Washington State University</div>
+    <div class="l-app">International Admissions Rating Algorithm</div>
+    <div class="l-rule"></div>
+    <div class="l-head">Score. Evaluate.<br>Decide with confidence.</div>
+    <div class="l-desc">AI-powered decision support for WSU's Office of International Programs. Consistent, auditable, and fast.</div>
+    <ul class="feature-list">
+      <li>Structured GPA, curriculum and travel scoring rubric</li>
+      <li>AI essay quality analysis via transformer models</li>
+      <li>PDF report generation with staff comments</li>
+      <li>Batch processing for large applicant pools</li>
+      <li>Country-level analytics and trend dashboard</li>
+    </ul>
+  </div>
+  <div class="left-foot">Washington State University · Pullman </div>
+</div>
+<div class="right">
+  <div class="r-head">Sign In</div>
+  <div class="r-sub">Enter your staff credentials to continue.</div>
+  <div class="error-box" id="errorBox"></div>
+  <form onsubmit="event.preventDefault();doLogin();">
+    <div class="form-group"><label>Username</label><input type="text" id="username" autocomplete="username" required placeholder="admin"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="password" autocomplete="current-password" required placeholder="••••••••"></div>
+    <button type="submit" class="btn-submit" id="loginBtn">Sign In</button>
+  </form>
+  <div class="creds-box">
+    <div class="cb-head">Default Access</div>
+    <div class="cb-row"><span>Username</span><strong>admin</strong></div>
+    <div class="cb-row"><span>Password</span><strong>admin123</strong></div>
+  </div>
+</div>
+<script>
+  async function doLogin(){
+    const btn=document.getElementById('loginBtn'),err=document.getElementById('errorBox');
+    btn.disabled=true;btn.textContent='Signing in…';err.style.display='none';
+    try{
+      const resp=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',
+        body:JSON.stringify({username:document.getElementById('username').value,password:document.getElementById('password').value})});
+      const data=await resp.json();
+      if(data.success){window.location.href=data.redirect||'/';}
+      else{err.textContent=data.error||'Invalid credentials.';err.style.display='block';}
+    }catch(e){err.textContent='Connection error.';err.style.display='block';}
+    finally{btn.disabled=false;btn.textContent='Sign In';}
+  }
+</script>
 </body>
 </html>

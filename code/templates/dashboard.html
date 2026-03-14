@@ -1,190 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Student Scoring System</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .header {
-            background: white;
-            border-radius: 12px;
-            padding: 24px 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .nav-links { margin-top: 16px; display: flex; gap: 16px; flex-wrap: wrap; }
-        .nav-links a { color: #667eea; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 4px; transition: background 0.2s; }
-        .nav-links a:hover { background: #f0f0f0; }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
-        }
-        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.12); }
-        .stat-card h3 {
-            font-size: 0.8rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            line-height: 1;
-            margin-bottom: 6px;
-        }
-        .stat-label { font-size: 0.85rem; color: #6c757d; }
-        
-        .content-box {
-            background: white;
-            border-radius: 12px;
-            padding: 28px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-        .content-box h2 { margin-bottom: 20px; color: #2c3e50; font-size: 1.2rem; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-        th {
-            background: #f8f9fa;
-            padding: 12px;
-            text-align: left;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #6c757d;
-            text-transform: uppercase;
-            border-bottom: 2px solid #e9ecef;
-        }
-        td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
-        tr:hover { background: #f8f9fa; }
-        
-        .btn {
-            padding: 8px 16px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn:hover { background: #5568d3; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — IARA · WSU</title>
+  <link rel="stylesheet" href="https://cdn-web-wsu.s3-us-west-2.amazonaws.com/designsystem/1.x/build/dist/wsu-design-system.bundle.dist.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--c:#a60f2d;--cd:#7a0b21;--ct:#fae6ea;--gt:#262626;--gm:#737373;--gb:#e6e6e6;--gbg:#f5f5f5;--gd:#1a1a1a;--green:#1a6b2e;--amber:#d97706;--font:'Montserrat',sans-serif;--r:4px;--rmd:8px;--sh:0 1px 4px rgba(0,0,0,.09)}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);font-size:14px;color:var(--gt);background:var(--gbg);min-height:100vh;-webkit-font-smoothing:antialiased}
+    .util-bar{background:var(--gd);color:#999;font-size:11px;font-weight:500;letter-spacing:.05em;padding:5px 24px;display:flex;justify-content:space-between}
+    .site-header{background:var(--c);display:flex;align-items:stretch;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:200;box-shadow:0 2px 6px rgba(0,0,0,.22)}
+    .site-brand{display:flex;align-items:center;padding:12px 0;gap:0;text-decoration:none;color:#fff}
+    .brand-rule{width:3px;height:36px;background:rgba(255,255,255,.3);margin:0 14px;border-radius:2px;flex-shrink:0}
+    .brand-wsu{font-size:18px;font-weight:900;letter-spacing:-.01em;line-height:1}
+    .brand-app{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;opacity:.75;margin-top:3px}
+    .site-nav{display:flex;align-items:stretch}
+    .site-nav a{display:flex;align-items:center;padding:0 14px;color:rgba(255,255,255,.82);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:3px solid transparent;transition:all .15s}
+    .site-nav a:hover{color:#fff;background:rgba(255,255,255,.1);border-bottom-color:rgba(255,255,255,.5)}
+    .site-nav a.current{color:#fff;border-bottom-color:#fff}
+    .nav-div{width:1px;background:rgba(255,255,255,.15);margin:12px 0}
+    .page-hero{background:var(--gd);color:#fff;padding:20px 24px}
+    .page-hero h1{font-size:20px;font-weight:800;letter-spacing:-.01em}
+    .page-hero p{font-size:12px;color:rgba(255,255,255,.55);margin-top:3px}
+    .page-body{max-width:1440px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:18px}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px}
+    .stat-card{background:#fff;border-radius:var(--rmd);box-shadow:var(--sh);padding:18px 18px 14px;border-left:4px solid var(--gb);transition:transform .15s}
+    .stat-card:hover{transform:translateY(-2px)}
+    .stat-card.s1{border-left-color:var(--c)}.stat-card.s2{border-left-color:var(--green)}.stat-card.s3{border-left-color:var(--gm)}.stat-card.s4{border-left-color:var(--amber)}
+    .stat-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--gm);margin-bottom:8px}
+    .stat-val{font-size:28px;font-weight:900;color:var(--gt);letter-spacing:-.02em;line-height:1;margin-bottom:3px}
+    .stat-sub{font-size:10px;color:var(--gm);font-weight:500}
+    .card{background:#fff;border-radius:var(--rmd);box-shadow:var(--sh);overflow:hidden}
+    .card-head{padding:13px 20px;border-bottom:1px solid var(--gb);display:flex;align-items:center;justify-content:space-between}
+    .card-head h2{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--gm)}
+    .card-head a{font-size:10px;font-weight:700;color:var(--c);text-decoration:none}
+    .card-head a:hover{text-decoration:underline}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:var(--gbg);padding:9px 12px;text-align:left;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--gm);border-bottom:2px solid #d8d8d8}
+    .data-table td{padding:11px 12px;border-bottom:1px solid var(--gb);font-size:12px;color:var(--gt)}
+    .data-table tr:hover td{background:#fafafa}
+    .data-table a{color:var(--c);text-decoration:none;font-weight:700}
+    .data-table a:hover{text-decoration:underline}
+    .dl-btn{padding:4px 10px;background:var(--gbg);border:1px solid var(--gb);border-radius:var(--r);font-family:var(--font);font-size:10px;font-weight:700;cursor:pointer;color:var(--gt);text-decoration:none;display:inline-block}
+    .dl-btn:hover{background:var(--gb)}
+    .empty-msg{text-align:center;padding:40px;color:var(--gm);font-size:12px;font-weight:500}
+    .actions-wrap{padding:20px;display:flex;gap:8px;flex-wrap:wrap}
+    .act-btn{padding:9px 16px;border:1.5px solid var(--gb);background:#fff;border-radius:var(--r);font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gt);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+    .act-btn:hover{border-color:var(--c);color:var(--c);background:var(--ct)}
+    .act-btn.primary{background:var(--c);color:#fff;border-color:var(--c)}
+    .act-btn.primary:hover{background:var(--cd)}
+    .site-footer{text-align:center;padding:16px;font-size:11px;color:var(--gm);font-weight:500;border-top:1px solid var(--gb);letter-spacing:.03em}
+    @media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📊 Dashboard</h1>
-            <p style="color: #6c757d;">System overview and recent activity</p>
-            <div class="nav-links">
-                <a href="/">← Analysis</a>
-                <a href="/reports">📄 Reports</a>
-                <a href="/analytics">📈 Analytics</a>
-                {% if session.role == 'admin' %}
-                <a href="/admin/users">👥 Users</a>
-                {% endif %}
-                <a href="/logout">🚪 Logout</a>
-            </div>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Analyses</h3>
-                <div class="stat-value">{{ stats.total_analyses }}</div>
-                <div class="stat-label">students analyzed</div>
-            </div>
-            
-            <div class="stat-card">
-                <h3>Total Reports</h3>
-                <div class="stat-value">{{ stats.total_reports }}</div>
-                <div class="stat-label">documents generated</div>
-            </div>
-            
-            <div class="stat-card">
-                <h3>Active Users</h3>
-                <div class="stat-value">{{ stats.active_users }}</div>
-                <div class="stat-label">staff members</div>
-            </div>
-            
-            <div class="stat-card">
-                <h3>This Week</h3>
-                <div class="stat-value">{{ stats.recent_activity }}</div>
-                <div class="stat-label">activities logged</div>
-            </div>
-        </div>
-
-        <!-- Recent Reports -->
-        <div class="content-box">
-            <h2>📄 Recent Reports</h2>
-            {% if recent_reports %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Type</th>
-                        <th>Reviewed By</th>
-                        <th>Generated</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for report in recent_reports %}
-                    <tr>
-                        <td>
-                            <a href="/student/{{ report.student_id }}" style="color: #667eea; text-decoration: none; font-weight: 600;">
-                                {{ report.student_id }}
-                            </a>
-                        </td>
-                        <td>{{ report.report_type.upper() }}</td>
-                        <td>{{ report.reviewer_name }}</td>
-                        <td>{{ report.reviewed_at[:16] }}</td>
-                        <td>
-                            <a href="/api/report/{{ report.id }}/download" class="btn">⬇️</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p style="color: #6c757d; text-align: center; padding: 40px;">No reports yet</p>
-            {% endif %}
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="content-box">
-            <h2>⚡ Quick Actions</h2>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <a href="/" class="btn">🚀 New Analysis</a>
-                <a href="/batch" class="btn">📁 Batch Process</a>
-                <a href="/reports" class="btn">📄 View All Reports</a>
-                <a href="/analytics" class="btn">📈 Analytics</a>
-                {% if session.role == 'admin' %}
-                <a href="/admin/users" class="btn">👥 Manage Users</a>
-                {% endif %}
-            </div>
-        </div>
+<header class="site-header">
+  <a class="site-brand" href="/">
+    <div><div class="brand-wsu">WSU</div><div class="brand-app">IARA System</div></div>
+    <div class="brand-rule"></div>
+    <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.75);line-height:1.4;">International<br>Admissions Rating</div>
+  </a>
+  <nav class="site-nav">
+    <div class="nav-div"></div>
+    <a href="/">Analysis</a><a href="/analytics">Analytics</a><a href="/batch">Batch</a>
+    <a href="/dashboard" class="current">Dashboard</a>
+    {% if session.role == 'admin' %}<a href="/admin/users">Users</a>{% endif %}
+    <div class="nav-div"></div><a href="/logout" style="opacity:.7">Logout</a>
+  </nav>
+</header>
+<div class="page-hero"><h1>System Dashboard</h1><p>Overview of activity, reports, and usage</p></div>
+<main class="page-body">
+  <div class="stats-grid">
+    <div class="stat-card s1"><div class="stat-lbl">Total Analyses</div><div class="stat-val">{{ stats.totalAnalyses or stats.total_analyses or 0 }}</div><div class="stat-sub">students scored</div></div>
+    <div class="stat-card s2"><div class="stat-lbl">Total Reports</div><div class="stat-val">{{ stats.totalReports or stats.total_reports or 0 }}</div><div class="stat-sub">documents generated</div></div>
+    <div class="stat-card s3"><div class="stat-lbl">Active Users</div><div class="stat-val">{{ stats.activeUsers or stats.active_users or 0 }}</div><div class="stat-sub">staff members</div></div>
+    <div class="stat-card s4"><div class="stat-lbl">This Week</div><div class="stat-val">{{ stats.reportsThisWeek or stats.recent_activity or 0 }}</div><div class="stat-sub">reports generated</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Recent Reports</h2><a href="/reports">View all →</a></div>
+    {% if recent_reports %}
+    <table class="data-table">
+      <thead><tr><th>Student ID</th><th>Reviewed By</th><th>Generated</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for r in recent_reports %}
+        <tr>
+          <td><a href="/student/{{ r.student_id }}">{{ r.student_id }}</a></td>
+          <td>{{ r.reviewer or '—' }}</td>
+          <td style="color:var(--gm);">{{ r.reviewed_at[:16] if r.reviewed_at else '—' }}</td>
+          <td><a href="/api/report/{{ r.id }}/download" class="dl-btn">Download</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty-msg">No reports generated yet.</p>
+    {% endif %}
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Quick Actions</h2></div>
+    <div class="actions-wrap">
+      <a href="/" class="act-btn primary">New Analysis</a>
+      <a href="/batch" class="act-btn">Batch Process</a>
+      <a href="/analytics" class="act-btn">Analytics</a>
+      <a href="/reports" class="act-btn">All Reports</a>
+      <a href="/financial" class="act-btn">Financial Docs</a>
+      <a href="/transcript" class="act-btn">Transcripts</a>
+      {% if session.role == 'admin' %}<a href="/admin/users" class="act-btn">Manage Users</a>{% endif %}
     </div>
+  </div>
+</main>
+<footer class="site-footer">IARA — International Admissions Rating Algorithm</footer>
 </body>
 </html>

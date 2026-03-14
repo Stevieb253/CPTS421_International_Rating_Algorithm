@@ -2,6 +2,10 @@
 Flask Backend Integration for Enhanced Student Scoring System
 Integrates the enhanced essay analyzer with your existing frontend
 """
+from dotenv import load_dotenv
+load_dotenv()
+from openai import OpenAI
+from services.financial_fraud_detector import analyze_financial_pdf
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_file
 from services.student_analyzer import StudentAnalyzerSafe
 from db.database import get_db

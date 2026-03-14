@@ -1,826 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transcript Screening - Student Scoring System</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            padding: 20px;
-        }
-
-        .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .header p {
-            font-size: 1.05rem;
-            opacity: 0.95;
-        }
-
-        .nav-bar {
-            margin-top: 16px;
-        }
-
-        .nav-bar a,
-        .nav-bar button {
-            display: inline-block;
-            color: white;
-            margin-right: 12px;
-            text-decoration: none;
-            padding: 8px 12px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 6px;
-            border: 1px solid transparent;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .nav-bar a:hover,
-        .nav-bar button:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .nav-bar .danger {
-            background: rgba(220,38,38,0.8);
-            border-color: white;
-        }
-
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-        }
-
-        .card h2 {
-            font-size: 1.4rem;
-            margin-bottom: 12px;
-            color: #1f2937;
-        }
-
-        .card p.subtitle {
-            font-size: 0.9rem;
-            color: #6b7280;
-            margin-bottom: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #374151;
-        }
-
-        .form-group input[type="file"] {
-            width: 100%;
-        }
-
-        .upload-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .upload-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .info-box {
-            margin-top: 16px;
-            padding: 12px;
-            background: #f3f4f6;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            color: #4b5563;
-        }
-
-        .severity-pill {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 999px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .severity-low    { background: #dcfce7; color: #166534; }
-        .severity-medium { background: #fef9c3; color: #854d0e; }
-        .severity-high   { background: #fee2e2; color: #b91c1c; }
-
-        .results-header {
-            margin-bottom: 16px;
-        }
-
-        .results-header h3 {
-            font-size: 1.1rem;
-            margin-bottom: 4px;
-        }
-
-        .results-header p {
-            font-size: 0.85rem;
-            color: #6b7280;
-        }
-
-        .page-card {
-            border-radius: 12px;
-            border: 1px solid #e5e7eb;
-            padding: 16px;
-            margin-bottom: 16px;
-            background: #f9fafb;
-        }
-
-        .page-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .page-title-row h4 {
-            font-size: 1rem;
-            color: #111827;
-        }
-
-        .pill {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            margin-left: 4px;
-        }
-
-        .pill-esc {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        .pill-conf {
-            background: #eef2ff;
-            color: #4338ca;
-        }
-
-        .pill-ela, .pill-cm {
-            background: #f1f5f9;
-            color: #475569;
-        }
-
-        .summary-block {
-            margin: 8px 0 12px 0;
-            font-size: 0.9rem;
-            color: #374151;
-        }
-
-        .ocr-preview {
-            font-size: 0.8rem;
-            color: #6b7280;
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 8px;
-            margin-bottom: 10px;
-            max-height: 100px;
-            overflow-y: auto;
-        }
-
-        .signals-list {
-            margin-top: 8px;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 8px;
-        }
-
-        .signal-item {
-            margin-bottom: 8px;
-            padding: 6px 8px;
-            border-radius: 8px;
-            background: #ffffff;
-            font-size: 0.85rem;
-        }
-
-        .signal-meta {
-            font-size: 0.75rem;
-            margin-top: 4px;
-        }
-
-        .polarity-fraud {
-            color: #b91c1c;
-        }
-
-        .polarity-benign {
-            color: #166534;
-        }
-
-        .polarity-inc {
-            color: #92400e;
-        }
-
-        .error-message {
-            margin-top: 8px;
-            padding: 10px;
-            background: #fee2e2;
-            color: #b91c1c;
-            border-radius: 8px;
-            display: none;
-            font-size: 0.85rem;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.6s linear infinite;
-        }
-
-        /* ---- Export / reviewer notes ---- */
-        .export-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        @media (max-width: 900px) {
-            .export-grid { grid-template-columns: 1fr; }
-        }
-
-        .text-input, .text-area {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .text-input:focus, .text-area:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
-        }
-
-        .text-area {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .export-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
-
-        .secondary-btn {
-            padding: 10px 12px;
-            background: #111827;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .secondary-btn:hover { opacity: 0.92; }
-
-        .secondary-btn:disabled,
-        .upload-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @media (max-width: 1024px) {
-            .main-content { flex-direction: column; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transcript Screening — IARA · WSU</title>
+  <link rel="stylesheet" href="https://cdn-web-wsu.s3-us-west-2.amazonaws.com/designsystem/1.x/build/dist/wsu-design-system.bundle.dist.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--c:#a60f2d;--cd:#7a0b21;--ct:#fae6ea;--gt:#262626;--gm:#737373;--gb:#e6e6e6;--gbg:#f5f5f5;--gd:#1a1a1a;--green:#1a6b2e;--greenbg:#e6f4ea;--amber:#7a4a00;--amberbg:#fef3c7;--red:#b91c1c;--redbg:#fee2e2;--font:'Montserrat',sans-serif;--r:4px;--rmd:8px;--sh:0 1px 4px rgba(0,0,0,.09)}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);font-size:14px;color:var(--gt);background:var(--gbg);min-height:100vh;-webkit-font-smoothing:antialiased}
+    .util-bar{background:var(--gd);color:#999;font-size:11px;font-weight:500;letter-spacing:.05em;padding:5px 24px;display:flex;justify-content:space-between}
+    .site-header{background:var(--c);display:flex;align-items:stretch;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:200;box-shadow:0 2px 6px rgba(0,0,0,.22)}
+    .site-brand{display:flex;align-items:center;padding:12px 0;gap:0;text-decoration:none;color:#fff}
+    .brand-rule{width:3px;height:36px;background:rgba(255,255,255,.3);margin:0 14px;border-radius:2px;flex-shrink:0}
+    .brand-wsu{font-size:18px;font-weight:900;letter-spacing:-.01em;line-height:1}
+    .brand-app{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;opacity:.75;margin-top:3px}
+    .site-nav{display:flex;align-items:stretch}
+    .site-nav a{display:flex;align-items:center;padding:0 14px;color:rgba(255,255,255,.82);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:3px solid transparent;transition:all .15s}
+    .site-nav a:hover{color:#fff;background:rgba(255,255,255,.1);border-bottom-color:rgba(255,255,255,.5)}
+    .site-nav a.current{color:#fff;border-bottom-color:#fff}
+    .nav-div{width:1px;background:rgba(255,255,255,.15);margin:12px 0}
+    .page-hero{background:var(--gd);color:#fff;padding:20px 24px}
+    .page-hero h1{font-size:20px;font-weight:800;letter-spacing:-.01em}
+    .page-hero p{font-size:12px;color:rgba(255,255,255,.55);margin-top:3px}
+    .page-body{max-width:1400px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:18px}
+    .card{background:#fff;border-radius:var(--rmd);box-shadow:var(--sh);overflow:hidden}
+    .card-head{padding:13px 20px;border-bottom:1px solid var(--gb)}
+    .card-head h2{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--gm)}
+    .card-body{padding:20px}
+    .form-group{margin-bottom:14px}
+    .form-group label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gm);margin-bottom:5px}
+    .upload-zone{border:2px dashed var(--gb);border-radius:var(--rmd);padding:44px 24px;text-align:center;cursor:pointer;transition:all .2s;background:#fafafa}
+    .upload-zone:hover{border-color:var(--c);background:var(--ct)}
+    .upload-zone.over{border-color:var(--c);background:var(--ct)}
+    .uz-icon{font-size:32px;opacity:.3;margin-bottom:10px}
+    .upload-zone h3{font-size:13px;font-weight:700;color:var(--gt);margin-bottom:4px}
+    .upload-zone p{font-size:11px;color:var(--gm)}
+    .btn-primary{width:100%;padding:12px;background:var(--c);color:#fff;border:none;border-radius:var(--r);font-family:var(--font);font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:12px}
+    .btn-primary:hover{background:var(--cd)}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+    .info-box{background:var(--gbg);border:1px solid var(--gb);border-radius:var(--r);padding:13px 16px;margin-top:14px;font-size:12px;color:var(--gm)}
+    .info-box strong{color:var(--gt);display:block;margin-bottom:6px}
+    .info-box ul{margin-left:16px;list-style:disc;display:flex;flex-direction:column;gap:3px}
+    .info-box li{font-size:11px}
+    .error-box{background:var(--redbg);border:1.5px solid #f0a0a8;border-radius:var(--r);padding:10px 13px;margin-top:10px;font-size:12px;color:var(--red);font-weight:600;display:none}
+    /* Results */
+    .sev-pill{display:inline-block;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;margin-bottom:6px}
+    .sev-low{background:var(--greenbg);color:var(--green)}
+    .sev-medium{background:var(--amberbg);color:var(--amber)}
+    .sev-high{background:var(--redbg);color:var(--red)}
+    .sev-err{background:var(--ct);color:var(--c)}
+    .doc-block{background:var(--gbg);border:1px solid var(--gb);border-radius:var(--rmd);padding:16px;margin-bottom:16px}
+    .doc-name{font-size:14px;font-weight:800;color:var(--gt);margin:6px 0 4px}
+    .doc-sub{font-size:11px;color:var(--gm)}
+    .meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+    .meta-grid input{width:100%;padding:8px 10px;border:1.5px solid var(--gb);border-radius:var(--r);font-family:var(--font);font-size:12px;color:var(--gt)}
+    .meta-grid input:focus{outline:none;border-color:var(--c)}
+    .meta-notes textarea{width:100%;padding:9px 11px;border:1.5px solid var(--gb);border-radius:var(--r);font-family:var(--font);font-size:12px;resize:vertical;min-height:80px;line-height:1.6;margin-top:8px}
+    .meta-notes textarea:focus{outline:none;border-color:var(--c)}
+    .page-card{border:1px solid var(--gb);border-radius:var(--r);padding:14px;margin-top:10px;background:#fff}
+    .page-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+    .page-row h4{font-size:13px;font-weight:700;color:var(--gt)}
+    .pill{display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;margin-left:4px}
+    .pill-conf{background:#eef2ff;color:#4338ca}
+    .pill-ela,.pill-cm{background:var(--gbg);color:var(--gm);border:1px solid var(--gb)}
+    .pill-esc{background:#e0f2fe;color:#0369a1}
+    .summary-blk{font-size:12px;color:var(--gt);margin:8px 0 10px;line-height:1.6}
+    .ocr-prev{font-size:11px;color:var(--gm);background:var(--gbg);border-radius:var(--r);padding:8px;margin-bottom:10px;max-height:90px;overflow-y:auto;border:1px solid var(--gb)}
+    .signals-head{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gm);padding-top:10px;border-top:1px solid var(--gb);margin-top:4px;margin-bottom:6px}
+    .signal-item{background:var(--gbg);border-radius:var(--r);padding:8px 10px;margin-bottom:6px;font-size:12px;border:1px solid var(--gb)}
+    .signal-meta{font-size:10px;margin-top:4px;color:var(--gm)}
+    .pol-fraud{color:var(--red);font-weight:700}
+    .pol-benign{color:var(--green);font-weight:700}
+    .pol-inc{color:var(--amber);font-weight:700}
+    .export-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .btn-secondary{padding:9px 16px;background:var(--gd);color:#fff;border:none;border-radius:var(--r);font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;transition:opacity .15s}
+    .btn-secondary:hover{opacity:.85}
+    .btn-secondary:disabled{opacity:.4;cursor:not-allowed}
+    .export-status{font-size:11px;color:var(--gm);align-self:center}
+    .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .section-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gm);margin:12px 0 6px}
+    .site-footer{text-align:center;padding:16px;font-size:11px;color:var(--gm);font-weight:500;border-top:1px solid var(--gb);letter-spacing:.03em}
+    @media(max-width:900px){.meta-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>📄 Transcript Screening</h1>
-        <p>Prototype fraud pre-screening for academic transcripts and academic records</p>
-
-        <div class="nav-bar">
-            <span style="color: white; margin-right: 16px;">👤 {{ username }}</span>
-            <a href="/">🏠 Student Scoring</a>
-            <a href="/analytics">📊 Analytics</a>
-            <a href="/batch">📁 Batch Process</a>
-            <a href="/financial">💵 Financial Docs</a>
-            <!-- corrected route: /transcript -->
-            <a href="/transcript" style="border-color: white;">📄 Transcripts</a>
-            <a href="/logout" class="danger">🚪 Logout</a>
-        </div>
+<header class="site-header">
+  <a class="site-brand" href="/">
+    <div><div class="brand-wsu">WSU</div><div class="brand-app">IARA System</div></div>
+    <div class="brand-rule"></div>
+    <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.75);line-height:1.4;">International<br>Admissions Rating</div>
+  </a>
+  <nav class="site-nav">
+    <div class="nav-div"></div>
+    <a href="/">Analysis</a><a href="/analytics">Analytics</a><a href="/batch">Batch</a>
+    <a href="/financial">Financial</a><a href="/transcript" class="current">Transcripts</a>
+    <div class="nav-div"></div><a href="/logout" style="opacity:.7">{{ username }} · Logout</a>
+  </nav>
+</header>
+<div class="page-hero"><h1>Transcript Screening</h1><p>Pre-screening for academic transcripts and official academic records — prototype tool</p></div>
+<main class="page-body">
+  <!-- Upload -->
+  <div class="card">
+    <div class="card-head"><h2>Upload Transcript PDF(s)</h2></div>
+    <div class="card-body">
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('transcriptFile').click()">
+        <div class="uz-icon">📄</div>
+        <h3>Click to select or drag &amp; drop transcript(s)</h3>
+        <p>Academic transcripts or official academic records · Max 20 pages per document</p>
+      </div>
+      <input type="file" id="transcriptFile" accept=".pdf" multiple style="display:none" onchange="fileSelected(this)">
+      <button class="btn-primary" id="analyzeTranscriptBtn" onclick="uploadAndAnalyzeTranscript()">Analyze Transcript(s)</button>
+      <div class="error-box" id="errorBox"></div>
+      <div class="info-box">
+        <strong>What this does</strong>
+        <ul>
+          <li>Runs OCR to extract document text</li>
+          <li>Computes pixel heuristics (ELA, copy-move)</li>
+          <li>Uses AI vision to flag unusual regions and content conflicts</li>
+          <li>Returns a conservative LOW / MEDIUM / HIGH risk label</li>
+        </ul>
+        <p style="margin-top:8px;font-size:11px;font-style:italic;">Pre-screening only. Humans must review MEDIUM and HIGH results.</p>
+      </div>
     </div>
-
-    <div class="main-content">
-        <!-- Upload card -->
-        <div class="card">
-            <h2>Upload Transcript PDF(s)</h2>
-            <p class="subtitle">
-                Select a single academic transcript or official academic record.
-                The system will run OCR, image heuristics, and an AI transcript-specific analysis.
-            </p>
-
-            <div class="form-group">
-                <label for="transcriptFile">Transcript PDF(s)</label>
-                <!-- allow multiple transcripts at once -->
-                <input type="file" id="transcriptFile" accept=".pdf" multiple>
-            </div>
-
-            <button class="upload-btn" id="analyzeTranscriptBtn" onclick="uploadAndAnalyzeTranscript()">
-                🔍 Analyze Transcript(s)
-            </button>
-
-            <div id="errorBox" class="error-message"></div>
-
-            <div class="info-box">
-                <strong>What this does:</strong>
-                <ul style="margin-left: 16px; margin-top: 6px; list-style: disc;">
-                    <li>Runs OCR to extract noisy text.</li>
-                    <li>Computes quick pixel heuristics (ELA, copy-move).</li>
-                    <li>Extracts transcript-specific features (course codes, GPA values, registrar, suspicious phrases).</li>
-                    <li>Uses GPT-based vision to flag visual tampering and content conflicts.</li>
-                    <li>Combines everything into a conservative LOW / MEDIUM / HIGH risk label.</li>
-                </ul>
-                <p style="margin-top: 8px;">
-                    <strong>Note:</strong> This is a pre-screening tool only.
-                    <span style="font-style: italic;">Humans must review any MEDIUM or HIGH results.</span>
-                    <br>
-                    <span style="font-size: 0.8rem; color:#6b7280;">
-                        Up to 20 pages are analyzed automatically per transcript. For larger or multiple PDFs,
-                        analysis may take a moment.
-                    </span>
-                </p>
-            </div>
-        </div>
-
-        <!-- Results card -->
-        <div class="card" id="resultsCard" style="display: none;">
-            <h2 style="margin-bottom: 8px;">Transcript Results</h2>
-            <p class="subtitle" style="margin-bottom: 8px;">
-                Each uploaded transcript is analyzed independently. Pages and signals appear below.
-            </p>
-
-            <!-- same legend style as financial.html -->
-            <div class="info-box" style="margin-top: 4px; font-size: 0.85rem;">
-                <strong>How to read this:</strong>
-                <ul style="margin-left: 16px; margin-top: 4px; list-style: disc;">
-                    <li><strong>DOC:</strong> Overall risk level for the entire transcript (LOW / MEDIUM / HIGH).</li>
-                    <li><strong>Conf:</strong> Model confidence from 0.00 to 1.00 (higher = more certain).</li>
-                    <li><strong>ELA score:</strong> Image consistency score; very high values can suggest editing.</li>
-                    <li><strong>Copy-move score:</strong> Looks for duplicated regions that may indicate copy–paste.</li>
-                    <li><strong>OCR preview:</strong> Short snippet of text extracted from the page.</li>
-                    <li><strong>Signals:</strong> Key reasons and visual/text findings that support the risk level.</li>
-                </ul>
-            </div>
-
-            <!-- Export / reviewer notes -->
-            <div class="info-box" style="margin-top: 14px;">
-                <strong>Export for applicant file:</strong>
-                <p style="margin-top: 6px;">
-                    Add per-document applicant metadata + reviewer notes under each result, then export a combined report.
-                </p>
-
-                <div class="export-actions">
-                    <button class="secondary-btn" id="exportPdfBtn" onclick="exportReport('pdf')" disabled>
-                        ⬇️ Export PDF Report
-                    </button>
-                    <button class="secondary-btn" id="exportTxtBtn" onclick="exportReport('txt')" disabled>
-                        ⬇️ Export TXT Report
-                    </button>
-                    <span id="exportStatus" style="font-size:0.85rem; color:#4b5563; align-self:center;"></span>
-                </div>
-            </div>
-
-            <div id="resultsContainer"></div>
-        </div>
+  </div>
+  <!-- Results -->
+  <div class="card" id="resultsCard" style="display:none;">
+    <div class="card-head"><h2>Document Results</h2></div>
+    <div class="card-body">
+      <div class="info-box">
+        <strong>Legend</strong>
+        <ul>
+          <li><strong>DOC:</strong> Overall risk level (LOW / MEDIUM / HIGH)</li>
+          <li><strong>Conf:</strong> Model confidence 0–1</li>
+          <li><strong>ELA:</strong> Image consistency; high values may indicate editing</li>
+          <li><strong>Copy-move:</strong> Detects duplicated regions</li>
+        </ul>
+      </div>
+      <div class="section-lbl" style="margin-top:14px;">Export combined report</div>
+      <div class="export-actions">
+        <button class="btn-secondary" id="exportPdfBtn" onclick="exportReport('pdf')" disabled>Export PDF Report</button>
+        <button class="btn-secondary" id="exportTxtBtn" onclick="exportReport('txt')" disabled>Export TXT Report</button>
+        <span class="export-status" id="exportStatus"></span>
+      </div>
+      <div id="pagesContainer" style="margin-top:16px;"></div>
     </div>
-</div>
-
+  </div>
+</main>
+<footer class="site-footer">IARA — International Admissions Rating Algorithm </footer>
 <script>
-    const latestResultsByFilename = {};
-    const reviewerNotesByFilename = {};
-    const metaByFilename = {};
+  const latestResultsByFilename={},reviewerNotesByFilename={},metaByFilename={};
 
-    function setSeverityPill(el, severity, labelPrefix) {
-        el.className = 'severity-pill';
-        const s = (severity || 'LOW').toUpperCase();
-        if (s === 'HIGH')   el.classList.add('severity-high');
-        if (s === 'MEDIUM') el.classList.add('severity-medium');
-        if (s === 'LOW')    el.classList.add('severity-low');
-        el.textContent = (labelPrefix || 'DOC: ') + s;
+  // Show selected file names on the upload zone
+  function fileSelected(input) {
+    const zone = document.getElementById('uploadZone');
+    if (input.files && input.files.length) {
+      const names = Array.from(input.files).map(f => f.name).join(', ');
+      zone.querySelector('h3').textContent = `${input.files.length} file${input.files.length>1?'s':''} selected`;
+      zone.querySelector('p').textContent = names.length > 80 ? names.slice(0,80)+'…' : names;
+      zone.style.borderColor = 'var(--c)';
     }
+  }
 
-    function polarityClass(p) {
-        if (!p) return 'polarity-inc';
-        p = p.toLowerCase();
-        if (p === 'fraud_positive') return 'polarity-fraud';
-        if (p === 'benign')         return 'polarity-benign';
-        return 'polarity-inc';
-    }
+  // Drag and drop — wrapped in DOMContentLoaded so _zone is guaranteed to exist
+  document.addEventListener('DOMContentLoaded', function() {
+    const _zone = document.getElementById('uploadZone');
+    if (!_zone) return;
+    _zone.addEventListener('dragover', e => { e.preventDefault(); _zone.classList.add('over'); });
+    _zone.addEventListener('dragleave', () => _zone.classList.remove('over'));
+    _zone.addEventListener('drop', e => {
+      e.preventDefault(); _zone.classList.remove('over');
+      const fi = document.getElementById('transcriptFile');
+      try {
+        const dt = new DataTransfer();
+        Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.pdf')).forEach(f => dt.items.add(f));
+        fi.files = dt.files;
+        fileSelected(fi);
+      } catch(_) {
+        fi._dragFiles = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.pdf'));
+        fileSelected({files: fi._dragFiles});
+      }
+    });
+  });
 
-    async function uploadAndAnalyzeTranscript() {
-        const fileInput        = document.getElementById('transcriptFile');
-        const btn              = document.getElementById('analyzeTranscriptBtn');
-        const errorBox         = document.getElementById('errorBox');
-        const resultsCard      = document.getElementById('resultsCard');
-        const resultsContainer = document.getElementById('resultsContainer');
+  function setSevPill(el,sev,prefix){el.className='sev-pill';const s=(sev||'LOW').toUpperCase();if(s==='HIGH')el.classList.add('sev-high');else if(s==='MEDIUM')el.classList.add('sev-medium');else el.classList.add('sev-low');el.textContent=(prefix||'DOC: ')+s;}
+  function polClass(p){if(!p)return'pol-inc';p=p.toLowerCase();if(p==='fraud_positive')return'pol-fraud';if(p==='benign')return'pol-benign';return'pol-inc';}
+  function polLabel(p){if(!p)return'Inconclusive';p=p.toLowerCase();if(p==='fraud_positive')return'Fraud-positive';if(p==='benign')return'Benign';return'Inconclusive';}
 
-        errorBox.style.display = 'none';
-        errorBox.textContent   = '';
-
-        if (!fileInput.files || fileInput.files.length === 0) {
-            errorBox.textContent = 'Please select at least one PDF file.';
-            errorBox.style.display = 'block';
-            return;
+  async function uploadAndAnalyzeTranscript(){
+    const fi=document.getElementById('transcriptFile');
+    const btn=document.getElementById('analyzeTranscriptBtn');
+    const errBox=document.getElementById('errorBox');
+    const resCard=document.getElementById('resultsCard');
+    const container=document.getElementById('pagesContainer');
+    errBox.style.display='none';
+    const files=Array.from(fi._dragFiles||fi.files||[]);
+    if(!files.length){errBox.textContent='Please select at least one PDF.';errBox.style.display='block';return;}
+    container.innerHTML='';resCard.style.display='none';
+    Object.keys(latestResultsByFilename).forEach(k=>delete latestResultsByFilename[k]);
+    Object.keys(reviewerNotesByFilename).forEach(k=>delete reviewerNotesByFilename[k]);
+    Object.keys(metaByFilename).forEach(k=>delete metaByFilename[k]);
+    btn.disabled=true;
+    try{
+      for(let i=0;i<files.length;i++){
+        const file=files[i];
+        btn.innerHTML=`<span class="spinner"></span>Analyzing document ${i+1} of ${files.length}…`;
+        const fd=new FormData();fd.append('file',file);
+        let data;
+        try{
+          const resp=await fetch('/api/fraud/transcript',{method:'POST',body:fd,credentials:'include'});
+          if(!resp.ok){let m=`Failed: ${file.name}`;try{const d=await resp.json();if(d.error)m=d.error;}catch(_){}throw new Error(m);}
+          data=await resp.json();
+          latestResultsByFilename[file.name]=data;
+          document.getElementById('exportPdfBtn').disabled=false;
+          document.getElementById('exportTxtBtn').disabled=false;
+        }catch(err){
+          const eb=document.createElement('div');eb.className='doc-block';
+          eb.innerHTML=`<span class="sev-pill sev-err">ERROR</span><div class="doc-name">${file.name}</div><div class="doc-sub">${err.message}</div>`;
+          container.appendChild(eb);continue;
         }
+        if(!metaByFilename[file.name])metaByFilename[file.name]={studentId:'',applicantName:'',program:''};
+        const docBlock=document.createElement('div');docBlock.className='doc-block';
+        docBlock.innerHTML=`
+          <span class="sev-pill"></span>
+          <div class="doc-name">${file.name}</div>
+          <div class="doc-sub">Server path: ${data.file_path||'n/a'}</div>
+          <div style="margin-top:12px;">
+            <div class="section-lbl">Applicant Metadata</div>
+            <div class="meta-grid">
+              <input data-meta="studentId" data-fn="${file.name}" placeholder="Student ID (optional)">
+              <input data-meta="applicantName" data-fn="${file.name}" placeholder="Applicant Name (optional)">
+              <input data-meta="program" data-fn="${file.name}" placeholder="Program / Term (optional)">
+            </div>
+            <div class="meta-notes">
+              <div class="section-lbl">Reviewer Notes</div>
+              <textarea data-fn="${file.name}" placeholder="Notes for this document (concerns, follow-ups, verification needed…)"></textarea>
+            </div>
+          </div>
+          <div class="doc-pages"></div>`;
+        setSevPill(docBlock.querySelector('.sev-pill'),data.doc_severity,'DOC: ');
+        const notesBox=docBlock.querySelector(`textarea[data-fn="${file.name}"]`);
+        notesBox.value=reviewerNotesByFilename[file.name]||'';
+        notesBox.addEventListener('input',()=>{reviewerNotesByFilename[file.name]=notesBox.value;});
+        docBlock.querySelectorAll(`input[data-fn="${file.name}"]`).forEach(inp=>{
+          const key=inp.getAttribute('data-meta');
+          inp.value=metaByFilename[file.name][key]||'';
+          inp.addEventListener('input',()=>{metaByFilename[file.name][key]=inp.value;});
+        });
+        const pagesDiv=docBlock.querySelector('.doc-pages');
+        (data.pages||[]).forEach(page=>{
+          const ex=page.extra||{};
+          const ela=ex.ela!==undefined?ex.ela.toFixed(3):'n/a';
+          const cm=ex.copy_move!==undefined?ex.copy_move.toFixed(3):'n/a';
+          const pd=document.createElement('div');pd.className='page-card';
+          pd.innerHTML=`
+            <div class="page-row">
+              <h4>Page ${page.page_number}</h4>
+              <div>
+                <span class="sev-pill ${page.severity==='HIGH'?'sev-high':page.severity==='MEDIUM'?'sev-medium':'sev-low'}">${page.severity||'LOW'}</span>
+                <span class="pill pill-conf">Conf: ${(page.confidence||0).toFixed(2)}</span>
+                <span class="pill pill-ela">ELA: ${ela}</span>
+                <span class="pill pill-cm">Copy-move: ${cm}</span>
+                ${ex.escalated?'<span class="pill pill-esc">Second opinion</span>':''}
+              </div>
+            </div>
+            <div class="summary-blk"><strong>Summary:</strong><br>${page.ai_summary||'<span style="color:var(--gm)">(No summary returned)</span>'}</div>
+            <div class="ocr-prev"><strong>OCR preview:</strong><br>${page.ocr_preview?page.ocr_preview.replace(/</g,'&lt;').replace(/>/g,'&gt;'):'<span style="color:var(--gm)">(No text extracted)</span>'}</div>
+            <div class="signals-head">Signals</div>
+            <div class="signals-container"></div>`;
+          const sc=pd.querySelector('.signals-container');
+          const sigs=page.fraud_signals||[];
+          if(!sigs.length){sc.innerHTML='<div class="signal-item" style="color:var(--gm)">No explicit signals returned.</div>';}
+          else{sigs.forEach(sig=>{const sd=document.createElement('div');sd.className='signal-item';sd.innerHTML=`<div>${sig.signal||'(no description)'}</div><div class="signal-meta"><span class="${polClass(sig.polarity)}">${polLabel(sig.polarity)}</span> · Category: ${sig.category||'n/a'} · Conf: ${(sig.confidence||0).toFixed(2)}${sig.source?` · Source: ${sig.source}`:''}</div>`;sc.appendChild(sd);});}
+          pagesDiv.appendChild(pd);
+        });
+        container.appendChild(docBlock);
+      }
+      if(container.children.length)resCard.style.display='block';
+    }catch(err){errBox.textContent=err.message||'Unexpected error.';errBox.style.display='block';}
+    finally{btn.disabled=false;btn.innerHTML='Analyze Transcript(s)';}
+  }
 
-        const files = Array.from(fileInput.files);
-        const total = files.length;
-
-        // Clear old results
-        resultsContainer.innerHTML = '';
-        resultsCard.style.display  = 'none';
-
-        Object.keys(latestResultsByFilename).forEach(k => delete latestResultsByFilename[k]);
-        Object.keys(reviewerNotesByFilename).forEach(k => delete reviewerNotesByFilename[k]);
-        Object.keys(metaByFilename).forEach(k => delete metaByFilename[k]);
-
-        document.getElementById('exportPdfBtn').disabled = true;
-        document.getElementById('exportTxtBtn').disabled = true;
-        document.getElementById('exportStatus').textContent = '';
-
-
-        btn.disabled = true;
-        btn.innerHTML =
-            '<span class="spinner"></span> Analyzing document(s)… this may take a moment for large or multiple PDFs.';
-
-        try {
-            for (let i = 0; i < total; i++) {
-                const file = files[i];
-
-                // Update progress text per file
-                btn.innerHTML =
-                    `<span class="spinner"></span> Analyzing document ${i + 1} of ${total}… ` +
-                    `this may take a moment for large or multiple PDFs.`;
-
-                const formData = new FormData();
-                formData.append('file', file);
-
-                let data;
-                try {
-                    const response = await fetch('/api/fraud/transcript', {
-                        method: 'POST',
-                        body: formData,
-                        credentials: 'include'
-                    });
-
-                    if (!response.ok) {
-                        let msg = `Analysis failed for ${file.name}.`;
-                        try {
-                            const d = await response.json();
-                            if (d.error) msg = d.error;
-                        } catch (_) {}
-                        throw new Error(msg);
-                    }
-
-                    data = await response.json();
-                    latestResultsByFilename[file.name] = data;
-
-                    document.getElementById('exportPdfBtn').disabled = false;
-                    document.getElementById('exportTxtBtn').disabled = false;
-
-                } catch (err) {
-                    const errBlock = document.createElement('div');
-                    errBlock.className = 'page-card';
-                    errBlock.innerHTML = `
-                        <div class="results-header">
-                            <span class="severity-pill severity-high">ERROR</span>
-                            <h3 style="margin-top: 8px;">${file.name}</h3>
-                            <p class="subtitle">${err.message || 'Unexpected error during analysis.'}</p>
-                        </div>
-                    `;
-                    resultsContainer.appendChild(errBlock);
-                    continue;
-                }
-
-                const severity = data.doc_severity || 'LOW';
-
-                const docBlock = document.createElement('div');
-                docBlock.className = 'page-card';
-
-                docBlock.innerHTML = `
-                    <div class="results-header" style="margin-bottom: 10px;">
-                        <span class="severity-pill"></span>
-                        <h3 style="margin-top: 8px;">${file.name}</h3>
-                        <p class="subtitle">
-                            File: ${file.name}
-                            &nbsp;•&nbsp;
-                            Server path (internal): ${data.file_path || 'n/a'}
-                        </p>
-                    </div>
-
-                    <div class="info-box" style="margin-top: 8px; margin-bottom: 12px;">
-                        <strong>Applicant Metadata (saved with export):</strong>
-
-                        <div class="export-grid" style="margin-top:10px;">
-                            <div>
-                                <label style="display:block; font-weight:600; margin: 10px 0 6px 0;">Student ID (optional)</label>
-                                <input class="text-input" data-meta="studentId" data-filename="${file.name}" placeholder="e.g., STU_2026_0142">
-                            </div>
-                            <div>
-                                <label style="display:block; font-weight:600; margin: 10px 0 6px 0;">Applicant Name (optional)</label>
-                                <input class="text-input" data-meta="applicantName" data-filename="${file.name}" placeholder="e.g., Jane Doe">
-                            </div>
-                            <div>
-                                <label style="display:block; font-weight:600; margin: 10px 0 6px 0;">Program/Term (optional)</label>
-                                <input class="text-input" data-meta="program" data-filename="${file.name}" placeholder="e.g., CS BS Fall 2026">
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 10px;">
-                            <strong>Reviewer Notes (saved with export):</strong>
-                            <textarea
-                                class="text-area"
-                                data-filename="${file.name}"
-                                placeholder="Type notes for this transcript (what to verify, inconsistencies, follow-ups, etc.)"
-                            ></textarea>
-                        </div>
-                    </div>
-
-                    <div class="doc-pages"></div>
-                `;
-
-
-                const pill = docBlock.querySelector('.severity-pill');
-                setSeverityPill(pill, severity, 'DOC: ');
-
-                // --- per-document reviewer notes wiring ---
-                const notesBox = docBlock.querySelector(`textarea[data-filename="${file.name}"]`);
-                notesBox.value = reviewerNotesByFilename[file.name] || '';
-                notesBox.addEventListener('input', () => {
-                    reviewerNotesByFilename[file.name] = notesBox.value;
-                });
-
-                // --- per-document meta wiring ---
-                if (!metaByFilename[file.name]) {
-                    metaByFilename[file.name] = { studentId: "", applicantName: "", program: "" };
-                }
-
-                const metaInputs = docBlock.querySelectorAll(`input[data-filename="${file.name}"][data-meta]`);
-                metaInputs.forEach(inp => {
-                    const key = inp.getAttribute("data-meta"); // studentId | applicantName | program
-                    inp.value = metaByFilename[file.name][key] || "";
-                    inp.addEventListener("input", () => {
-                        metaByFilename[file.name][key] = inp.value;
-                    });
-                });
-
-
-                const pagesContainer = docBlock.querySelector('.doc-pages');
-
-                (data.pages || []).forEach(page => {
-                    const extra      = page.extra || {};
-                    const ela        = (extra.ela !== undefined) ? extra.ela.toFixed(3) : 'n/a';
-                    const cm         = (extra.copy_move !== undefined) ? extra.copy_move.toFixed(3) : 'n/a';
-                    const escalated  = !!extra.escalated;
-
-                    const pageDiv = document.createElement('div');
-                    pageDiv.className = 'page-card';
-
-                    pageDiv.innerHTML = `
-                        <div class="page-title-row">
-                            <h4>Page ${page.page_number}</h4>
-                            <div>
-                                <span class="severity-pill ${
-                                    page.severity === 'HIGH'
-                                        ? 'severity-high'
-                                        : page.severity === 'MEDIUM'
-                                            ? 'severity-medium'
-                                            : 'severity-low'
-                                }">
-                                    ${page.severity || 'LOW'}
-                                </span>
-                                <span
-                                    class="pill pill-conf"
-                                    title="Model confidence from 0.00 to 1.00 (higher = more certain)."
-                                >
-                                    Conf: ${(page.confidence || 0).toFixed(2)}
-                                </span>
-                                <span
-                                    class="pill pill-ela"
-                                    title="Image consistency score; higher values can suggest image editing."
-                                >
-                                    ELA score: ${ela}
-                                </span>
-                                <span
-                                    class="pill pill-cm"
-                                    title="Looks for duplicated regions that may indicate copy–paste."
-                                >
-                                    Copy-move score: ${cm}
-                                </span>
-                                ${escalated ? '<span class="pill pill-esc">GPT-5 second opinion</span>' : ''}
-                            </div>
-                        </div>
-
-                        <div class="summary-block">
-                            <strong>Summary:</strong><br>
-                            ${page.ai_summary || '<span style="color:#9ca3af;">(Model did not return a summary.)</span>'}
-                        </div>
-
-                        <div class="ocr-preview">
-                            <strong>OCR preview:</strong><br>
-                            ${
-                                page.ocr_preview
-                                    ? page.ocr_preview.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                                    : '<span style="color:#9ca3af;">(No OCR text extracted.)</span>'
-                            }
-                        </div>
-
-                        <div class="signals-list">
-                            <strong>Signals:</strong>
-                            <div class="signals-container"></div>
-                        </div>
-                    `;
-
-                    const signalsContainer = pageDiv.querySelector('.signals-container');
-                    const signals = page.fraud_signals || [];
-
-                    if (signals.length === 0) {
-                        signalsContainer.innerHTML =
-                            '<div class="signal-item"><span style="color:#9ca3af;">No explicit signals returned.</span></div>';
-                    } else {
-                        signals.forEach(sig => {
-                            const sDiv = document.createElement('div');
-                            sDiv.className = 'signal-item';
-
-                            const pol = (sig.polarity || '').toLowerCase();
-                            const polLabel =
-                                pol === 'fraud_positive'
-                                    ? 'Fraud-positive'
-                                    : pol === 'benign'
-                                        ? 'Benign'
-                                        : 'Inconclusive';
-
-                            sDiv.innerHTML = `
-                                <div>${sig.signal || '(no description)'}</div>
-                                <div class="signal-meta">
-                                    <span class="${polarityClass(sig.polarity)}">${polLabel}</span>
-                                    &nbsp;•&nbsp;
-                                    <span>Category: ${sig.category || 'n/a'}</span>
-                                    &nbsp;•&nbsp;
-                                    <span>Conf: ${(sig.confidence || 0).toFixed(2)}</span>
-                                    ${sig.source ? `&nbsp;•&nbsp;<span>Source: ${sig.source}</span>` : ''}
-                                </div>
-                            `;
-                            signalsContainer.appendChild(sDiv);
-                        });
-                    }
-
-                    pagesContainer.appendChild(pageDiv);
-                });
-
-                resultsContainer.appendChild(docBlock);
-            }
-
-            if (resultsContainer.children.length > 0) {
-                resultsCard.style.display = 'block';
-            }
-        } catch (err) {
-            console.error(err);
-            errorBox.textContent = err.message || 'Unexpected error during analysis.';
-            errorBox.style.display = 'block';
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '🔍 Analyze Transcript(s)';
-        }
-    }
-    async function exportReport(format) {
-        const exportPdfBtn = document.getElementById('exportPdfBtn');
-        const exportTxtBtn = document.getElementById('exportTxtBtn');
-        const statusEl = document.getElementById('exportStatus');
-
-        statusEl.textContent = '';
-
-        const filenames = Object.keys(latestResultsByFilename);
-        if (filenames.length === 0) {
-            statusEl.textContent = 'No analysis results available to export yet.';
-            return;
-        }
-
-        const documents = filenames.map(fn => ({
-            originalFilename: fn,
-            result: latestResultsByFilename[fn],
-            comments: (reviewerNotesByFilename[fn] || '').trim(),
-            meta: {
-                studentId: (metaByFilename[fn]?.studentId || "").trim(),
-                applicantName: (metaByFilename[fn]?.applicantName || "").trim(),
-                program: (metaByFilename[fn]?.program || "").trim()
-            }
-        }));
-
-        exportPdfBtn.disabled = true;
-        exportTxtBtn.disabled = true;
-        statusEl.textContent = `Generating combined ${format.toUpperCase()} report…`;
-
-        try {
-            const resp = await fetch('/api/fraud/transcript/report/all', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ documents, format })
-            });
-
-            if (!resp.ok) {
-                let msg = 'Combined report export failed.';
-                try {
-                    const d = await resp.json();
-                    if (d && d.error) msg = d.error;
-                } catch (_) {}
-                throw new Error(msg);
-            }
-
-            const blob = await resp.blob();
-
-            let filename = '';
-            const cd = resp.headers.get('Content-Disposition') || resp.headers.get('content-disposition');
-            if (cd) {
-                const match = cd.match(/filename="?([^"]+)"?/i);
-                if (match && match[1]) filename = match[1];
-            }
-            if (!filename) {
-                filename = (format === 'txt')
-                    ? 'transcript_fraud_combined.txt'
-                    : 'transcript_fraud_combined.pdf';
-            }
-
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-
-            statusEl.textContent = `Downloaded: ${filename}`;
-        } catch (err) {
-            console.error(err);
-            statusEl.textContent = err.message || 'Unexpected error exporting combined report.';
-        } finally {
-            exportPdfBtn.disabled = false;
-            exportTxtBtn.disabled = false;
-        }
-    }
-
+  async function exportReport(format){
+    const pdfBtn=document.getElementById('exportPdfBtn'),txtBtn=document.getElementById('exportTxtBtn'),statusEl=document.getElementById('exportStatus');
+    statusEl.textContent='';
+    const filenames=Object.keys(latestResultsByFilename);
+    if(!filenames.length){statusEl.textContent='No results to export.';return;}
+    const docs=filenames.map(fn=>({originalFilename:fn,result:latestResultsByFilename[fn],comments:(reviewerNotesByFilename[fn]||'').trim(),meta:{studentId:(metaByFilename[fn]?.studentId||'').trim(),applicantName:(metaByFilename[fn]?.applicantName||'').trim(),program:(metaByFilename[fn]?.program||'').trim()}}));
+    pdfBtn.disabled=txtBtn.disabled=true;statusEl.textContent=`Generating ${format.toUpperCase()} report…`;
+    try{
+      const resp=await fetch('/api/fraud/transcript/report/all',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({documents:docs,format})});
+      if(!resp.ok){let m='Export failed.';try{const d=await resp.json();if(d.error)m=d.error;}catch(_){}throw new Error(m);}
+      const blob=await resp.blob();
+      let fname=format==='txt'?'transcript_fraud_combined.txt':'transcript_fraud_combined.pdf';
+      const cd=resp.headers.get('content-disposition')||'';const match=cd.match(/filename="?([^"]+)"?/i);if(match)fname=match[1];
+      const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:fname});document.body.appendChild(a);a.click();a.remove();
+      statusEl.textContent=`Downloaded: ${fname}`;
+    }catch(err){statusEl.textContent=err.message||'Export error.';}
+    finally{pdfBtn.disabled=txtBtn.disabled=false;}
+  }
 </script>
 </body>
 </html>

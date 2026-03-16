@@ -92,7 +92,6 @@
       <thead>
         <tr>
           <th>Student ID</th>
-          <th>Type</th>
           <th>Reviewed By</th>
           <th>Generated</th>
           <th>Size</th>
@@ -107,12 +106,7 @@
               {{ report.student_id }}
             </a>
           </td>
-          <td>
-            <span class="badge badge-{{ report.report_type if report.report_type else 'pdf' }}">
-              {{ (report.report_type or 'PDF').upper() }}
-            </span>
-          </td>
-          <td>{{ report.reviewer or report.reviewer_name or '—' }}</td>
+          <td>{{ report.reviewer or '—' }}</td>
           <td style="color:var(--gm);">{{ report.reviewed_at[:16] if report.reviewed_at else '—' }}</td>
           <td style="color:var(--gm);">
             {% if report.file_size %}
@@ -143,7 +137,6 @@
 
 <footer class="site-footer">
   IARA — International Admissions Rating Algorithm 
-</footer>
 
 </body>
 </html>

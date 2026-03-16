@@ -24,8 +24,8 @@ openai==1.51.0
 httpx==0.27.0
 reportlab
 
-# NLP / ML
-transformers
-sentence-transformers
-torch
-scikit-learn
+# NLP / ML - commented out, models disabled
+# transformers
+# sentence-transformers
+# torch
+# scikit-learn

@@ -20,6 +20,7 @@ from typing import Optional, Dict
 from textwrap import shorten
 from werkzeug.utils import secure_filename
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.utils import simpleSplit
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from datetime import datetime
@@ -1261,6 +1262,45 @@ def build_multi_transcript_txt_report(documents: list, reviewer: str) -> str:
 
     return "\n".join(lines)
 
+def wrap_line_for_pdf(line: str, canvas_obj, max_width: float, font_name: str, font_size: int):
+    if not line:
+        return [""]
+    
+    words = line.split(" ")
+    wrapped_lines = []
+    current_line = ""
+    
+    for word in words:
+        test_line = word if not current_line else current_line + " " + word
+        
+        if canvas_obj.stringWidth(test_line, font_name, font_size) <= max_width:
+            current_line = test_line
+        else:
+            if current_line:
+                wrapped_lines.append(current_line)
+            current_line = ""
+            
+            # If a single word is too long (like a filename), break it into chunks
+            if canvas_obj.stringWidth(word, font_name, font_size) > max_width:
+                chunk = ""
+                for ch in word:
+                    test_chunk = chunk + ch
+                    if canvas_obj.stringWidth(test_chunk, font_name, font_size) <= max_width:
+                        chunk = test_chunk
+                    else:
+                        if chunk:
+                            wrapped_lines.append(chunk)
+                        chunk = ch
+                if chunk:
+                    current_line = chunk
+            else:
+                current_line = word
+    
+    if current_line:
+        wrapped_lines.append(current_line)
+    
+    return wrapped_lines
+
 def build_pdf_bytes_from_text(report_text: str) -> bytes:
     buf = io.BytesIO()
     c = canvas.Canvas(buf, pagesize=letter)
@@ -1268,17 +1308,30 @@ def build_pdf_bytes_from_text(report_text: str) -> bytes:
 
     x = 0.75 * inch
     y = height - 0.75 * inch
+    right_margin = 0.75 * inch
+    max_width = width - x - right_margin
 
-    c.setFont("Courier", 10)
+    font_name = "Courier"
+    font_size = 10
+    line_height = 12
 
-    for line in report_text.splitlines():
-        if y < 0.75 * inch:
-            c.showPage()
-            c.setFont("Courier", 10)
-            y = height - 0.75 * inch
-        # prevent running off the page horizontally
-        c.drawString(x, y, (line or "")[:120])
-        y -= 12
+    c.setFont(font_name, font_size)
+
+    for raw_line in report_text.splitlines():
+        line = raw_line or ""
+
+        wrapped_lines = wrap_line_for_pdf(line, c, max_width, font_name, font_size)
+        if not wrapped_lines:
+            wrapped_lines = [""]
+
+        for wrapped_line in wrapped_lines:
+            if y < 0.75 * inch:
+                c.showPage()
+                c.setFont(font_name, font_size)
+                y = height - 0.75 * inch
+
+            c.drawString(x, y, wrapped_line)
+            y -= line_height
 
     c.save()
     buf.seek(0)

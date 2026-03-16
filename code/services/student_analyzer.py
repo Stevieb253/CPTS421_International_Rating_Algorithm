@@ -92,15 +92,15 @@ class StudentScore:
 # Load Transformers Models
 # =======================
 # Essay depth and content model
-bart_tokenizer = AutoTokenizer.from_pretrained("yjernite/bart_eli5")
-bart_model = AutoModelForSeq2SeqLM.from_pretrained("yjernite/bart_eli5")
+# bart_tokenizer = AutoTokenizer.from_pretrained("yjernite/bart_eli5")
+# bart_model = AutoModelForSeq2SeqLM.from_pretrained("yjernite/bart_eli5")
 
-# Sentiment / grammar classifier
-sentiment_pipe = pipeline("text-classification", model="distilbert/distilbert-base-uncased-finetuned-sst-2-english")
+# # Sentiment / grammar classifier
+# sentiment_pipe = pipeline("text-classification", model="distilbert/distilbert-base-uncased-finetuned-sst-2-english")
 
-# Zero-shot essay scoring
-zero_shot_tokenizer = AutoTokenizer.from_pretrained("cross-encoder/ms-marco-MiniLM-L6-v2")
-zero_shot_model = AutoModelForSequenceClassification.from_pretrained("cross-encoder/ms-marco-MiniLM-L6-v2")
+# # Zero-shot essay scoring
+# zero_shot_tokenizer = AutoTokenizer.from_pretrained("cross-encoder/ms-marco-MiniLM-L6-v2")
+# zero_shot_model = AutoModelForSequenceClassification.from_pretrained("cross-encoder/ms-marco-MiniLM-L6-v2")
 
 # =======================
 # Helper Functions
@@ -140,11 +140,12 @@ def extract_text_features(text: str) -> Dict:
 # =======================
 class StudentAnalyzer:
     def __init__(self):
-        self.sentiment_pipe = sentiment_pipe
-        self.bart_model = bart_model
-        self.bart_tokenizer = bart_tokenizer
-        self.zero_shot_model = zero_shot_model
-        self.zero_shot_tokenizer = zero_shot_tokenizer
+        # self.sentiment_pipe = sentiment_pipe
+        # self.bart_model = bart_model
+        # self.bart_tokenizer = bart_tokenizer
+        # self.zero_shot_model = zero_shot_model
+        # self.zero_shot_tokenizer = zero_shot_tokenizer
+        pass
 
     def get_gpa_score(self, gpa: float) -> float:
         for min_gpa, max_gpa, score in GPA_RANGES:

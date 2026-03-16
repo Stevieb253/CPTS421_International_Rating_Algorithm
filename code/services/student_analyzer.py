@@ -12,7 +12,7 @@ import re
 import numpy as np
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
-from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForSequenceClassification
+# from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForSequenceClassification
 
 # =======================
 # Scoring Rubrics

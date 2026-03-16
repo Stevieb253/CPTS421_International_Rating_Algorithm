@@ -1,9 +1,9 @@
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-from transformers import pipeline
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
+# from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+# from transformers import pipeline
+# from sentence_transformers import SentenceTransformer
+# from sklearn.metrics.pairwise import cosine_similarity
 
-import torch
+# import torch
 import numpy as np
 
 class NLPService:

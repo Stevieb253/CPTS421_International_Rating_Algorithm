@@ -80,6 +80,59 @@
     .btn-secondary:disabled{opacity:.4;cursor:not-allowed}
     .export-status{font-size:11px;color:var(--gm);align-self:center}
     .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+
+    .progress-wrap{
+      display:none;
+      margin-top:12px;
+      padding:12px;
+      background:#fff;
+      border:1px solid var(--gb);
+      border-radius:var(--rmd);
+    }
+
+    .progress-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:8px;
+    }
+
+    .progress-status{
+      font-size:11px;
+      font-weight:700;
+      color:var(--gt);
+      letter-spacing:.03em;
+    }
+
+    .progress-percent{
+      font-size:11px;
+      font-weight:800;
+      color:var(--c);
+    }
+
+    .progress-bar{
+      width:100%;
+      height:10px;
+      background:var(--gb);
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress-fill{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,var(--c),#c1274a);
+      border-radius:999px;
+      transition:width .35s ease;
+    }
+
+    .progress-subtext{
+      margin-top:7px;
+      font-size:10px;
+      color:var(--gm);
+    }
+
     @keyframes spin{to{transform:rotate(360deg)}}
     .section-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gm);margin:12px 0 6px}
     .site-footer{text-align:center;padding:16px;font-size:11px;color:var(--gm);font-weight:500;border-top:1px solid var(--gb);letter-spacing:.03em}
@@ -113,6 +166,22 @@
       </div>
       <input type="file" id="transcriptFile" accept=".pdf" multiple style="display:none" onchange="fileSelected(this)">
       <button class="btn-primary" id="analyzeTranscriptBtn" onclick="uploadAndAnalyzeTranscript()">Analyze Transcript(s)</button>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-top">
+          <div class="progress-status" id="progressStatus">Preparing analysis...</div>
+          <div class="progress-percent" id="progressPercent">0%</div>
+        </div>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="progress-subtext" id="progressSubtext">
+          Waiting to start...
+        </div>
+      </div>
+
       <div class="error-box" id="errorBox"></div>
       <div class="info-box">
         <strong>What this does</strong>
@@ -152,6 +221,63 @@
 <footer class="site-footer">IARA — International Admissions Rating Algorithm </footer>
 <script>
   const latestResultsByFilename={},reviewerNotesByFilename={},metaByFilename={};
+
+  let progressTimer = null;
+
+  function showProgress(){
+    const el = document.getElementById('progressWrap');
+    if(el){
+      el.style.display = 'block';
+    }
+  }
+
+  function hideProgress(){
+    const el = document.getElementById('progressWrap');
+    if(el){
+      el.style.display = 'none';
+    }
+  }
+
+  function setProgress(percent, statusText, subText = ''){
+    const safe = Math.max(0, Math.min(100, Math.round(percent)));
+
+    document.getElementById('progressFill').style.width = safe + '%';
+    document.getElementById('progressPercent').textContent = safe + '%';
+    document.getElementById('progressStatus').textContent = statusText || '';
+    document.getElementById('progressSubtext').textContent = subText || '';
+  }
+
+  function stopProgressAnimation(){
+    if(progressTimer){
+      clearInterval(progressTimer);
+      progressTimer = null;
+    }
+  }
+
+  function animateProgressWithinRange(start, end, statusText, subText = ''){
+    stopProgressAnimation();
+
+    let current = start;
+    const target = start + ((end - start) * 0.7);
+
+    setProgress(current, statusText, subText);
+
+    progressTimer = setInterval(function(){
+
+      if(current < target){
+
+        current += Math.max(0.8, (end - start) / 25);
+
+        if(current > target){
+          current = target;
+        }
+
+        setProgress(current, statusText, subText);
+      }
+
+    }, 350);
+  }
+
 
   // Show selected file names on the upload zone
   function fileSelected(input) {
@@ -203,9 +329,24 @@
     Object.keys(reviewerNotesByFilename).forEach(k=>delete reviewerNotesByFilename[k]);
     Object.keys(metaByFilename).forEach(k=>delete metaByFilename[k]);
     btn.disabled=true;
+
+    showProgress();
+    setProgress(0,'Preparing analysis...',`Starting ${files.length} transcript${files.length>1?'s':''}.`);
+
     try{
       for(let i=0;i<files.length;i++){
         const file=files[i];
+
+        const startPct = (i / files.length) * 100;
+        const endPct = ((i + 1) / files.length) * 100;
+
+        animateProgressWithinRange(
+          startPct,
+          endPct,
+          "Analyzing document " + (i+1) + " of " + files.length,
+          file.name
+        );
+
         btn.innerHTML=`<span class="spinner"></span>Analyzing document ${i+1} of ${files.length}…`;
         const fd=new FormData();fd.append('file',file);
         let data;
@@ -214,9 +355,23 @@
           if(!resp.ok){let m=`Failed: ${file.name}`;try{const d=await resp.json();if(d.error)m=d.error;}catch(_){}throw new Error(m);}
           data=await resp.json();
           latestResultsByFilename[file.name]=data;
+
+          stopProgressAnimation();
+          setProgress(
+            ((i + 1) / files.length) * 100,
+            "Finished document " + (i+1) + " of " + files.length,
+            file.name + " completed successfully"
+          );
+
           document.getElementById('exportPdfBtn').disabled=false;
           document.getElementById('exportTxtBtn').disabled=false;
         }catch(err){
+          stopProgressAnimation();
+          setProgress(
+            ((i + 1) / files.length) * 100,
+            "Processed document " + (i+1) + " of " + files.length,
+            file.name + " finished with an error"
+          );
           const eb=document.createElement('div');eb.className='doc-block';
           eb.innerHTML=`<span class="sev-pill sev-err">ERROR</span><div class="doc-name">${file.name}</div><div class="doc-sub">${err.message}</div>`;
           container.appendChild(eb);continue;
@@ -280,7 +435,22 @@
       }
       if(container.children.length)resCard.style.display='block';
     }catch(err){errBox.textContent=err.message||'Unexpected error.';errBox.style.display='block';}
-    finally{btn.disabled=false;btn.innerHTML='Analyze Transcript(s)';}
+    finally{
+      stopProgressAnimation();
+
+      setProgress(
+        100,
+        "Analysis complete",
+        "Finished processing " + files.length + " transcript(s)"
+      );
+
+      setTimeout(function(){
+        hideProgress();
+      },1200);
+
+      btn.disabled=false;
+      btn.innerHTML='Analyze Transcript(s)';
+    }
   }
 
   async function exportReport(format){

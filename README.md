@@ -1,7 +1,7 @@
 # Team 25 – Washington State University
 
 **Project Lead:** Khushi Panchal  
-**Team Member:** Steven Bennet  
+**Team Member:** Steven Bennett  
 **Client:** Trevor Kingsley  
 **Mentor:** Parteek Kumar  
 
@@ -9,30 +9,31 @@
 
 ## Project Overview
 
-The International Student Scoring System supports WSU’s admissions office by scoring international applicants accurately and efficiently.  
+The International Student Scoring System (IARA) supports WSU's admissions office by scoring international applicants accurately and efficiently.
 
-**Sprint 4** focuses on usability, data handling, and security: file restructuring, database integration, feedback textbox, redesigned analysis dashboard, and role-based login. The system is now more modular, maintainable, and multi-user ready.  
+**Sprint 5** focuses on backend stabilization, a full WSU-branded UI redesign, admin user management, and fraud detection improvements. The system now generates reports end-to-end, displays live analytics, and is being prepared for deployment on Render.
 
 ---
 
 ## Demo Video
 
-**Sprint 4 Demo** – Direct link:  https://youtu.be/2RWjarZzjTI
+**Sprint 5 Demo** – Direct link: *(Add unlisted YouTube link here)*
 
 ---
 
-## Sprint 4 Features
+## Sprint 5 Features
 
-- **File Restructuring** – Organized project into `services/`, `db/`, `templates/`, `static/`.  
-- **Database Integration** – MongoDB backend to store analyses, feedback, and logs.  
-- **Feedback Textbox** – Users can submit essay feedback, stored in DB.  
-- **Redesigned Dashboard** – Improved UI for scores, essay analysis, and recommendations.  
-- **Role-Based Login** – Admin, reviewer, and guest roles with proper access control.  
-- **API Improvements** – Robust `/api/analyze` and `/api/batch-analyze` handling with safe JSON/dict conversions.  
-- **Scalable Prototype** – Backend ready for batch processing and potential integration with Slate.
-- **Transcript & Financial Templates** – Added structured transcript and financial evaluation views.
-- **Export Formatting** – Implemented clean report layout for administrative review.
-- **Application Refactor** – Integrated new features into updated project structure.
+- **Report Generation Fixed** – PDF and plain text reports now generate end-to-end with scores, essay analysis, staff comments, and recommendation.
+- **WSU Brand Redesign** – All 11 templates rebuilt using the official WSU design system (Crimson #a60f2d, Montserrat font, WSU CDN bundle).
+- **Live Analytics** – Dashboard now updates after every single student analysis, not just batch.
+- **Admin User Management** – Working Deactivate and Delete buttons, protected admin account, all actions logged to activity log.
+- **File Upload Fix** – Financial and transcript upload zones now work correctly across all browsers.
+- **Checkbox Fix** – Risk factor checkboxes now support multiple independent selections.
+- **Fraud Detection Loading Bar** – Progress indicator added to both financial and transcript screening pages.
+- **Fraud Detection Test Suite** – Automated tests written for both fraud detection systems.
+- **Fraud Detection PDF Fix** – Text overflow in exported fraud detection reports resolved.
+- **Database Auto-Migration** – Schema migrates automatically on startup, zero manual intervention required.
+- **New Admin Routes** – `POST /api/admin/toggle-user` and `POST /api/admin/delete-user` added with role-based access control.
 
 ---
 
@@ -40,65 +41,91 @@ The International Student Scoring System supports WSU’s admissions office by s
 
 ### Prerequisites
 
-- Python 3.11+  
-- Git  
-- Node.js 18+  
-- MongoDB  
-- pip  
+- Python 3.11+
+- Git
+- pip
 
 ### Additional Requirements
 
-- Tesseract OCR, Poppler / PDFPlumber  
-- Pandas, NumPy, Matplotlib  
-- Flask / FastAPI  
-- Pillow, OpenCV, PyMuPDF / pdf2image  
-- Flask-Login, WTForms (Sprint 4 additions)  
+- Flask, ReportLab, OpenPyXL
+- Transformers, Torch, Sentence-Transformers
+- Tesseract OCR, Poppler / PDFPlumber
+- Pandas, NumPy, Pillow, OpenCV, PyMuPDF
 
 ### Setup
-
 ```bash
 git clone https://github.com/Stevieb253/CPTS421_International_Rating_Algorithm.git
 cd CPTS421_International_Rating_Algorithm
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
+python -m venv .venv
+source .venv/bin/activate   # Linux/Mac
+.venv\Scripts\activate      # Windows
 pip install -r requirements.txt
 ```
-Start MongoDB and create student_scoring database
 
-Seed with anonymized datasets in data/ folder
+Set your HuggingFace token (recommended):
+```bash
+export HF_TOKEN=your_token_here        # Linux/Mac
+set HF_TOKEN=your_token_here           # Windows
+```
 
 Run the app:
 ```bash
+cd code
 python app.py
 ```
 
-### Usage
-#### Single Applicant
+Access at `http://localhost:5000`  
+Default login: **admin / admin123**
 
-- Place applicant data in data/
+---
 
-- Access /api/analyze via dashboard or Postman
+## Usage
 
-- Review scores, essay analysis, and recommendations
+### Single Applicant Analysis
+- Log in and navigate to the home page
+- Fill in student profile or load a sample (High / Medium / High Risk)
+- Click **Analyze Student** to generate scores and essay analysis
+- Add staff comments and download PDF or plain text report
 
-- Leave feedback in the textbox
+### Batch Analysis
+- Navigate to **Batch Process**
+- Upload a CSV file with columns: `studentId, country, gpa, curriculum, travelHistory, essayText, negFactors`
+- Download the template from the page if needed
+- Review results and export as CSV or Excel
 
-#### Batch Analysis
-- Submit JSON list of students to /api/batch-analyze
+### Fraud Screening
+- Navigate to **Financial Docs** or **Transcripts**
+- Upload one or more PDFs
+- Review per-page risk levels (LOW / MEDIUM / HIGH), OCR preview, and fraud signals
+- Add reviewer notes and export a combined PDF or TXT report
 
-- Review structured results and analytics
+### Admin
+- Log in as admin and navigate to `/admin/users`
+- Create new staff accounts with Reviewer or Admin role
+- Deactivate or delete existing accounts
 
-#### Role-Based Access
-- Admin: Full access
+---
 
-- Reviewer: Score students and leave feedback
+## Project Structure
+```
+code/
+├── app.py                  # Main Flask application
+├── db/
+│   ├── database.py         # SQLite database layer
+│   ├── report_generator.py # PDF report generation
+│   └── student_scoring.db  # SQLite database file
+├── services/
+│   ├── student_analyzer.py       # Core scoring engine
+│   ├── nlp_service.py            # Sentiment & similarity
+│   ├── financial_fraud_detector.py
+│   └── transcript_fraud_detector.py
+└── templates/              # All 11 HTML templates
+```
 
-- Guest: Limited view
+---
 
-### Contribution
+## Contribution
 ```bash
-
 git checkout -b my-new-feature
 git commit -am 'Add feature'
 git push origin my-new-feature

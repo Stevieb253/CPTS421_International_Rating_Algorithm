@@ -4,6 +4,7 @@ SQLite database for user management and report storage
 LOCK-SAFE VERSION — includes all methods required by app.py
 """
 
+import os
 import sqlite3
 import hashlib
 import secrets
@@ -15,7 +16,7 @@ class Database:
     def __init__(self):
         db_dir = Path(__file__).parent
         db_dir.mkdir(parents=True, exist_ok=True)
-        self.db_path = db_dir / "student_scoring.db"
+        self.db_path = Path(os.environ.get("DB_PATH", str(db_dir / "student_scoring.db")))
         self._initialize_database()
         self._migrate_database()
 

@@ -56,11 +56,14 @@ class TranscriptFraudDetector:
     # Public entry point
     # ------------------------------------------------------------------
     def analyze_document(self, pdf_path: str) -> List[fin.FraudResult]:
-        pages = fin.extract_pdf_images(pdf_path)  # pdf2image via financial module
+        import gc
+        total_pages = fin.get_pdf_page_count(pdf_path)
+        pages_to_process = min(total_pages, self.max_pages)
         results: List[fin.FraudResult] = []
 
-        for i, page_img in enumerate(pages[: self.max_pages]):
-            print(f"  [Transcript] Processing page {i + 1}/{len(pages)}")
+        for i in range(pages_to_process):
+            page_img = fin.extract_pdf_page(pdf_path, page_num=i + 1)
+            print(f"  [Transcript] Processing page {i + 1}/{total_pages}")
 
             # 1) OCR
             ocr_text = fin.extract_ocr_text(page_img)
@@ -74,7 +77,7 @@ class TranscriptFraudDetector:
 
             # 4) Primary AI pass (gpt-5-mini)
             ai_raw = self._analyze_with_openai(
-                page_img, ocr_text, features, model="gpt-5-mini"
+                page_img, ocr_text, features, model="gpt-5-mini", ela=ela, cm=cm
             )
 
             # 5) Finalize LOW/MEDIUM/HIGH severity using shared logic
@@ -119,7 +122,7 @@ class TranscriptFraudDetector:
             if needs_escalation:
                 try:
                     ai_raw_5 = self._analyze_with_openai(
-                        page_img, ocr_text, features, model="gpt-5"
+                        page_img, ocr_text, features, model="gpt-5", ela=ela, cm=cm
                     )
                     ai_raw_5 = fin.finalize_label(ai_raw_5)
 
@@ -178,6 +181,8 @@ class TranscriptFraudDetector:
                 },
             )
             results.append(result)
+            del page_img
+            gc.collect()
 
         return results
 
@@ -265,6 +270,8 @@ class TranscriptFraudDetector:
         ocr_text: str,
         features: Dict[str, Any],
         model: str = "gpt-5-mini",
+        ela: float = 0.0,
+        cm: float = 0.0,
     ) -> dict:
         """
         Call OpenAI for transcript-specific analysis.
@@ -284,8 +291,6 @@ class TranscriptFraudDetector:
         safe_hint = self._scrub_text(ocr_text or "")
         features_json = json.dumps(features, ensure_ascii=False)
 
-        ela = fin.ela_score(pil_img)
-        cm = fin.copy_move_score(pil_img)
 
         # ---- SYSTEM PROMPT ----
         system_prompt = (

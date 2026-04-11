@@ -72,17 +72,20 @@ def with_retries(fn, max_tries=3, base_delay=1.5):
 # -----------------------------------------------------------------------------
 # Image / PDF helpers
 # -----------------------------------------------------------------------------
-def extract_pdf_images(pdf_path: str, dpi: int = 300) -> List[Image.Image]:
-    """
-    Convert PDF pages to PIL images using pdf2image.
-    Higher DPI (e.g., 300) improves OCR quality, at the cost of bigger images.
-    Requires poppler on PATH.
-    """
+def extract_pdf_page(pdf_path: str, page_num: int, dpi: int = 300) -> Image.Image:
+    pages = convert_from_path(pdf_path, dpi=dpi, first_page=page_num, last_page=page_num)
+    if not pages:
+        raise RuntimeError(f"Could not extract page {page_num}")
+    return pages[0]
+
+def get_pdf_page_count(pdf_path: str) -> int:
+    from pdf2image.pdf2image import pdfinfo_from_path
     try:
-        pages = convert_from_path(pdf_path, dpi=dpi)
-        return pages
-    except Exception as e:
-        raise RuntimeError(f"pdf->image conversion failed: {e}")
+        info = pdfinfo_from_path(pdf_path)
+        return info["Pages"]
+    except Exception:
+        pages = convert_from_path(pdf_path, dpi=72)
+        return len(pages)
 
 
 def extract_ocr_text(pil_img: Image.Image) -> str:
@@ -444,11 +447,14 @@ def analyze_document(pdf_path: str, max_pages: int = 3, escalate=True) -> List[F
     Analyze a PDF document; return a list of FraudResult (one per page analyzed).
     escalate=True allows calling stronger model gpt-5 when heuristics or content checks trigger.
     """
-    pages = extract_pdf_images(pdf_path)
+    import gc
+    total_pages = get_pdf_page_count(pdf_path)
+    pages_to_process = min(total_pages, max_pages)
     results: List[FraudResult] = []
 
-    for i, page_img in enumerate(pages[:max_pages]):
-        print(f"  Processing page {i+1}/{len(pages)}")
+    for i in range(pages_to_process):
+        page_img = extract_pdf_page(pdf_path, page_num=i + 1)
+        print(f"  Processing page {i+1}/{total_pages}")
 
         # 1) OCR
         ocr_text = extract_ocr_text(page_img)
@@ -565,6 +571,8 @@ def analyze_document(pdf_path: str, max_pages: int = 3, escalate=True) -> List[F
                    "escalated": bool(ai_raw.get("escalated", False))}
         )
         results.append(result)
+        del page_img
+        gc.collect()
 
     return results
 

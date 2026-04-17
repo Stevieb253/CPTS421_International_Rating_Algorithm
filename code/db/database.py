@@ -150,6 +150,8 @@ class Database:
                 VALUES (?, ?, ?, ?, ?)
             """, ("admin", pwd_hash, salt, "Administrator", "admin"))
             print("✅ Default admin created  →  username: admin  |  password: admin123")
+    
+    
 
     # ─── User Management ──────────────────────────────────────────────────────
 
@@ -207,7 +209,48 @@ class Database:
                 ORDER BY created_at DESC
             """)
             return [dict(row) for row in cursor.fetchall()]
+    
+    
 
+    def delete_user(self, user_id):
+        """Permanently delete a user."""
+        try:
+            self.cursor.execute(
+                'DELETE FROM users WHERE id = ?',
+                (user_id,)
+            )
+            self.conn.commit()
+            return True
+        except Exception as e:
+            print(f"Error deleting user: {e}")
+            return False
+    
+    
+    def get_user_by_id(self, user_id):
+        """Get user by ID."""
+        try:
+            self.cursor.execute(
+                'SELECT * FROM users WHERE id = ?',
+                (user_id,)
+            )
+            return self.cursor.fetchone()
+        except Exception as e:
+            print(f"Error getting user: {e}")
+            return None
+    
+    # def toggle_user_status(self, user_id, is_active):
+    #     """Toggle user active/inactive status."""
+    # try:
+    #     self.cursor.execute(
+    #         '''UPDATE users SET is_active = ? WHERE id = ?''',
+    #         (is_active, user_id)
+    #     )
+    #     self.conn.commit()
+    #     return True
+    # except Exception as e:
+    #     print(f"Error toggling user status: {e}")
+    #     return False
+    
     # ─── Activity Logging ─────────────────────────────────────────────────────
 
     def _log_activity(self, cursor, user_id: int, action: str, details: str = None):

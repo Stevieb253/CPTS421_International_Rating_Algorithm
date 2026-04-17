@@ -581,7 +581,6 @@ def download_report(report_id):
         download_name=f"report_{report['student_id']}_{report_id}.pdf"
     )
 
-
 @app.route('/admin/users')
 def admin_users():
     redirect_response = require_login()
@@ -616,6 +615,91 @@ def create_user():
         return jsonify({'success': True, 'user_id': user_id})
     else:
         return jsonify({'error': 'Username already exists'}), 400
+
+@app.route('/api/admin/toggle-user', methods=['POST'])
+def toggle_user():
+    """Toggle user active/inactive status."""
+    if session.get('role') != 'admin':
+        return jsonify({'error': 'Access denied'}), 403
+    
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        is_active = data.get('is_active')  # Will be 0 or 1
+        
+        if not user_id:
+            return jsonify({'error': 'User ID required'}), 400
+        
+        db = get_db()
+        
+        # Update user status in database
+        if hasattr(db, 'toggle_user_status'):
+            success = db.toggle_user_status(user_id, is_active)
+        else:
+            # Fallback if method doesn't exist
+            return jsonify({'error': 'Database method not implemented'}), 500
+        
+        if success:
+            # Log the activity
+            action = 'user_deactivated' if is_active == 0 else 'user_activated'
+            if hasattr(db, 'log_activity'):
+                db.log_activity(
+                    user_id=session.get('user_id'),
+                    action=action,
+                    details=f"User ID {user_id}"
+                )
+            
+            return jsonify({'success': True, 'message': 'User status updated'})
+        else:
+            return jsonify({'error': 'Failed to update user'}), 400
+            
+    except Exception as e:
+        print(f"Toggle user error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/admin/delete-user', methods=['POST'])
+def delete_user():
+    """Permanently delete a user."""
+    if session.get('role') != 'admin':
+        return jsonify({'error': 'Access denied'}), 403
+    
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        
+        if not user_id:
+            return jsonify({'error': 'User ID required'}), 400
+        
+        db = get_db()
+        
+        # Prevent deleting the admin user
+        user = db.get_user_by_id(user_id) if hasattr(db, 'get_user_by_id') else None
+        if user and user.get('username') == 'admin':
+            return jsonify({'error': 'Cannot delete admin user'}), 403
+        
+        # Delete user from database
+        if hasattr(db, 'delete_user'):
+            success = db.delete_user(user_id)
+        else:
+            return jsonify({'error': 'Database method not implemented'}), 500
+        
+        if success:
+            # Log the activity
+            if hasattr(db, 'log_activity'):
+                db.log_activity(
+                    user_id=session.get('user_id'),
+                    action='user_deleted',
+                    details=f"Deleted user ID {user_id}"
+                )
+            
+            return jsonify({'success': True, 'message': 'User deleted'})
+        else:
+            return jsonify({'error': 'Failed to delete user'}), 400
+            
+    except Exception as e:
+        print(f"Delete user error: {e}")
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/dashboard')

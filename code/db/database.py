@@ -1,9 +1,7 @@
 """
-database.py
-SQLite database for user management and report storage
-LOCK-SAFE VERSION — includes all methods required by app.py
+SQLite Database Layer for IARA
+Handles user management, analysis records, reports, and activity logging
 """
-
 import os
 import sqlite3
 import hashlib
@@ -13,31 +11,42 @@ from pathlib import Path
 
 
 class Database:
-    def __init__(self):
+    """Thread-safe SQLite database with WAL mode for concurrent access"""
+    
+    def __init__(self, db_path: Optional[str] = None):
+        """Initialize database connection and schema"""
         db_dir = Path(__file__).parent
         db_dir.mkdir(parents=True, exist_ok=True)
-        self.db_path = Path(os.environ.get("DB_PATH", str(db_dir / "student_scoring.db")))
-        self._initialize_database()
-        self._migrate_database()
+        
+        self.db_path = Path(db_path) if db_path else db_dir / "student_scoring.db"
+        self._initialize_schema()
+        self._migrate_schema()
 
-    # ─── Connection ───────────────────────────────────────────────────────────
-
-    def _get_connection(self):
+    # ═══════════════════════════════════════════════════════════════════════
+    # DATABASE CONNECTION
+    # ═══════════════════════════════════════════════════════════════════════
+    
+    def _get_connection(self) -> sqlite3.Connection:
+        """Create thread-safe database connection with WAL mode"""
         conn = sqlite3.connect(
             self.db_path,
             timeout=10,
             check_same_thread=False
         )
         conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA journal_mode=WAL;")
+        conn.execute("PRAGMA journal_mode=WAL")
         return conn
 
-    # ─── Schema Setup ─────────────────────────────────────────────────────────
-
-    def _initialize_database(self):
+    # ═══════════════════════════════════════════════════════════════════════
+    # SCHEMA INITIALIZATION
+    # ═══════════════════════════════════════════════════════════════════════
+    
+    def _initialize_schema(self):
+        """Create database tables if they don't exist"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
-
+            
+            # Users table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,28 +61,32 @@ class Database:
                     last_login TEXT
                 )
             """)
-
+            
+            # Activity log table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS activity_log (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
                     action TEXT NOT NULL,
                     details TEXT,
-                    timestamp TEXT DEFAULT CURRENT_TIMESTAMP
+                    timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id)
                 )
             """)
-
+            
+            # Analysis records table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS analysis_records (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     student_id TEXT NOT NULL,
                     final_score REAL,
                     analyzed_by INTEGER,
-                    analyzed_at TEXT DEFAULT CURRENT_TIMESTAMP
+                    analyzed_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (analyzed_by) REFERENCES users(id)
                 )
             """)
-
-            # analysis_id is nullable — no NOT NULL constraint
+            
+            # Reports table (analysis_id nullable for flexibility)
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS reports (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -82,28 +95,29 @@ class Database:
                     reviewed_by INTEGER,
                     reviewed_at TEXT DEFAULT CURRENT_TIMESTAMP,
                     pdf_blob BLOB,
-                    file_size INTEGER
+                    file_size INTEGER,
+                    FOREIGN KEY (analysis_id) REFERENCES analysis_records(id),
+                    FOREIGN KEY (reviewed_by) REFERENCES users(id)
                 )
             """)
-
+            
+            conn.commit()
             self._create_default_admin(cursor)
 
-    def _migrate_database(self):
-        """
-        Fix any existing reports table that was created with NOT NULL on analysis_id.
-        Runs silently if the table is already correct.
-        """
+    def _migrate_schema(self):
+        """Apply schema migrations if needed"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
-
-            # Check if analysis_id column allows NULL
+            
+            # Check if reports.analysis_id needs to be nullable
             cursor.execute("PRAGMA table_info(reports)")
             cols = {row['name']: row for row in cursor.fetchall()}
-
+            
             analysis_id_col = cols.get('analysis_id')
             if analysis_id_col and analysis_id_col['notnull'] == 1:
-                print("🔧 Migrating reports table to allow nullable analysis_id...")
+                # print("🔧 Migrating reports table...")
                 cursor.execute("PRAGMA foreign_keys=OFF")
+                
                 cursor.execute("""
                     CREATE TABLE reports_new (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,33 +129,21 @@ class Database:
                         file_size INTEGER
                     )
                 """)
+                
                 cursor.execute("""
                     INSERT INTO reports_new
-                    SELECT id, analysis_id, student_id, reviewed_by,
-                           reviewed_at, pdf_blob, file_size
+                    SELECT id, analysis_id, student_id, reviewed_by, reviewed_at, pdf_blob, file_size
                     FROM reports
                 """)
+                
                 cursor.execute("DROP TABLE reports")
                 cursor.execute("ALTER TABLE reports_new RENAME TO reports")
                 cursor.execute("PRAGMA foreign_keys=ON")
-                print("✅ Migration complete.")
-
-    # ─── Password ─────────────────────────────────────────────────────────────
-
-    def _hash_password(self, password: str, salt: str = None):
-        if salt is None:
-            salt = secrets.token_hex(32)
-        pwd_hash = hashlib.pbkdf2_hmac(
-            "sha256",
-            password.encode(),
-            salt.encode(),
-            100000
-        ).hex()
-        return pwd_hash, salt
-
-    # ─── Admin bootstrap ──────────────────────────────────────────────────────
+                conn.commit()
+                # print("✅ Migration complete")
 
     def _create_default_admin(self, cursor):
+        """Create default admin user if no users exist"""
         cursor.execute("SELECT COUNT(*) as count FROM users")
         if cursor.fetchone()["count"] == 0:
             pwd_hash, salt = self._hash_password("admin123")
@@ -149,16 +151,35 @@ class Database:
                 INSERT INTO users (username, password_hash, salt, full_name, role)
                 VALUES (?, ?, ?, ?, ?)
             """, ("admin", pwd_hash, salt, "Administrator", "admin"))
-            print("✅ Default admin created  →  username: admin  |  password: admin123")
-    
-    
+            # print("✅ Default admin created → username: admin | password: admin123")
 
-    # ─── User Management ──────────────────────────────────────────────────────
+    # ═══════════════════════════════════════════════════════════════════════
+    # PASSWORD UTILITIES
+    # ═══════════════════════════════════════════════════════════════════════
+    
+    def _hash_password(self, password: str, salt: str = None) -> tuple[str, str]:
+        """Hash password with PBKDF2 and salt"""
+        if salt is None:
+            salt = secrets.token_hex(32)
+        
+        pwd_hash = hashlib.pbkdf2_hmac(
+            "sha256",
+            password.encode(),
+            salt.encode(),
+            100000
+        ).hex()
+        
+        return pwd_hash, salt
 
-    def create_user(self, username: str, password: str,
-                    full_name: str = None, email: str = None,
-                    role: str = 'reviewer') -> Optional[int]:
+    # ═══════════════════════════════════════════════════════════════════════
+    # USER MANAGEMENT
+    # ═══════════════════════════════════════════════════════════════════════
+    
+    def create_user(self, username: str, password: str, full_name: str = None,
+                    email: str = None, role: str = 'reviewer') -> Optional[int]:
+        """Create new user account"""
         pwd_hash, salt = self._hash_password(password)
+        
         try:
             with self._get_connection() as conn:
                 cursor = conn.cursor()
@@ -166,33 +187,37 @@ class Database:
                     INSERT INTO users (username, password_hash, salt, full_name, email, role)
                     VALUES (?, ?, ?, ?, ?, ?)
                 """, (username, pwd_hash, salt, full_name, email, role))
+                
                 user_id = cursor.lastrowid
                 self._log_activity(cursor, user_id, "user_created",
-                                   f"New user '{username}' created with role '{role}'")
+                                 f"New user '{username}' created with role '{role}'")
+                conn.commit()
                 return user_id
         except sqlite3.IntegrityError:
             return None
 
     def authenticate_user(self, username: str, password: str) -> Optional[Dict]:
+        """Authenticate user and update last login"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                SELECT * FROM users WHERE username = ? AND is_active = 1
-            """, (username,))
+            cursor.execute("SELECT * FROM users WHERE username = ? AND is_active = 1", (username,))
             user = cursor.fetchone()
+            
             if not user:
                 return None
+            
             pwd_hash, _ = self._hash_password(password, user["salt"])
             if pwd_hash != user["password_hash"]:
                 return None
-            cursor.execute("""
-                UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?
-            """, (user["id"],))
-            self._log_activity(cursor, user["id"], "login",
-                               f"User '{username}' logged in")
+            
+            cursor.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?", (user["id"],))
+            self._log_activity(cursor, user["id"], "login", f"User '{username}' logged in")
+            conn.commit()
+            
             return dict(user)
 
     def get_user_by_id(self, user_id: int) -> Optional[Dict]:
+        """Retrieve user by ID"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
@@ -200,76 +225,60 @@ class Database:
             return dict(user) if user else None
 
     def get_all_users(self) -> List[Dict]:
+        """Get all users (excluding passwords)"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                SELECT id, username, full_name, email, role, is_active,
-                       created_at, last_login
+                SELECT id, username, full_name, email, role, is_active, created_at, last_login
                 FROM users
                 ORDER BY created_at DESC
             """)
             return [dict(row) for row in cursor.fetchall()]
-    
-    
 
-    def delete_user(self, user_id):
-        """Permanently delete a user."""
+    def toggle_user_status(self, user_id: int, is_active: int) -> bool:
+        """Toggle user active/inactive status"""
         try:
-            self.cursor.execute(
-                'DELETE FROM users WHERE id = ?',
-                (user_id,)
-            )
-            self.conn.commit()
-            return True
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("UPDATE users SET is_active = ? WHERE id = ?", (is_active, user_id))
+                conn.commit()
+                return True
+        except Exception as e:
+            print(f"Error toggling user status: {e}")
+            return False
+
+    def delete_user(self, user_id: int) -> bool:
+        """Permanently delete a user"""
+        try:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+                conn.commit()
+                return True
         except Exception as e:
             print(f"Error deleting user: {e}")
             return False
-    
-    
-    def get_user_by_id(self, user_id):
-        """Get user by ID."""
-        try:
-            self.cursor.execute(
-                'SELECT * FROM users WHERE id = ?',
-                (user_id,)
-            )
-            return self.cursor.fetchone()
-        except Exception as e:
-            print(f"Error getting user: {e}")
-            return None
-    
-    # def toggle_user_status(self, user_id, is_active):
-    #     """Toggle user active/inactive status."""
-    # try:
-    #     self.cursor.execute(
-    #         '''UPDATE users SET is_active = ? WHERE id = ?''',
-    #         (is_active, user_id)
-    #     )
-    #     self.conn.commit()
-    #     return True
-    # except Exception as e:
-    #     print(f"Error toggling user status: {e}")
-    #     return False
-    
-    # ─── Activity Logging ─────────────────────────────────────────────────────
 
+    # ═══════════════════════════════════════════════════════════════════════
+    # ACTIVITY LOGGING
+    # ═══════════════════════════════════════════════════════════════════════
+    
     def _log_activity(self, cursor, user_id: int, action: str, details: str = None):
-        """Internal — must be called with an existing cursor inside a transaction."""
+        """Internal activity logger (requires existing cursor/transaction)"""
         cursor.execute("""
             INSERT INTO activity_log (user_id, action, details)
             VALUES (?, ?, ?)
         """, (user_id, action, details))
 
     def log_activity(self, user_id: int, action: str, details: str = None):
-        """Public — opens its own connection."""
+        """Public activity logger (opens own connection)"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                INSERT INTO activity_log (user_id, action, details)
-                VALUES (?, ?, ?)
-            """, (user_id, action, details))
+            self._log_activity(cursor, user_id, action, details)
+            conn.commit()
 
     def get_activity_log(self, limit: int = 100) -> List[Dict]:
+        """Retrieve recent activity log"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -281,22 +290,27 @@ class Database:
             """, (limit,))
             return [dict(row) for row in cursor.fetchall()]
 
-    # ─── Analysis Records ─────────────────────────────────────────────────────
-
-    def save_analysis(self, student_id: str, final_score: float,
-                      user_id: int) -> int:
+    # ═══════════════════════════════════════════════════════════════════════
+    # ANALYSIS RECORDS
+    # ═══════════════════════════════════════════════════════════════════════
+    
+    def save_analysis(self, student_id: str, final_score: float, user_id: int) -> int:
+        """Save analysis record"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
                 INSERT INTO analysis_records (student_id, final_score, analyzed_by)
                 VALUES (?, ?, ?)
             """, (student_id, final_score, user_id))
+            
             analysis_id = cursor.lastrowid
             self._log_activity(cursor, user_id, "analysis_created",
-                               f"Analysis saved for student '{student_id}'")
+                             f"Analysis saved for student '{student_id}'")
+            conn.commit()
             return analysis_id
 
     def get_student_analyses(self, student_id: str) -> List[Dict]:
+        """Get all analyses for a student"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -306,33 +320,36 @@ class Database:
             """, (student_id,))
             return [dict(row) for row in cursor.fetchall()]
 
-    # ─── Reports ──────────────────────────────────────────────────────────────
-
-    def save_report(self, analysis_id, student_id: str,
+    # ═══════════════════════════════════════════════════════════════════════
+    # REPORTS
+    # ═══════════════════════════════════════════════════════════════════════
+    
+    def save_report(self, analysis_id: Optional[int], student_id: str,
                     user_id: int, pdf_blob: bytes) -> int:
+        """Save PDF report"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO reports
-                    (analysis_id, student_id, reviewed_by, pdf_blob, file_size)
+                INSERT INTO reports (analysis_id, student_id, reviewed_by, pdf_blob, file_size)
                 VALUES (?, ?, ?, ?, ?)
-            """, (analysis_id, student_id, user_id,
-                  pdf_blob, len(pdf_blob)))
+            """, (analysis_id, student_id, user_id, pdf_blob, len(pdf_blob)))
+            
             report_id = cursor.lastrowid
             self._log_activity(cursor, user_id, "report_generated",
-                               f"Report generated for student '{student_id}'")
+                             f"Report generated for student '{student_id}'")
+            conn.commit()
             return report_id
 
     def get_report_by_id(self, report_id: int) -> Optional[Dict]:
+        """Get report by ID"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                SELECT * FROM reports WHERE id = ?
-            """, (report_id,))
+            cursor.execute("SELECT * FROM reports WHERE id = ?", (report_id,))
             row = cursor.fetchone()
             return dict(row) if row else None
 
     def get_all_reports(self, limit: int = 100) -> List[Dict]:
+        """Get all reports with reviewer info"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -346,6 +363,7 @@ class Database:
             return [dict(row) for row in cursor.fetchall()]
 
     def get_student_reports(self, student_id: str) -> List[Dict]:
+        """Get all reports for a student"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -358,47 +376,51 @@ class Database:
             """, (student_id,))
             return [dict(row) for row in cursor.fetchall()]
 
-    # ─── Dashboard Stats ──────────────────────────────────────────────────────
-
+    # ═══════════════════════════════════════════════════════════════════════
+    # DASHBOARD STATISTICS
+    # ═══════════════════════════════════════════════════════════════════════
+    
     def get_dashboard_stats(self) -> Dict:
+        """Calculate dashboard statistics"""
         with self._get_connection() as conn:
             cursor = conn.cursor()
-
+            
             cursor.execute("SELECT COUNT(*) as count FROM analysis_records")
             total_analyses = cursor.fetchone()["count"]
-
+            
             cursor.execute("SELECT COUNT(*) as count FROM reports")
             total_reports = cursor.fetchone()["count"]
-
+            
             cursor.execute("""
                 SELECT COUNT(*) as count FROM reports
                 WHERE reviewed_at >= datetime('now', '-7 days')
             """)
             reports_this_week = cursor.fetchone()["count"]
-
-            cursor.execute("""
-                SELECT AVG(final_score) as avg FROM analysis_records
-            """)
+            
+            cursor.execute("SELECT AVG(final_score) as avg FROM analysis_records")
             row = cursor.fetchone()
             avg_score = round(float(row["avg"]), 2) if row["avg"] else 0.0
-
+            
             cursor.execute("SELECT COUNT(*) as count FROM users WHERE is_active = 1")
             active_users = cursor.fetchone()["count"]
-
+            
             return {
-                'totalAnalyses':    total_analyses,
-                'totalReports':     total_reports,
-                'reportsThisWeek':  reports_this_week,
-                'avgFinalScore':    avg_score,
-                'activeUsers':      active_users,
+                'totalAnalyses': total_analyses,
+                'totalReports': total_reports,
+                'reportsThisWeek': reports_this_week,
+                'avgFinalScore': avg_score,
+                'activeUsers': active_users,
             }
 
 
-# ─── Singleton ────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════
+# SINGLETON PATTERN
+# ═══════════════════════════════════════════════════════════════════════
 
 _db_instance = None
 
 def get_db() -> Database:
+    """Get database singleton instance"""
     global _db_instance
     if _db_instance is None:
         _db_instance = Database()

@@ -11,29 +11,26 @@
 
 The International Student Scoring System (IARA) supports WSU's admissions office by scoring international applicants accurately and efficiently.
 
-**Sprint 5** focuses on backend stabilization, a full WSU-branded UI redesign, admin user management, and fraud detection improvements. The system now generates reports end-to-end, displays live analytics, and is being prepared for deployment on Render.
+**Sprint 6** focused on finalizing the entire system, integrating all major components, stabilizing performance, and preparing the application for stakeholder delivery. This sprint emphasized deployment, system reliability, and ensuring that IARA runs consistently in a real hosted environment.
 
 ---
 
 ## Demo Video
 
-**Sprint 5 Demo** – Direct link: *[Youtube.com](https://youtu.be/Ap_DkOtFV-E)*
+**Sprint 6 Demo** – Direct link: *Add unlisted YouTube link here*
 
 ---
 
-## Sprint 5 Features
+## Sprint 6 Features
 
-- **Report Generation Fixed** – PDF and plain text reports now generate end-to-end with scores, essay analysis, staff comments, and recommendation.
-- **WSU Brand Redesign** – All 11 templates rebuilt using the official WSU design system (Crimson #a60f2d, Montserrat font, WSU CDN bundle).
-- **Live Analytics** – Dashboard now updates after every single student analysis, not just batch.
-- **Admin User Management** – Working Deactivate and Delete buttons, protected admin account, all actions logged to activity log.
-- **File Upload Fix** – Financial and transcript upload zones now work correctly across all browsers.
-- **Checkbox Fix** – Risk factor checkboxes now support multiple independent selections.
-- **Fraud Detection Loading Bar** – Progress indicator added to both financial and transcript screening pages.
-- **Fraud Detection Test Suite** – Automated tests written for both fraud detection systems.
-- **Fraud Detection PDF Fix** – Text overflow in exported fraud detection reports resolved.
-- **Database Auto-Migration** – Schema migrates automatically on startup, zero manual intervention required.
-- **New Admin Routes** – `POST /api/admin/toggle-user` and `POST /api/admin/delete-user` added with role-based access control.
+- **Final IARA Showcase Video** – A polished 3‑minute professional video demonstrating the full system.
+- **Final Poster Presentation** – Completed and formatted for stakeholder review.
+- **Stakeholder Final Report** – Comprehensive written report summarizing system capabilities and results.
+- **Stakeholder Handoff Document** – Instructions and documentation for future continuation of the project.
+- **Azure Deployment** – Full application deployed to Azure App Service / Azure Web App with stable performance.
+- **System Integration Complete** – Scoring engine, NLP essay analysis, fraud detection, and reporting all connected end‑to‑end.
+- **Report Generation Fixes** – Stability improvements for PDF and text report generation.
+- **Hosted Environment Optimization** – Environment variables, dependencies, and memory configuration updated for cloud hosting.
 
 ---
 
@@ -47,10 +44,10 @@ The International Student Scoring System (IARA) supports WSU's admissions office
 
 ### Additional Requirements
 
-- Flask, ReportLab, OpenPyXL
-- Transformers, Torch, Sentence-Transformers
-- Tesseract OCR, Poppler / PDFPlumber
-- Pandas, NumPy, Pillow, OpenCV, PyMuPDF
+- Flask, ReportLab, OpenPyXL  
+- Transformers, Torch, Sentence-Transformers  
+- Tesseract OCR, Poppler / PDFPlumber  
+- Pandas, NumPy, Pillow, OpenCV, PyMuPDF  
 
 ### Setup
 ```bash

@@ -1,6 +1,7 @@
 # Sprint 5 Report (2/17/2026-3/15/2026)
 
-## YouTube link of Sprint * Video [youtube.com](https://youtu.be/Ap_DkOtFV-E)
+## YouTube link of Sprint * Video 
+[youtube.com](https://youtu.be/Ap_DkOtFV-E)
 
 ## What's New (User Facing)  
 * Report generation bug fixed from end to end  
@@ -29,7 +30,7 @@ Here are links to the issues that we completed in this sprint:
     
 ## Incomplete Issues/User Stories  
 Here are links to issues we worked on but did not complete in this sprint:  
-* https://github.com/Stevieb253/CPTS421\_International\_Rating\_Algorithm/issues/42 \<\<Ran out of time while working on other issues\>\>
+* https://github.com/Stevieb253/CPTS421\_International\_Rating\_Algorithm/issues/42 
 
     
 ## Code Files for Review  

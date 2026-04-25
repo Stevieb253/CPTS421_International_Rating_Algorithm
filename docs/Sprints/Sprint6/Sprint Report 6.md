@@ -1,7 +1,7 @@
 # Sprint 6 Report (03/16/2026 – 04/24/2026)
 
 ## YouTube link of Sprint 6 Video (Make this video unlisted)
-*[Click here to access the link](https://www.youtube.com/watch?v=HQUHaxc2waY)*
+*[Click here to access the link](https://youtu.be/HQUHaxc2waY)*
 
 ## What's New (User Facing)
 * Created a 3-minute professional video showcasing IARA.

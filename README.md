@@ -17,7 +17,7 @@ The International Student Scoring System (IARA) supports WSU's admissions office
 
 ## Demo Video
 
-**Sprint 6 Demo** – Direct link: *Add unlisted YouTube link here*
+ **Sprint 6 Demo** Direct link: (https://youtu.be/HQUHaxc2waY)
 
 ---
 
